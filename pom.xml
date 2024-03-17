@@ -15,7 +15,7 @@
     <name>obs</name>
     <description>Online banking system developed for learning purposed in the course pa165 at FI MU</description>
     <modules>
-        <module>account-service</module>
+        <module>user-service</module>
         <module>transaction-service</module>
         <module>analytics-service</module>
         <module>account-overview-service</module>
