@@ -1,13 +1,21 @@
 # Online banking service
 
-TODO: fill description after design
+
+
+![img.png](img.png)
+
+![img_1.png](img_1.png)
 
 ---
 
-## Microservice 1
+## Account-overview-service
+This service provides operations for overview of customer accounts, for example calculating current balance and viewing transaction history
 
-## Microservice 2
+## Analytics-service
+Service for bank employees for viewing customer transactions and exporting analytic reports.
 
-## Microservice 3
+## Transaction-management-service
+Service for managing transactions, provides operations for currency conversions, payment scheduling.
 
-## Microservice 4
+## Account-service
+Service for managing customer accounts.
