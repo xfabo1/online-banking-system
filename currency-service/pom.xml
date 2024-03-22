@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>cz.muni.fi.obs</groupId>
-    <artifactId>account-overview-service</artifactId>
+    <artifactId>currency-service</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

@@ -18,7 +18,7 @@
         <module>user-service</module>
         <module>transaction-service</module>
         <module>analytics-service</module>
-        <module>account-overview-service</module>
+        <module>currency-service</module>
     </modules>
     <properties>
         <java.version>21</java.version>
