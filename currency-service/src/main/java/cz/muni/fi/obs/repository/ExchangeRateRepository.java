@@ -4,6 +4,7 @@ import cz.muni.fi.obs.domain.Currency;
 import cz.muni.fi.obs.domain.ExchangeRate;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -11,8 +12,12 @@ import java.util.Optional;
 public class ExchangeRateRepository {
 
     // fixme: temporary way of finding exchange rate
-    public Optional<ExchangeRate> findLatestExchangeRate(Currency from, Currency to) {
+    public Optional<ExchangeRate> findCurrentExchangeRate(Currency from, Currency to) {
         return from.getExchangeRates().stream().filter(rate -> rate.getFrom().equals(from) && rate.getTo().equals(to))
+                .filter(rate -> {
+                    Instant now = Instant.now();
+                    return rate.getCreatedAt().isBefore(now) && rate.getValidUntil().isAfter(now);
+                })
                 .min(Comparator.comparing(ExchangeRate::getValidUntil)).stream()
                 .findFirst();
     }

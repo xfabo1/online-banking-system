@@ -6,108 +6,121 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Set;
 
 @Configuration
 public class RepositoryDataProvider {
 
-    private final Currency currency1 = new Currency("usd", "US Dollar");
+    private final Currency usd = new Currency("usd", "US Dollar");
 
-    private final Currency currency2 = new Currency("eur", "Euro");
+    private final Currency euro = new Currency("eur", "Euro");
 
-    private final Currency currency3 = new Currency("yuan", "Chinese Yuan");
+    private final Currency yuan = new Currency("yuan", "Chinese Yuan");
 
     @Bean
-    public Currency currency1() {
+    public Currency usd() {
         Instant now = Instant.now();
 
-        ExchangeRate exchangeRate = ExchangeRate.builder()
+        ExchangeRate expiredExchangeRate = ExchangeRate.builder()
                 .conversionRate(1.1)
-                .from(currency1)
-                .to(currency2)
-                .createdAt(now)
-                .validUntil(now.plusSeconds(300))
+                .from(usd)
+                .to(euro)
+                .createdAt(now.minusSeconds(600)) // Expired
+                .validUntil(now.minusSeconds(300)) // Expired
                 .build();
 
-        ExchangeRate exchangeRate1 = ExchangeRate.builder()
+        ExchangeRate currentExchangeRate = ExchangeRate.builder()
+                .conversionRate(1.2)
+                .from(usd)
+                .to(euro)
+                .createdAt(now.minusSeconds(200))
+                .validUntil(now.plusSeconds(200)) // Current
+                .build();
+
+        ExchangeRate expiredExchangeRate1 = ExchangeRate.builder()
                 .conversionRate(100)
-                .from(currency1)
-                .to(currency3)
-                .createdAt(now)
-                .validUntil(now.plusSeconds(120))
+                .from(usd)
+                .to(yuan)
+                .createdAt(now.minusSeconds(300)) // Expired
+                .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        currency1.setExchangeRates(Set.of(exchangeRate1, exchangeRate));
+        usd.setExchangeRates(Set.of(expiredExchangeRate, currentExchangeRate, expiredExchangeRate1));
 
-        return currency1;
+        return usd;
     }
 
     @Bean
-    public Currency currency2() {
+    public Currency euro() {
         Instant now = Instant.now();
-        Instant fiveMinutesLater = now.plusSeconds(300);
 
-        ExchangeRate exchangeRate1 = ExchangeRate.builder()
+        ExchangeRate expiredExchangeRate = ExchangeRate.builder()
                 .conversionRate(0.909091) // EUR to USD
-                .from(currency2)
-                .to(currency1)
-                .createdAt(now)
-                .validUntil(fiveMinutesLater)
+                .from(euro)
+                .to(usd)
+                .createdAt(now.minusSeconds(600)) // Expired
+                .validUntil(now.minusSeconds(300)) // Expired
                 .build();
 
-        ExchangeRate exchangeRate2 = ExchangeRate.builder()
+        ExchangeRate expiredExchangeRate2 = ExchangeRate.builder()
                 .conversionRate(0.909091) // EUR to USD (Same conversion rate)
-                .from(currency2)
-                .to(currency1)
-                .createdAt(fiveMinutesLater)
-                .validUntil(fiveMinutesLater.plusSeconds(300)) // Different validity interval
+                .from(euro)
+                .to(usd)
+                .createdAt(now.minusSeconds(300)) // Expired
+                .validUntil(now.minusSeconds(150)) // Expired
                 .build();
 
-        ExchangeRate exchangeRate3 = ExchangeRate.builder()
+        ExchangeRate currentExchangeRate = ExchangeRate.builder()
+                .conversionRate(0.95) // EUR to USD (Different conversion rate)
+                .from(euro)
+                .to(usd)
+                .createdAt(now.minusSeconds(200))
+                .validUntil(now.plusSeconds(200)) // Current
+                .build();
+
+        ExchangeRate expiredExchangeRate3 = ExchangeRate.builder()
                 .conversionRate(7.272727) // EUR to Chinese Yuan
-                .from(currency2)
-                .to(currency3)
-                .createdAt(now)
-                .validUntil(now.plusSeconds(120))
+                .from(euro)
+                .to(yuan)
+                .createdAt(now.minusSeconds(300)) // Expired
+                .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        currency2.setExchangeRates(Set.of(exchangeRate1, exchangeRate2, exchangeRate3));
+        euro.setExchangeRates(Set.of(expiredExchangeRate, expiredExchangeRate2, currentExchangeRate, expiredExchangeRate3));
 
-        return currency2;
+        return euro;
     }
 
     @Bean
-    public Currency currency3() {
+    public Currency yuan() {
         Instant now = Instant.now();
-        Instant twoMinutesLater = now.plusSeconds(120);
 
-        ExchangeRate exchangeRate1 = ExchangeRate.builder()
+        ExchangeRate expiredExchangeRate = ExchangeRate.builder()
                 .conversionRate(0.1375) // Chinese Yuan to USD
-                .from(currency3)
-                .to(currency1)
-                .createdAt(now)
-                .validUntil(now.plusSeconds(300))
+                .from(yuan)
+                .to(usd)
+                .createdAt(now.minusSeconds(300)) // Expired
+                .validUntil(now.minusSeconds(150)) // Expired
                 .build();
 
-        ExchangeRate exchangeRate2 = ExchangeRate.builder()
+        ExchangeRate expiredExchangeRate2 = ExchangeRate.builder()
                 .conversionRate(0.1375) // Chinese Yuan to USD (Same conversion rate)
-                .from(currency3)
-                .to(currency1)
-                .createdAt(now.plusSeconds(300))
-                .validUntil(twoMinutesLater) // Different validity interval
+                .from(yuan)
+                .to(usd)
+                .createdAt(now.minusSeconds(150)) // Expired
+                .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        ExchangeRate exchangeRate3 = ExchangeRate.builder()
+        ExchangeRate expiredExchangeRate3 = ExchangeRate.builder()
                 .conversionRate(0.1375) // Chinese Yuan to EUR
-                .from(currency3)
-                .to(currency2)
-                .createdAt(now)
-                .validUntil(now.plusSeconds(120))
+                .from(yuan)
+                .to(euro)
+                .createdAt(now.minusSeconds(300)) // Expired
+                .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        currency3.setExchangeRates(Set.of(exchangeRate1, exchangeRate2, exchangeRate3));
+        yuan.setExchangeRates(Set.of(expiredExchangeRate, expiredExchangeRate2, expiredExchangeRate3));
 
-        return currency3;
+        return yuan;
     }
 }

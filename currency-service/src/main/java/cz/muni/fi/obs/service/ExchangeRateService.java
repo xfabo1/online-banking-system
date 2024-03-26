@@ -36,15 +36,15 @@ public class ExchangeRateService {
     public CurrencyExchangeResult exchange(String codeFrom, String codeTo, BigDecimal amount) {
         final Currency from = currencyRepository.findByCode(codeFrom);
         final Currency to = currencyRepository.findByCode(codeTo);
-        final Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findLatestExchangeRate(from, to);
-        final Optional<ExchangeRate> inverseExchangeRate = exchangeRateRepository.findLatestExchangeRate(to, from);
+        final Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findCurrentExchangeRate(from, to);
+        final Optional<ExchangeRate> inverseExchangeRate = exchangeRateRepository.findCurrentExchangeRate(to, from);
 
         CurrencyExchangeResult currencyExchangeResult = null;
 
         if (exchangeRate.isPresent()) {
-            currencyExchangeResult = calculateExchange(from, to, exchangeRate.get().getConversionRate(), amount);
+            currencyExchangeResult = createResult(from, to, exchangeRate.get().getConversionRate(), amount);
         } else if (inverseExchangeRate.isPresent()) {
-            currencyExchangeResult = calculateExchange(from, to, 1 / inverseExchangeRate.get().getConversionRate(), amount);
+            currencyExchangeResult = createResult(from, to, 1 / inverseExchangeRate.get().getConversionRate(), amount);
         }
 
         if (currencyExchangeResult != null) {
@@ -55,11 +55,12 @@ public class ExchangeRateService {
         }
     }
 
-    private CurrencyExchangeResult calculateExchange(Currency from, Currency to, Double conversionRate, BigDecimal amount) {
+    private CurrencyExchangeResult createResult(Currency from, Currency to, Double conversionRate, BigDecimal amount) {
         return new CurrencyExchangeResult(from.getCode(),
                 to.getCode(),
                 conversionRate,
                 amount,
                 amount.multiply(BigDecimal.valueOf(conversionRate)));
     }
+
 }
