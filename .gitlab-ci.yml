@@ -1,0 +1,11 @@
+image: maven:3-eclipse-temurin-21
+stages:
+  - build
+
+build:
+  tags: [shared-fi]
+  stage: build
+  script:
+    - mvn clean install
+  only:
+    - merge_requests
