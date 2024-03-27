@@ -44,8 +44,8 @@ class ExchangeRateServiceTest {
 
     @Test
     void givenTwoCurrencies_currenciesCanBeExchanged_calculatesExchangeRate() {
-        when(currencyRepository.findByCode("eur")).thenReturn(euro);
-        when(currencyRepository.findByCode("usd")).thenReturn(usd);
+        when(currencyRepository.findByCode("eur")).thenReturn(Optional.ofNullable((euro)));
+        when(currencyRepository.findByCode("usd")).thenReturn(Optional.ofNullable(usd));
         when(exchangeRateRepository.findCurrentExchangeRate(usd, euro)).thenReturn(Optional.of(ExchangeRate
                 .builder()
                 .conversionRate(1.2)
@@ -58,7 +58,7 @@ class ExchangeRateServiceTest {
                 "eur",
                 BigDecimal.valueOf(1000));
 
-        assertEquals(1.2, result.exchangedAt());
+        assertEquals(1.2, result.exchangeRate());
         assertEquals(result.sourceAmount(), BigDecimal.valueOf(1000));
         assertEquals(0, BigDecimal.valueOf(1200L).compareTo(result.destAmount()));
         assertEquals(result.symbolFrom(), "usd");
@@ -67,8 +67,8 @@ class ExchangeRateServiceTest {
 
     @Test
     void givenTwoCurrencies_currenciesCantBeExchanged_throwException() {
-        when(currencyRepository.findByCode("yuan")).thenReturn(yuan);
-        when(currencyRepository.findByCode("usd")).thenReturn(usd);
+        when(currencyRepository.findByCode("yuan")).thenReturn(Optional.ofNullable(yuan));
+        when(currencyRepository.findByCode("usd")).thenReturn(Optional.ofNullable(usd));
         when(exchangeRateRepository.findCurrentExchangeRate(yuan, usd)).thenReturn(Optional.empty());
         when(exchangeRateRepository.findCurrentExchangeRate(usd, yuan)).thenReturn(Optional.empty());
 
@@ -80,8 +80,8 @@ class ExchangeRateServiceTest {
     
     @Test
     void givenTwoCurrencies_currenciesDontExist_throwException() {
-        when(currencyRepository.findByCode("yuan")).thenReturn(euro);
-        when(currencyRepository.findByCode("eur")).thenThrow(new MissingObject(Currency.class, "eur"));
+        when(currencyRepository.findByCode("yuan")).thenReturn(Optional.ofNullable(euro));
+        when(currencyRepository.findByCode("eur")).thenReturn(Optional.empty());
 
         assertThrows( MissingObject.class, () -> exchangeRateService.exchange("usd",
                 "eur",

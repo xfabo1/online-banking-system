@@ -1,7 +1,9 @@
 package cz.muni.fi.obs.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -17,5 +19,5 @@ public class Currency extends DomainObject {
 
     private String name;
 
-    private Set<ExchangeRate> exchangeRates;
+    private Set<ExchangeRate> exchangeRates = new HashSet<>();
 }

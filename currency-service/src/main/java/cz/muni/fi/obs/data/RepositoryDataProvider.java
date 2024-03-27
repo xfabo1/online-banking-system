@@ -45,7 +45,7 @@ public class RepositoryDataProvider {
                 .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        usd.setExchangeRates(Set.of(expiredExchangeRate, currentExchangeRate, expiredExchangeRate1));
+        usd.getExchangeRates().addAll(Set.of(expiredExchangeRate, currentExchangeRate, expiredExchangeRate1));
 
         return usd;
     }
@@ -86,7 +86,7 @@ public class RepositoryDataProvider {
                 .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        euro.setExchangeRates(Set.of(expiredExchangeRate, expiredExchangeRate2, currentExchangeRate, expiredExchangeRate3));
+        euro.getExchangeRates().addAll(Set.of(expiredExchangeRate, expiredExchangeRate2, currentExchangeRate, expiredExchangeRate3));
 
         return euro;
     }
@@ -119,7 +119,7 @@ public class RepositoryDataProvider {
                 .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        yuan.setExchangeRates(Set.of(expiredExchangeRate, expiredExchangeRate2, expiredExchangeRate3));
+        yuan.getExchangeRates().addAll(Set.of(expiredExchangeRate, expiredExchangeRate2, expiredExchangeRate3));
 
         return yuan;
     }

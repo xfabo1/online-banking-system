@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {CurrencyRepository.class, RepositoryDataProvider.class})
 class CurrencyRepositoryTest {
@@ -20,13 +20,13 @@ class CurrencyRepositoryTest {
 
     @Test
     void findByCode_whenPresent_returnsCurrency() {
-        Currency currency = currencyRepository.findByCode("usd");
+        Currency currency = currencyRepository.findByCode("usd").orElseThrow(() -> new MissingObject(Currency.class, "usd"));
         assertEquals("usd", currency.getCode());
     }
 
     @Test
     void findByCode_whenMissing_throwsMissingObject() {
-        assertThrows(MissingObject.class, () -> currencyRepository.findByCode("aud"));
+        assertTrue(currencyRepository.findByCode("aud").isEmpty());
     }
 
     @Test

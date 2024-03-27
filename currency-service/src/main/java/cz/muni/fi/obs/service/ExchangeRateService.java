@@ -3,6 +3,7 @@ package cz.muni.fi.obs.service;
 import cz.muni.fi.obs.domain.Currency;
 import cz.muni.fi.obs.domain.ExchangeRate;
 import cz.muni.fi.obs.dto.CurrencyExchangeResult;
+import cz.muni.fi.obs.exception.MissingObject;
 import cz.muni.fi.obs.exception.NoExchangeRate;
 import cz.muni.fi.obs.repository.CurrencyRepository;
 import cz.muni.fi.obs.repository.ExchangeRateRepository;
@@ -25,6 +26,10 @@ public class ExchangeRateService {
         this.exchangeRateRepository = exchangeRateRepository;
     }
 
+    public Currency findByCode(String code) {
+        return currencyRepository.findByCode(code).orElseThrow(() -> new MissingObject(Currency.class, code));
+    }
+
     /**
      * Method for exchange in between two currencies
      *
@@ -34,8 +39,8 @@ public class ExchangeRateService {
      * @return result of exchange
      */
     public CurrencyExchangeResult exchange(String codeFrom, String codeTo, BigDecimal amount) {
-        final Currency from = currencyRepository.findByCode(codeFrom);
-        final Currency to = currencyRepository.findByCode(codeTo);
+        final Currency from = findByCode(codeFrom);
+        final Currency to = findByCode(codeTo);
         final Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findCurrentExchangeRate(from, to);
         final Optional<ExchangeRate> inverseExchangeRate = exchangeRateRepository.findCurrentExchangeRate(to, from);
 
@@ -47,12 +52,10 @@ public class ExchangeRateService {
             currencyExchangeResult = createResult(from, to, 1 / inverseExchangeRate.get().getConversionRate(), amount);
         }
 
-        if (currencyExchangeResult != null) {
-            return currencyExchangeResult;
-        }
-        else {
+        if (currencyExchangeResult == null) {
             throw new NoExchangeRate(from, to);
         }
+        return currencyExchangeResult;
     }
 
     private CurrencyExchangeResult createResult(Currency from, Currency to, Double conversionRate, BigDecimal amount) {
@@ -62,5 +65,4 @@ public class ExchangeRateService {
                 amount,
                 amount.multiply(BigDecimal.valueOf(conversionRate)));
     }
-
 }

@@ -1,0 +1,4 @@
+currency:
+  auto-update:
+    urls:
+      nbs: https://nbs.sk/export/sk/exchange-rate/latest/csv

@@ -3,11 +3,11 @@ package cz.muni.fi.obs.repository;
 import cz.muni.fi.obs.domain.Currency;
 import cz.muni.fi.obs.dto.PageRequest;
 import cz.muni.fi.obs.dto.PagedResult;
-import cz.muni.fi.obs.exception.MissingObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CurrencyRepository {
@@ -19,10 +19,20 @@ public class CurrencyRepository {
         this.data = data;
     }
 
-    public Currency findByCode(String code) {
+    public Currency save(Currency currency) {
+        int index = data.indexOf(currency);
+        if (index == -1) {
+            data.add(currency);
+        }
+        else {
+            data.set(index, currency);
+        }
+        return currency;
+    }
+
+    public Optional<Currency> findByCode(String code) {
         return data.stream().filter(currency -> currency.getCode().equals(code))
-                .findFirst()
-                .orElseThrow(() -> new MissingObject(Currency.class, code));
+                .findFirst();
     }
 
     public PagedResult<Currency> listPage(PageRequest pageRequest) {
