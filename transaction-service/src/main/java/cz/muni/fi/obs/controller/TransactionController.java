@@ -2,8 +2,6 @@ package cz.muni.fi.obs.controller;
 
 import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cz.muni.fi.obs.api.TransactionCreateDto;
@@ -38,9 +37,12 @@ public class TransactionController {
 	}
 
 	@GetMapping("/account/{accountId}")
-	public ResponseEntity<List<TransactionDbo>> viewTransactionHistory(@PathVariable("accountId") String accountId) {
+	public ResponseEntity<PagedResponse<TransactionDbo>> viewTransactionHistory(
+			@PathVariable("accountId") String accountId,
+			@RequestParam("pageNumber") int pageNumber,
+			@RequestParam(value = "pageSize") int pageSize) {
 		log.info("Getting transaction history for account: {}", accountId);
-		return ResponseEntity.ok(facade.viewTransactionHistory(accountId));
+		return ResponseEntity.ok(facade.viewTransactionHistory(accountId, pageNumber, pageSize));
 	}
 
 	@GetMapping("/account/{accountId}/balance")

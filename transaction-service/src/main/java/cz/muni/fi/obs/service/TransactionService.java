@@ -1,13 +1,12 @@
 package cz.muni.fi.obs.service;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.controller.PagedResponse;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.web.CurrencyServiceClient;
@@ -34,10 +33,9 @@ public class TransactionService {
 		return depositSum - withdrawSum;
 	}
 
-	public List<TransactionDbo> viewTransactionHistory(String accountId) {
-		return Stream.concat(repository.getTransactionsByWithdrawId(accountId).stream(),
-						repository.getTransactionsByDepositId(accountId).stream())
-				.toList();
+	public PagedResponse<TransactionDbo> viewTransactionHistory(String accountId, int pageNumber, int pageSize) {
+		var page = repository.getTransactionHistory(accountId, pageNumber, pageSize);
+		return PagedResponse.fromPage(page);
 	}
 
 	public TransactionDbo getTransactionById(String id) {
