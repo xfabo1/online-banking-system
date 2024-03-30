@@ -14,6 +14,7 @@ public class UserAccountService {
     @Autowired
     public UserAccountService(UserAccountRepository userAccountRepository) {
         this.userAccountRepository = userAccountRepository;
+
     }
 
     public Account create(String userId, AccountCreateDto accountCreateDto) {

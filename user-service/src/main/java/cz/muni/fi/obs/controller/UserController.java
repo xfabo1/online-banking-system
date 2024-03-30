@@ -6,14 +6,17 @@ import cz.muni.fi.obs.api.UserUpdateDto;
 import cz.muni.fi.obs.domain.Account;
 import cz.muni.fi.obs.domain.User;
 import cz.muni.fi.obs.facade.UserManagementFacade;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@Validated
 @RequestMapping("/users")
 public class UserController {
 
@@ -26,7 +29,7 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(
-            @RequestBody UserCreateDto userAccountCreateDto
+            @Valid @RequestBody UserCreateDto userAccountCreateDto
     ) {
         log.info("Creating user with birth number: " + userAccountCreateDto.getBirthNumber());
         User user = userManagementFacade.createUser(userAccountCreateDto);
@@ -57,8 +60,8 @@ public class UserController {
 
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(
-            @PathVariable("userId") String userId,
-            @RequestBody UserUpdateDto userUpdateDto
+            @PathVariable ("userId") String userId,
+            @Valid @RequestBody UserUpdateDto userUpdateDto
     ) {
         log.info("Updating user with id: " + userId);
         User user = userManagementFacade.updateUser(userId, userUpdateDto);
@@ -73,7 +76,7 @@ public class UserController {
     @PostMapping("/{userId}/accounts/create")
     public ResponseEntity<Account> createUserAccount(
             @PathVariable("userId") String userId,
-            @RequestBody AccountCreateDto accountCreateDto
+            @Valid @RequestBody AccountCreateDto accountCreateDto
 
     ) {
         log.info("Creating user account for user with id: " + userId);

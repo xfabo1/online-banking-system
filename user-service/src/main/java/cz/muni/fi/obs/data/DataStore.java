@@ -2,6 +2,7 @@ package cz.muni.fi.obs.data;
 
 import cz.muni.fi.obs.domain.Account;
 import cz.muni.fi.obs.domain.User;
+import cz.muni.fi.obs.enums.Nationality;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
@@ -16,8 +17,8 @@ public class DataStore {
     public ArrayList<Account> accounts = new ArrayList<>();
 
     public DataStore() {
-        User john = new User("John", "Doe", "+420 123 456 789", new GregorianCalendar(1990, Calendar.JANUARY, 1).getTime(), "900101/1234", "john@doe.cz");
-        User jane = new User("Jane", "Doe", "+420 987 654 321", new GregorianCalendar(1995, Calendar.FEBRUARY, 5).getTime(), "950101/1234", "jane@doe.com");
+        User john = new User("John", "Doe", "+420 123 456 789", "john@doe.cz", new GregorianCalendar(1990, Calendar.JANUARY, 1).getTime(), Nationality.CZECH, "900101/1234");
+        User jane = new User("Jane", "Doe", "+420 987 654 321", "jane@doe.com", new GregorianCalendar(1995, Calendar.FEBRUARY, 5).getTime(), Nationality.CZECH,  "950205/1234");
 
         users.add(john);
         users.add(jane);

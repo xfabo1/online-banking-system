@@ -4,6 +4,7 @@ import cz.muni.fi.obs.api.UserCreateDto;
 import cz.muni.fi.obs.api.UserUpdateDto;
 import cz.muni.fi.obs.data.UserRepository;
 import cz.muni.fi.obs.domain.User;
+import cz.muni.fi.obs.enums.Nationality;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +23,10 @@ public class UserService {
                 userCreateDto.getFirstName(),
                 userCreateDto.getLastName(),
                 userCreateDto.getPhoneNumber(),
+                userCreateDto.getEmail(),
                 userCreateDto.getBirthDate(),
-                userCreateDto.getBirthNumber(),
-                userCreateDto.getEmail()
+                Nationality.fromCode(userCreateDto.getNationality()),
+                userCreateDto.getBirthNumber()
         );
         return userRepository.create(user);
     }
