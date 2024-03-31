@@ -1,10 +1,9 @@
 package cz.muni.fi.obs.controller;
 
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.api.UserCreateDto;
-import cz.muni.fi.obs.api.UserUpdateDto;
+import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.domain.Account;
 import cz.muni.fi.obs.domain.User;
+import cz.muni.fi.obs.enums.Nationality;
 import cz.muni.fi.obs.facade.UserManagementFacade;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.util.List;
+
 @Slf4j
 @RestController
 @Validated
-@RequestMapping("/users")
+@RequestMapping("/api/user-management/v1/users")
 public class UserController {
 
     private final UserManagementFacade userManagementFacade;
@@ -27,6 +29,11 @@ public class UserController {
         this.userManagementFacade = userManagementFacade;
     }
 
+    @GetMapping("/nationalities")
+    public ResponseEntity<Nationality[]> getNationalities() {
+        return ResponseEntity.ok(Nationality.values());
+
+    }
     @PostMapping("/create")
     public ResponseEntity<User> createUser(
             @Valid @RequestBody UserCreateDto userAccountCreateDto
@@ -50,11 +57,31 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
     @GetMapping("")
-    public ResponseEntity<User[]> getAllUsers() {
-        log.info("Getting all users");
-        User[] users = userManagementFacade.getAllUsers();
+    public PagedResponse<User> getUsers(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Date birthDate,
+            @RequestParam(required = false) String birthNumber,
+            @RequestParam(required = false, defaultValue = "true") boolean active,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int pageSize) {
 
-        return ResponseEntity.ok(users);
+        UserSearchParamsDto searchParams = UserSearchParamsDto.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .phoneNumber(phoneNumber)
+                .email(email)
+                .birthDate(birthDate)
+                .birthNumber(birthNumber)
+                .active(active)
+                .page(page)
+                .pageSize(pageSize)
+                .build();
+
+        // Retrieve users based on search parameters
+        return userManagementFacade.findUsers(searchParams);
     }
 
 
@@ -72,6 +99,31 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
+    @PostMapping("/{userId}/deactivate")
+    public ResponseEntity<User> deactivateUser(@PathVariable ("userId") String userId) {
+        log.info("Deactivating user with id: " + userId);
+        User user = userManagementFacade.deactivateUser(userId);
+        if (user == null) {
+            log.info("User with id: " + userId + " not found");
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/{userId}/activate")
+    public ResponseEntity<User> activateUser(@PathVariable ("userId") String userId) {
+        log.info("Activating user with id: " + userId);
+        User user = userManagementFacade.activateUser(userId);
+        if (user == null) {
+            log.info("User with id: " + userId + " not found");
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
 
     @PostMapping("/{userId}/accounts/create")
     public ResponseEntity<Account> createUserAccount(

@@ -1,6 +1,8 @@
 package cz.muni.fi.obs.service;
 
+import cz.muni.fi.obs.api.PagedResponse;
 import cz.muni.fi.obs.api.UserCreateDto;
+import cz.muni.fi.obs.api.UserSearchParamsDto;
 import cz.muni.fi.obs.api.UserUpdateDto;
 import cz.muni.fi.obs.data.UserRepository;
 import cz.muni.fi.obs.domain.User;
@@ -25,8 +27,9 @@ public class UserService {
                 userCreateDto.getPhoneNumber(),
                 userCreateDto.getEmail(),
                 userCreateDto.getBirthDate(),
-                Nationality.fromCode(userCreateDto.getNationality()),
-                userCreateDto.getBirthNumber()
+                Nationality.fromString(userCreateDto.getNationality()),
+                userCreateDto.getBirthNumber(),
+                true
         );
         return userRepository.create(user);
     }
@@ -41,11 +44,31 @@ public class UserService {
         return userRepository.update(user);
     }
 
+    public User deactivateUser(String userId) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            return null;
+        }
+
+        user.setActive(false);
+        return userRepository.update(user);
+    }
+
+    public User activateUser(String userId) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            return null;
+        }
+
+        user.setActive(true);
+        return userRepository.update(user);
+    }
+
     public User getUser(String userId) {
         return userRepository.findById(userId);
     }
 
-    public User[] getAllUsers() {
-        return userRepository.getAll();
+    public PagedResponse<User> findUsers(UserSearchParamsDto searchParams) {
+        return userRepository.find(searchParams);
     }
 }

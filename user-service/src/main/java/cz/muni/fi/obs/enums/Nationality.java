@@ -5,18 +5,12 @@ import lombok.Getter;
 
 @Getter
 public enum Nationality {
-    CZECH("CZ"),
-    SLOVAK("SK");
+    CZ,
+    SK;
 
-    private final String code;
-
-    Nationality(String code) {
-        this.code = code;
-    }
-
-    public static Nationality fromCode(String code) {
+    public static Nationality fromString(String code) {
         for (Nationality nationality : Nationality.values()) {
-            if (nationality.getCode().equalsIgnoreCase(code.trim())) {
+            if (nationality.toString().equalsIgnoreCase(code.trim())) {
                 return nationality;
             }
         }

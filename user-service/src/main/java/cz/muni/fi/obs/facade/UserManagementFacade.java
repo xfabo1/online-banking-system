@@ -1,9 +1,7 @@
 package cz.muni.fi.obs.facade;
 
 
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.api.UserCreateDto;
-import cz.muni.fi.obs.api.UserUpdateDto;
+import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.domain.Account;
 import cz.muni.fi.obs.domain.User;
 import cz.muni.fi.obs.service.UserAccountService;
@@ -32,12 +30,20 @@ public class UserManagementFacade {
         return userService.updateUser(userId, userUpdateDto);
     }
 
+    public User deactivateUser(String userId) {
+        return userService.deactivateUser(userId);
+    }
+
+    public User activateUser(String userId) {
+        return userService.activateUser(userId);
+    }
+
     public User getUser(String userId) {
         return userService.getUser(userId);
     }
 
-    public User[] getAllUsers() {
-        return userService.getAllUsers();
+    public PagedResponse<User> findUsers(UserSearchParamsDto searchParams) {
+        return userService.findUsers(searchParams);
     }
 
     public Account createAccount(String userId, AccountCreateDto accountCreateDto) {

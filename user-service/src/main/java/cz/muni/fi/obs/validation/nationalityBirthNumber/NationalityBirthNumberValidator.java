@@ -26,11 +26,11 @@ public class NationalityBirthNumberValidator implements ConstraintValidator<Nati
             return false;
         }
 
-        Nationality nationality = Nationality.fromCode(nationalityStr);
+        Nationality nationality = Nationality.fromString(nationalityStr);
         try {
-            if (nationality == Nationality.CZECH) {
+            if (nationality == Nationality.CZ) {
                 new SlovakBirthNumber(birthDateStr);
-            } else if (nationality == Nationality.SLOVAK) {
+            } else if (nationality == Nationality.SK) {
                 new CzechBirthNumber(birthDateStr);
             }
 
