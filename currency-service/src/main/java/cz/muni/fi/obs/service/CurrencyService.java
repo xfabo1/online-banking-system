@@ -3,8 +3,9 @@ package cz.muni.fi.obs.service;
 import cz.muni.fi.obs.data.dbo.Currency;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.dto.CurrencyDto;
-import cz.muni.fi.obs.dto.PageRequest;
-import cz.muni.fi.obs.dto.PagedResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +19,11 @@ public class CurrencyService {
         this.currencyRepository = currencyRepository;
     }
 
-    public PagedResult<CurrencyDto> listPage(PageRequest pageRequest) {
-        final PagedResult<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
-        List<CurrencyDto> results = currencyPagedResult.result().stream().map(currency ->
+    public Page<CurrencyDto> listPage(Pageable pageable) {
+        final Page<Currency> currencyPagedResult = currencyRepository.listPage(pageable);
+        List<CurrencyDto> results = currencyPagedResult.getContent().stream().map(currency ->
                 new CurrencyDto(currency.getName(), currency.getCode())).toList();
 
-        return new PagedResult<>(results, currencyPagedResult.count(), pageRequest);
+        return new PageImpl<>(results, pageable, currencyPagedResult.getTotalElements());
     }
 }

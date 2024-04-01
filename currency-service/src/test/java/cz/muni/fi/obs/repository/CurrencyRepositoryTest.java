@@ -3,12 +3,12 @@ package cz.muni.fi.obs.repository;
 import cz.muni.fi.obs.data.dbo.Currency;
 import cz.muni.fi.obs.data.provider.RepositoryDataProvider;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
-import cz.muni.fi.obs.dto.PageRequest;
-import cz.muni.fi.obs.dto.PagedResult;
 import cz.muni.fi.obs.exception.MissingObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,31 +32,31 @@ class CurrencyRepositoryTest {
 
     @Test
     void listFirstPage_whenThreePresent_returnsThree() {
-        PageRequest pageRequest = new PageRequest(0, 10);
-        PagedResult<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
+        Pageable pageRequest = Pageable.ofSize(10);
+        Page<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
 
-        assertEquals(3, currencyPagedResult.count());
-        assertEquals(pageRequest, currencyPagedResult.request());
-        assertEquals(3, currencyPagedResult.result().size());
+        assertEquals(3, currencyPagedResult.getTotalElements());
+        assertEquals(pageRequest, currencyPagedResult.getPageable());
+        assertEquals(3, currencyPagedResult.getContent().size());
     }
 
     @Test
     void listSmallPage_whenThreePresent_returnsLess() {
-        PageRequest pageRequest = new PageRequest(0, 2);
-        PagedResult<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
+        Pageable pageRequest = Pageable.ofSize(2);
+        Page<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
 
-        assertEquals(3, currencyPagedResult.count());
-        assertEquals(pageRequest, currencyPagedResult.request());
-        assertEquals(2, currencyPagedResult.result().size());
+        assertEquals(3, currencyPagedResult.getTotalElements());
+        assertEquals(pageRequest, currencyPagedResult.getPageable());
+        assertEquals(2, currencyPagedResult.getContent().size());
     }
 
     @Test
     void listNextPage_whenThreePresent_returnsNothing() {
-        PageRequest pageRequest = new PageRequest(2, 2);
-        PagedResult<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
+        Pageable pageRequest = Pageable.ofSize(2).withPage(2);
+        Page<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
 
-        assertEquals(3, currencyPagedResult.count());
-        assertEquals(pageRequest, currencyPagedResult.request());
-        assertEquals(0, currencyPagedResult.result().size());
+        assertEquals(3, currencyPagedResult.getTotalElements());
+        assertEquals(pageRequest, currencyPagedResult.getPageable());
+        assertEquals(0, currencyPagedResult.getContent().size());
     }
 }

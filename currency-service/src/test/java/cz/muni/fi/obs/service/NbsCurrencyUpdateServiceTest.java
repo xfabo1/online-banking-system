@@ -1,13 +1,13 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
-import cz.muni.fi.obs.dto.PageRequest;
 import cz.muni.fi.obs.service.update.NbsCurrencyUpdateService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +32,6 @@ public class NbsCurrencyUpdateServiceTest {
 
         nbsCurrencyUpdateService.updateCurrencies();
 
-        assertTrue(currencyRepository.listPage(new PageRequest(0, 100)).count() > 3);
+        assertTrue(currencyRepository.listPage(Pageable.ofSize(100)).getTotalElements() > 3);
     }
 }

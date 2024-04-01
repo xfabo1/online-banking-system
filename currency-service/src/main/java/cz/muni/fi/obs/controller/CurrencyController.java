@@ -1,8 +1,12 @@
 package cz.muni.fi.obs.controller;
 
-import cz.muni.fi.obs.dto.*;
+import cz.muni.fi.obs.dto.CurrencyDto;
+import cz.muni.fi.obs.dto.CurrencyExchangeRequest;
+import cz.muni.fi.obs.dto.CurrencyExchangeResult;
 import cz.muni.fi.obs.facade.CurrencyFacade;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +27,7 @@ public class CurrencyController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<PagedResult<CurrencyDto>>currencies(@ModelAttribute PageRequest pageRequest) {
+    public ResponseEntity<Page<CurrencyDto>> currencies(@ModelAttribute Pageable pageRequest) {
         return ResponseEntity.ok(currencyFacade.listPaged(pageRequest));
     }
 }

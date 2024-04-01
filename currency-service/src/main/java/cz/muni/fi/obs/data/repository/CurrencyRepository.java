@@ -1,9 +1,10 @@
 package cz.muni.fi.obs.data.repository;
 
 import cz.muni.fi.obs.data.dbo.Currency;
-import cz.muni.fi.obs.dto.PageRequest;
-import cz.muni.fi.obs.dto.PagedResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,13 +36,13 @@ public class CurrencyRepository {
                 .findFirst();
     }
 
-    public PagedResult<Currency> listPage(PageRequest pageRequest) {
+    public Page<Currency> listPage(Pageable pageable) {
         List<Currency> results = data.stream()
-                .skip((long) pageRequest.page() * pageRequest.pageSize())
-                .limit(pageRequest.pageSize()).toList();
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize()).toList();
 
         long count = data.size();
 
-        return new PagedResult<>(results, count, pageRequest);
+        return new PageImpl<>(results, pageable, count);
     }
 }
