@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SlovakBirthNumber {
+public class CzechSlovakBirthNumber {
     private final String year;
     private final String month;
     private final String day;
@@ -17,7 +17,7 @@ public class SlovakBirthNumber {
     @Getter
     private Date birthDate;
 
-    public SlovakBirthNumber(String birthNumber) {
+    public CzechSlovakBirthNumber(String birthNumber) {
         if (birthNumber == null) {
             throw new IllegalArgumentException("Birth number cannot be null");
         }

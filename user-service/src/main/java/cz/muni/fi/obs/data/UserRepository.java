@@ -1,10 +1,10 @@
 package cz.muni.fi.obs.data;
 
-import cz.muni.fi.obs.api.PagedResponse;
-import cz.muni.fi.obs.api.Pagination;
 import cz.muni.fi.obs.api.UserSearchParamsDto;
 import cz.muni.fi.obs.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -44,33 +44,27 @@ public class UserRepository {
         return dataStore.users.stream().filter(u -> u.getId().equals(userId)).findFirst().orElse(null);
     }
 
-    public PagedResponse<User> find(UserSearchParamsDto searchParams) {
+    public Page<User> find(UserSearchParamsDto searchParams) {
         List<User> filteredUsers = new ArrayList<>();
         for (User user : dataStore.users) {
-            if ((searchParams.getFirstName() == null || user.getFirstName().startsWith(searchParams.getFirstName())) &&
-                    (searchParams.getLastName() == null || user.getLastName().startsWith(searchParams.getLastName())) &&
-                    (searchParams.getPhoneNumber() == null || user.getPhoneNumber().startsWith(searchParams.getPhoneNumber())) &&
-                    (searchParams.getEmail() == null || user.getEmail().startsWith(searchParams.getEmail())) &&
-                    (searchParams.getBirthDate() == null || user.getBirthDate().equals(searchParams.getBirthDate())) &&
-                    (searchParams.getBirthNumber() == null || user.getBirthNumber().startsWith(searchParams.getBirthNumber())) &&
-                    user.isActive() == searchParams.isActive()) {
+            if ((searchParams.firstName() == null || user.getFirstName().startsWith(searchParams.firstName())) &&
+                    (searchParams.lastName() == null || user.getLastName().startsWith(searchParams.lastName())) &&
+                    (searchParams.phoneNumber() == null || user.getPhoneNumber().startsWith(searchParams.phoneNumber())) &&
+                    (searchParams.email() == null || user.getEmail().startsWith(searchParams.email())) &&
+                    (searchParams.birthDate() == null || user.getBirthDate().equals(searchParams.birthDate())) &&
+                    (searchParams.birthNumber() == null || user.getBirthNumber().startsWith(searchParams.birthNumber())) &&
+                    (searchParams.active() == null || user.getActive() == searchParams.active())) {
                 filteredUsers.add(user);
             }
         }
+        if (searchParams.pageable() == null) {
+            return new PageImpl<>(filteredUsers);
+        }
 
-        int fromIndex = searchParams.getPage() * searchParams.getPageSize();
-        int toIndex = Math.min(fromIndex + searchParams.getPageSize(), filteredUsers.size());
+        int fromIndex = (int) searchParams.pageable().getOffset();
+        int toIndex = fromIndex + searchParams.pageable().getPageSize();
         List<User> pagedUsers = filteredUsers.subList(fromIndex, toIndex);
 
-        return new PagedResponse<User>(
-                pagedUsers,
-                new Pagination(
-                        filteredUsers.size(),
-                        filteredUsers.size() / searchParams.getPageSize() + (filteredUsers.size() % searchParams.getPageSize() == 0 ? 0 : 1),
-                        searchParams.getPage(),
-                        pagedUsers.size()
-
-                )
-        );
+        return new PageImpl<>(pagedUsers, searchParams.pageable(), filteredUsers.size());
     }
 }

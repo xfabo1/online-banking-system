@@ -10,7 +10,16 @@ import java.util.Date;
 @Setter
 public class User extends DomainObject {
 
-    public User(String firstName, String lastName, String phoneNumber, String email, Date birthDate, Nationality nationality, String birthNumber, boolean active) {
+    String firstName;
+    String lastName;
+    String phoneNumber;
+    String email;
+    Date birthDate;
+    Nationality nationality;
+    String birthNumber;
+    Boolean active;
+
+    public User(String firstName, String lastName, String phoneNumber, String email, Date birthDate, Nationality nationality, String birthNumber, Boolean active) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -20,13 +29,4 @@ public class User extends DomainObject {
         this.birthNumber = birthNumber;
         this.active = active;
     }
-
-    String firstName;
-    String lastName;
-    String phoneNumber;
-    String email;
-    Date birthDate;
-    Nationality nationality;
-    String birthNumber;
-    boolean active;
 }

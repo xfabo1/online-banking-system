@@ -18,7 +18,7 @@ public class DataStore {
 
     public DataStore() {
         User john = new User("John", "Doe", "+420 123 456 789", "john@doe.cz", new GregorianCalendar(1990, Calendar.JANUARY, 1).getTime(), Nationality.CZ, "900101/1234", true);
-        User jane = new User("Jane", "Doe", "+420 987 654 321", "jane@doe.com", new GregorianCalendar(1995, Calendar.FEBRUARY, 5).getTime(), Nationality.SK,  "950205/1234", true);
+        User jane = new User("Jane", "Doe", "+420 987 654 321", "jane@doe.com", new GregorianCalendar(1995, Calendar.FEBRUARY, 5).getTime(), Nationality.SK, "950205/1234", true);
 
         users.add(john);
         users.add(jane);

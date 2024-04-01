@@ -1,6 +1,5 @@
 package cz.muni.fi.obs.service;
 
-import cz.muni.fi.obs.api.PagedResponse;
 import cz.muni.fi.obs.api.UserCreateDto;
 import cz.muni.fi.obs.api.UserSearchParamsDto;
 import cz.muni.fi.obs.api.UserUpdateDto;
@@ -8,6 +7,7 @@ import cz.muni.fi.obs.data.UserRepository;
 import cz.muni.fi.obs.domain.User;
 import cz.muni.fi.obs.enums.Nationality;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,13 +22,13 @@ public class UserService {
 
     public User createUser(UserCreateDto userCreateDto) {
         User user = new User(
-                userCreateDto.getFirstName(),
-                userCreateDto.getLastName(),
-                userCreateDto.getPhoneNumber(),
-                userCreateDto.getEmail(),
-                userCreateDto.getBirthDate(),
-                Nationality.fromString(userCreateDto.getNationality()),
-                userCreateDto.getBirthNumber(),
+                userCreateDto.firstName(),
+                userCreateDto.lastName(),
+                userCreateDto.phoneNumber(),
+                userCreateDto.email(),
+                userCreateDto.birthDate(),
+                Nationality.fromString(userCreateDto.nationality()),
+                userCreateDto.birthNumber(),
                 true
         );
         return userRepository.create(user);
@@ -36,10 +36,10 @@ public class UserService {
 
     public User updateUser(String userId, UserUpdateDto userUpdateDto) {
         User user = userRepository.findById(userId);
-        user.setFirstName(userUpdateDto.getFirstName());
-        user.setLastName(userUpdateDto.getLastName());
-        user.setPhoneNumber(userUpdateDto.getPhoneNumber());
-        user.setEmail(userUpdateDto.getEmail());
+        user.setFirstName(userUpdateDto.firstName());
+        user.setLastName(userUpdateDto.lastName());
+        user.setPhoneNumber(userUpdateDto.phoneNumber());
+        user.setEmail(userUpdateDto.email());
 
         return userRepository.update(user);
     }
@@ -68,7 +68,7 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    public PagedResponse<User> findUsers(UserSearchParamsDto searchParams) {
+    public Page<User> findUsers(UserSearchParamsDto searchParams) {
         return userRepository.find(searchParams);
     }
 }

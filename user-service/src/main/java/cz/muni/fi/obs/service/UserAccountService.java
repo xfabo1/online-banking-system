@@ -6,6 +6,8 @@ import cz.muni.fi.obs.domain.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserAccountService {
 
@@ -20,14 +22,14 @@ public class UserAccountService {
     public Account create(String userId, AccountCreateDto accountCreateDto) {
         Account account = new Account(
                 userId,
-                accountCreateDto.getAccountNumber(),
-                accountCreateDto.getCurrencyCode()
+                accountCreateDto.accountNumber(),
+                accountCreateDto.currencyCode()
         );
 
         return userAccountRepository.create(account);
     }
 
-    public Account[] getUserAccounts(String userId) {
+    public List<Account> getUserAccounts(String userId) {
         return userAccountRepository.findByUserId(userId);
     }
 }

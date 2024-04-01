@@ -8,6 +8,5 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 @Getter
 public abstract class DomainObject {
-
     private final String id = UUID.randomUUID().toString();
 }

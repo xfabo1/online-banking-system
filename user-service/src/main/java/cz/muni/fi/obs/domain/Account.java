@@ -7,12 +7,13 @@ import lombok.Setter;
 @Setter
 public class Account extends DomainObject {
 
+    String userId;
+    String accountNumber;
+    String currencyCode;
+
     public Account(String userId, String accountNumber, String currencyCode) {
         this.userId = userId;
         this.accountNumber = accountNumber;
         this.currencyCode = currencyCode;
     }
-    String userId;
-    String accountNumber;
-    String currencyCode;
 }

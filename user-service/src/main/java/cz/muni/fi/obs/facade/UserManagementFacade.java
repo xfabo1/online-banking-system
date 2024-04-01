@@ -7,7 +7,10 @@ import cz.muni.fi.obs.domain.User;
 import cz.muni.fi.obs.service.UserAccountService;
 import cz.muni.fi.obs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class UserManagementFacade {
@@ -21,36 +24,45 @@ public class UserManagementFacade {
         this.userAccountService = userAccountService;
     }
 
-    public User createUser(UserCreateDto userCreateDto) {
-        return userService.createUser(userCreateDto);
+    public UserDto createUser(UserCreateDto userCreateDto) {
+        User user = userService.createUser(userCreateDto);
+        return UserDto.fromUser(user);
     }
 
 
-    public User updateUser(String userId, UserUpdateDto userUpdateDto) {
-        return userService.updateUser(userId, userUpdateDto);
+    public UserDto updateUser(String userId, UserUpdateDto userUpdateDto) {
+        User user = userService.updateUser(userId, userUpdateDto);
+        return UserDto.fromUser(user);
     }
 
-    public User deactivateUser(String userId) {
-        return userService.deactivateUser(userId);
+    public UserDto deactivateUser(String userId) {
+        User user = userService.deactivateUser(userId);
+        return UserDto.fromUser(user);
     }
 
-    public User activateUser(String userId) {
-        return userService.activateUser(userId);
+    public UserDto activateUser(String userId) {
+        User user = userService.activateUser(userId);
+        return UserDto.fromUser(user);
     }
 
-    public User getUser(String userId) {
-        return userService.getUser(userId);
+    public UserDto getUser(String userId) {
+        User user = userService.getUser(userId);
+        return UserDto.fromUser(user);
     }
 
-    public PagedResponse<User> findUsers(UserSearchParamsDto searchParams) {
-        return userService.findUsers(searchParams);
+    public Page<UserDto> findUsers(UserSearchParamsDto searchParams) {
+        Page<User> users = userService.findUsers(searchParams);
+        return users.map(UserDto::fromUser);
     }
 
-    public Account createAccount(String userId, AccountCreateDto accountCreateDto) {
-        return userAccountService.create(userId, accountCreateDto);
+    public AccountDto createAccount(String userId, AccountCreateDto accountCreateDto) {
+        Account account = userAccountService.create(userId, accountCreateDto);
+        return AccountDto.fromAccount(account);
     }
 
-    public Account[] getUserAccounts(String userId) {
-        return userAccountService.getUserAccounts(userId);
+    public List<AccountDto> getUserAccounts(String userId) {
+        List<Account> accounts = userAccountService.getUserAccounts(userId);
+
+        return accounts.stream().map(AccountDto::fromAccount).toList();
     }
 }

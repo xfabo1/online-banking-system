@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class UserAccountRepository {
@@ -23,11 +24,8 @@ public class UserAccountRepository {
         return account;
     }
 
-    public Account[] findByUserId(String userId) {
-        ArrayList<Account> accounts = dataStore.accounts.stream().filter(a -> a.getUserId().equals(userId)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        Account[] array = new Account[accounts.size()];
-
-        return accounts.toArray(array);
+    public List<Account> findByUserId(String userId) {
+        return dataStore.accounts.stream().filter(a -> a.getUserId().equals(userId)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 
 }

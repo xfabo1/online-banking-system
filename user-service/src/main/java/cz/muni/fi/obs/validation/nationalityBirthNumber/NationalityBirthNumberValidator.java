@@ -10,6 +10,7 @@ public class NationalityBirthNumberValidator implements ConstraintValidator<Nati
 
     private String nationalityProperty;
     private String birthNumberProperty;
+
     @Override
     public void initialize(NationalityBirthNumber constraintAnnotation) {
         nationalityProperty = constraintAnnotation.nationalityProperty();
@@ -28,10 +29,8 @@ public class NationalityBirthNumberValidator implements ConstraintValidator<Nati
 
         Nationality nationality = Nationality.fromString(nationalityStr);
         try {
-            if (nationality == Nationality.CZ) {
-                new SlovakBirthNumber(birthDateStr);
-            } else if (nationality == Nationality.SK) {
-                new CzechBirthNumber(birthDateStr);
+            if (nationality == Nationality.SK || nationality == Nationality.CZ) {
+                new CzechSlovakBirthNumber(birthDateStr);
             }
 
             return true;
