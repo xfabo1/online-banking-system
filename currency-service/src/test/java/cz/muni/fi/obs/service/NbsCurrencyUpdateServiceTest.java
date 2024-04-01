@@ -1,8 +1,8 @@
 package cz.muni.fi.obs.service;
 
+import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.dto.PageRequest;
-import cz.muni.fi.obs.repository.CurrencyRepository;
-import cz.muni.fi.obs.service.updaters.NbsCurrencyUpdateService;
+import cz.muni.fi.obs.service.update.NbsCurrencyUpdateService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.Test;

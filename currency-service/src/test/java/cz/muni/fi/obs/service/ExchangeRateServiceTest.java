@@ -1,12 +1,12 @@
 package cz.muni.fi.obs.service;
 
-import cz.muni.fi.obs.domain.Currency;
-import cz.muni.fi.obs.domain.ExchangeRate;
+import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.dbo.ExchangeRate;
+import cz.muni.fi.obs.data.repository.CurrencyRepository;
+import cz.muni.fi.obs.data.repository.ExchangeRateRepository;
 import cz.muni.fi.obs.dto.CurrencyExchangeResult;
 import cz.muni.fi.obs.exception.MissingObject;
 import cz.muni.fi.obs.exception.NoExchangeRate;
-import cz.muni.fi.obs.repository.CurrencyRepository;
-import cz.muni.fi.obs.repository.ExchangeRateRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

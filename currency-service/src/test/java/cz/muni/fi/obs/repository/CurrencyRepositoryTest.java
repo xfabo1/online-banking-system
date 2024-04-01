@@ -1,7 +1,8 @@
 package cz.muni.fi.obs.repository;
 
-import cz.muni.fi.obs.data.RepositoryDataProvider;
-import cz.muni.fi.obs.domain.Currency;
+import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.provider.RepositoryDataProvider;
+import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.dto.PageRequest;
 import cz.muni.fi.obs.dto.PagedResult;
 import cz.muni.fi.obs.exception.MissingObject;

@@ -1,7 +1,7 @@
-package cz.muni.fi.obs.repository;
+package cz.muni.fi.obs.data.repository;
 
-import cz.muni.fi.obs.domain.Currency;
-import cz.muni.fi.obs.domain.ExchangeRate;
+import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.dbo.ExchangeRate;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;

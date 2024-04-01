@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.domain;
+package cz.muni.fi.obs.data.dbo;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Builder
-public class ExchangeRate extends DomainObject {
+public class ExchangeRate extends Dbo {
 
     private Instant createdAt;
 

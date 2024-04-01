@@ -1,7 +1,7 @@
-package cz.muni.fi.obs.data;
+package cz.muni.fi.obs.data.provider;
 
-import cz.muni.fi.obs.domain.Currency;
-import cz.muni.fi.obs.domain.ExchangeRate;
+import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.dbo.ExchangeRate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

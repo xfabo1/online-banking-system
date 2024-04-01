@@ -1,11 +1,11 @@
-package cz.muni.fi.obs.domain;
+package cz.muni.fi.obs.data.dbo;
 
 import lombok.EqualsAndHashCode;
 
 import java.util.UUID;
 
 @EqualsAndHashCode(of = "id")
-public abstract class DomainObject {
+public abstract class Dbo {
 
     private final String id = UUID.randomUUID().toString();
 }

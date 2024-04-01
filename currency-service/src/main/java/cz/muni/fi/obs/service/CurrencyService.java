@@ -1,10 +1,10 @@
 package cz.muni.fi.obs.service;
 
-import cz.muni.fi.obs.domain.Currency;
+import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.dto.CurrencyDto;
 import cz.muni.fi.obs.dto.PageRequest;
 import cz.muni.fi.obs.dto.PagedResult;
-import cz.muni.fi.obs.repository.CurrencyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

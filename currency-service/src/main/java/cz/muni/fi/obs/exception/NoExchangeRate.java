@@ -1,6 +1,6 @@
 package cz.muni.fi.obs.exception;
 
-import cz.muni.fi.obs.domain.Currency;
+import cz.muni.fi.obs.data.dbo.Currency;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

@@ -1,10 +1,8 @@
 package cz.muni.fi.obs.exception;
 
-import cz.muni.fi.obs.domain.DomainObject;
+import cz.muni.fi.obs.data.dbo.Dbo;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.text.MessageFormat;
 
 
 /**
@@ -13,12 +11,12 @@ import java.text.MessageFormat;
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
 public class MissingObject extends RuntimeException {
 
-    private final Class<? extends DomainObject> objectClass;
+    private final Class<? extends Dbo> objectClass;
 
     private final String identifier;
 
 
-    public MissingObject(Class<? extends DomainObject> objectClass, String identifier) {
+    public MissingObject(Class<? extends Dbo> objectClass, String identifier) {
         this.objectClass = objectClass;
         this.identifier = identifier;
     }

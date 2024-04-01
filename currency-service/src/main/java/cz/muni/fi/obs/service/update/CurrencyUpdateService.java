@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.service.updaters;
+package cz.muni.fi.obs.service.update;
 
 public interface CurrencyUpdateService {
 

@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.domain;
+package cz.muni.fi.obs.data.dbo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class Currency extends DomainObject {
+public class Currency extends Dbo {
 
     public Currency(String code, String name) {
         this.code = code;

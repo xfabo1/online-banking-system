@@ -1,13 +1,13 @@
-package cz.muni.fi.obs.service.updaters;
+package cz.muni.fi.obs.service.update;
 
 import com.opencsv.CSVParser;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
-import cz.muni.fi.obs.domain.Currency;
-import cz.muni.fi.obs.domain.ExchangeRate;
+import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.dbo.ExchangeRate;
+import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.exception.CsvFormatException;
-import cz.muni.fi.obs.repository.CurrencyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
