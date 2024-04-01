@@ -3,10 +3,10 @@ package cz.muni.fi.obs.service;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import cz.muni.fi.obs.api.TransactionCreateDto;
-import cz.muni.fi.obs.controller.PagedResponse;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.web.CurrencyServiceClient;
@@ -33,9 +33,8 @@ public class TransactionService {
 		return depositSum - withdrawSum;
 	}
 
-	public PagedResponse<TransactionDbo> viewTransactionHistory(String accountId, int pageNumber, int pageSize) {
-		var page = repository.getTransactionHistory(accountId, pageNumber, pageSize);
-		return PagedResponse.fromPage(page);
+	public Page<TransactionDbo> viewTransactionHistory(String accountId, int pageNumber, int pageSize) {
+		return repository.getTransactionHistory(accountId, pageNumber, pageSize);
 	}
 
 	public TransactionDbo getTransactionById(String id) {

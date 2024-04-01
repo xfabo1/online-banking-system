@@ -3,6 +3,7 @@ package cz.muni.fi.obs.controller;
 import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +38,7 @@ public class TransactionController {
 	}
 
 	@GetMapping("/account/{accountId}")
-	public ResponseEntity<PagedResponse<TransactionDbo>> viewTransactionHistory(
+	public ResponseEntity<Page<TransactionDbo>> viewTransactionHistory(
 			@PathVariable("accountId") String accountId,
 			@RequestParam("pageNumber") int pageNumber,
 			@RequestParam(value = "pageSize") int pageSize) {
