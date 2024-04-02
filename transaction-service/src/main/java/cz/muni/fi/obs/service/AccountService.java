@@ -27,4 +27,8 @@ public class AccountService {
 				.build();
 		repository.createAccount(accountDbo);
 	}
+
+	public AccountDbo findAccountById(String id) {
+		return repository.findAccountById(id);
+	}
 }

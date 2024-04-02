@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.service.AccountService;
 import cz.muni.fi.obs.service.TransactionService;
@@ -40,6 +41,10 @@ public class TransactionManagementFacade {
 
 	public void createAccount(AccountCreateDto accountCreateDto) {
 		accountService.createAccount(accountCreateDto);
+	}
+
+	public AccountDbo findAccountById(String id) {
+		return accountService.findAccountById(id);
 	}
 }
 
