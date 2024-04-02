@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.service;
+package cz.muni.fi.obs.service.updaters;
 
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.service.update.NbsCurrencyUpdateService;

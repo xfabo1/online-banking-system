@@ -28,6 +28,6 @@ public class CurrencyController {
 
     @GetMapping("/")
     public ResponseEntity<Page<CurrencyDto>> currencies(@ModelAttribute Pageable pageRequest) {
-        return ResponseEntity.ok(currencyFacade.listPaged(pageRequest));
+        return ResponseEntity.ok(currencyFacade.listPage(pageRequest));
     }
 }
