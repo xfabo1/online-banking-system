@@ -2,6 +2,8 @@ package cz.muni.fi.obs.controller;
 
 import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +49,7 @@ public class TransactionController {
 	}
 
 	@GetMapping("/account/{accountId}/balance")
-	public ResponseEntity<Long> checkAccountBalance(@PathVariable("accountId") String accountId) {
+	public ResponseEntity<BigDecimal> checkAccountBalance(@PathVariable("accountId") String accountId) {
 		log.info("Checking account balance for account: {}", accountId);
 		return ResponseEntity.ok(facade.checkAccountBalance(accountId));
 	}

@@ -1,5 +1,7 @@
 package cz.muni.fi.obs.data.dbo;
 
+import java.math.BigDecimal;
+
 import org.springframework.data.annotation.Id;
 
 import lombok.Builder;
@@ -7,12 +9,11 @@ import lombok.Builder;
 @Builder
 public record TransactionDbo(
 		@Id String id,
-		long conversionRate,
+		BigDecimal conversionRate,
 		String withdrawsFrom,
 		String depositsTo,
-		long withdrawAmount,
-		long depositAmount,
+		BigDecimal withdrawAmount,
+		BigDecimal depositAmount,
 		String note,
-		String variableSymbol,
-		String state) {
+		String variableSymbol) {
 }

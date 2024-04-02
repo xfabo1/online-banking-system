@@ -1,5 +1,7 @@
 package cz.muni.fi.obs.facade;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -35,7 +37,7 @@ public class TransactionManagementFacade {
 		return transactionService.viewTransactionHistory(accountId, pageNumber, pageSize);
 	}
 
-	public long checkAccountBalance(String accountId) {
+	public BigDecimal checkAccountBalance(String accountId) {
 		return transactionService.checkAccountBalance(accountId);
 	}
 

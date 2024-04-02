@@ -1,5 +1,6 @@
 package cz.muni.fi.obs.data.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -16,13 +17,12 @@ public class TransactionRepository {
 		return TransactionDbo.builder()
 				.id("1")
 				.depositsTo("1")
-				.conversionRate(1)
+				.conversionRate(BigDecimal.valueOf(1))
 				.note("note")
-				.withdrawAmount(1)
+				.withdrawAmount(BigDecimal.valueOf(1))
 				.withdrawsFrom("1")
-				.depositAmount(1)
+				.depositAmount(BigDecimal.valueOf(1))
 				.variableSymbol("123")
-				.state("state")
 				.build();
 	}
 
@@ -31,24 +31,22 @@ public class TransactionRepository {
 				TransactionDbo.builder()
 						.id("1")
 						.depositsTo("1")
-						.conversionRate(1)
+						.conversionRate(BigDecimal.valueOf(1))
 						.note("note")
-						.withdrawAmount(1)
+						.withdrawAmount(BigDecimal.valueOf(1))
 						.withdrawsFrom("1")
-						.depositAmount(1)
+						.depositAmount(BigDecimal.valueOf(1))
 						.variableSymbol("123")
-						.state("state")
 						.build(),
 				TransactionDbo.builder()
 						.id("2")
 						.depositsTo("1")
-						.conversionRate(2)
+						.conversionRate(BigDecimal.valueOf(2))
 						.note("note")
-						.withdrawAmount(2)
+						.withdrawAmount(BigDecimal.valueOf(2))
 						.withdrawsFrom("2")
-						.depositAmount(2)
+						.depositAmount(BigDecimal.valueOf(2))
 						.variableSymbol("123")
-						.state("state")
 						.build()
 		);
 	}
@@ -58,24 +56,22 @@ public class TransactionRepository {
 				TransactionDbo.builder()
 						.id("1")
 						.depositsTo("1")
-						.conversionRate(1)
+						.conversionRate(BigDecimal.valueOf(1))
 						.note("note")
-						.withdrawAmount(1)
+						.withdrawAmount(BigDecimal.valueOf(1))
 						.withdrawsFrom("1")
-						.depositAmount(1)
+						.depositAmount(BigDecimal.valueOf(1))
 						.variableSymbol("123")
-						.state("state")
 						.build(),
 				TransactionDbo.builder()
 						.id("2")
 						.depositsTo("1")
-						.conversionRate(2)
+						.conversionRate(BigDecimal.valueOf(2))
 						.note("note")
-						.withdrawAmount(2)
+						.withdrawAmount(BigDecimal.valueOf(2))
 						.withdrawsFrom("1")
-						.depositAmount(2)
+						.depositAmount(BigDecimal.valueOf(2))
 						.variableSymbol("123")
-						.state("state")
 						.build()
 		);
 	}
@@ -84,24 +80,22 @@ public class TransactionRepository {
 		var transactions = List.of(
 				TransactionDbo.builder()
 						.id("1")
-						.conversionRate(1)
+						.conversionRate(BigDecimal.valueOf(1))
 						.note("note")
-						.withdrawAmount(1)
+						.withdrawAmount(BigDecimal.valueOf(1))
 						.withdrawsFrom("1")
-						.depositAmount(1)
+						.depositAmount(BigDecimal.valueOf(1))
 						.variableSymbol("123")
-						.state("state")
 						.build(),
 				TransactionDbo.builder()
 						.id("2")
 						.depositsTo("2")
-						.conversionRate(2)
+						.conversionRate(BigDecimal.valueOf(2))
 						.note("note")
-						.withdrawAmount(2)
+						.withdrawAmount(BigDecimal.valueOf(2))
 						.withdrawsFrom("2")
-						.depositAmount(2)
+						.depositAmount(BigDecimal.valueOf(2))
 						.variableSymbol("123")
-						.state("state")
 						.build()
 		);
 
