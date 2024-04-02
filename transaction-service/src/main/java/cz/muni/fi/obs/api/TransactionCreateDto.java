@@ -13,8 +13,5 @@ public record TransactionCreateDto(
 		@Min(0)long withdrawAmount,
 		@Min(0)long depositAmount,
 		String note,
-		@NotBlank
-		String variableSymbol,
-		@NotBlank
-		String state) {
+		String variableSymbol) {
 }

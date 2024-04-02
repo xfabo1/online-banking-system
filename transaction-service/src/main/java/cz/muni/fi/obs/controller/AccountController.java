@@ -16,7 +16,7 @@ import cz.muni.fi.obs.facade.TransactionManagementFacade;
 @RequestMapping(ACCOUNT_PATH)
 public class AccountController {
 
-	public static final String ACCOUNT_PATH = "/accounts";
+	public static final String ACCOUNT_PATH = "/v1/accounts";
 
 	private final TransactionManagementFacade facade;
 

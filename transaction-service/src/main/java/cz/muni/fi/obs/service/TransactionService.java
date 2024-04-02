@@ -53,7 +53,6 @@ public class TransactionService {
 				.withdrawAmount(transaction.withdrawAmount())
 				.variableSymbol(transaction.variableSymbol())
 				.conversionRate(conversionRate.exchangedRate())
-				.state(transaction.state())
 				.build();
 
 		repository.createTransaction(transactionDbo);

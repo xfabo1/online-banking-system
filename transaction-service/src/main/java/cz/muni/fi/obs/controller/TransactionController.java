@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(TRANSACTION_PATH)
 public class TransactionController {
 
-	public static final String TRANSACTION_PATH = "/transactions";
+	public static final String TRANSACTION_PATH = "/v1/transactions";
 	private final TransactionManagementFacade facade;
 
 	@Autowired
