@@ -1,8 +1,12 @@
 package cz.muni.fi.obs.controller;
 
+import cz.muni.fi.obs.api.NotFoundResponse;
+import cz.muni.fi.obs.api.ValidationErrors;
+import cz.muni.fi.obs.api.ValidationFailedResponse;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -18,23 +22,35 @@ import java.util.Map;
 public class UserControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleNotFoundExceptions(ResourceNotFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
+    public ResponseEntity<NotFoundResponse> handleNotFoundExceptions(ResourceNotFoundException ex) {
+        NotFoundResponse response = NotFoundResponse.builder()
+                .message(ex.getMessage())
+                .build();
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<?> handleValidationExceptions(BindException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Validation failed");
-        response.put("errors", getValidationErrors(ex));
+    public ResponseEntity<ValidationFailedResponse> handleValidationExceptions(BindException ex) {
+        ValidationFailedResponse response = ValidationFailedResponse.builder()
+                .message("Validation failed")
+                .validationErrors(getValidationErrors(ex))
+                .build();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    private Map<String, Object> getValidationErrors(BindException ex) {
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ValidationFailedResponse> handleNonReadableExceptions(HttpMessageNotReadableException ex) {
+        ValidationFailedResponse response = ValidationFailedResponse.builder()
+                .message("Validation failed")
+                .validationErrors(ValidationErrors.builder().globalErrors(List.of(ex.getMessage())).build())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    private ValidationErrors getValidationErrors(BindException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
             fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
@@ -45,10 +61,6 @@ public class UserControllerAdvice {
             globalErrors.add(error.getDefaultMessage());
         }
 
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("fieldErrors", fieldErrors);
-        errors.put("globalErrors", globalErrors);
-
-        return errors;
+        return ValidationErrors.builder().fieldErrors(fieldErrors).globalErrors(globalErrors).build();
     }
 }

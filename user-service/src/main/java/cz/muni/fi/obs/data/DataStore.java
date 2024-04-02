@@ -5,9 +5,8 @@ import cz.muni.fi.obs.domain.User;
 import cz.muni.fi.obs.enums.Nationality;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 @Configuration
 public class DataStore {
@@ -17,8 +16,8 @@ public class DataStore {
     public ArrayList<Account> accounts = new ArrayList<>();
 
     public DataStore() {
-        User john = new User("John", "Doe", "+420 123 456 789", "john@doe.cz", new GregorianCalendar(1990, Calendar.JANUARY, 1).getTime(), Nationality.CZ, "900101/1234", true);
-        User jane = new User("Jane", "Doe", "+420 987 654 321", "jane@doe.com", new GregorianCalendar(1995, Calendar.FEBRUARY, 5).getTime(), Nationality.SK, "950205/1234", true);
+        User john = new User("John", "Doe", "+420 123 456 789", "john@doe.cz", LocalDate.of(1990, 1, 1), Nationality.CZ, "900101/1234", true);
+        User jane = new User("Jane", "Doe", "+420 987 654 321", "jane@doe.com", LocalDate.of(1995, 2, 5), Nationality.SK, "950205/1234", true);
 
         users.add(john);
         users.add(jane);
