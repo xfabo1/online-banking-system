@@ -1,5 +1,6 @@
 package cz.muni.fi.obs.service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,18 @@ public class TransactionService {
 		this.client = client;
 	}
 
-	public long checkAccountBalance(String accountId) {
+	public BigDecimal checkAccountBalance(String accountId) {
 		var withdraws = repository.getTransactionsByWithdrawId(accountId);
 		var deposits = repository.getTransactionsByDepositId(accountId);
 
-		long withdrawSum = withdraws.stream().mapToLong(TransactionDbo::withdrawAmount).sum();
-		long depositSum = deposits.stream().mapToLong(TransactionDbo::depositAmount).sum();
+		BigDecimal withdrawSum = withdraws.stream()
+				.map(TransactionDbo::withdrawAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal depositSum = deposits.stream()
+				.map(TransactionDbo::depositAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		return depositSum - withdrawSum;
+		return depositSum.subtract(withdrawSum);
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountId, int pageNumber, int pageSize) {
