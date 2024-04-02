@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/currencies")
+@RequestMapping("/v1/currencies")
 public class CurrencyController {
 
     private final CurrencyFacade currencyFacade;

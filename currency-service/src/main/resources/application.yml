@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: '/cs/api'
+    context-path: '/api/currency-service'
 
 currency:
   auto-update:
