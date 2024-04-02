@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.service;
+package cz.muni.fi.obs.service.updaters;
 
 public class CurrencySheetsResponse {
 

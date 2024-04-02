@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.service;
+package cz.muni.fi.obs.service.update;
 
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;

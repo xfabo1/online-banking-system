@@ -26,7 +26,7 @@ public class ExchangeRateService {
         this.exchangeRateRepository = exchangeRateRepository;
     }
 
-    public Currency findByCode(String code) {
+    private Currency findByCode(String code) {
         return currencyRepository.findByCode(code).orElseThrow(() -> new MissingObject(Currency.class, code));
     }
 
