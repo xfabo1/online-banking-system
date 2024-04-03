@@ -50,7 +50,7 @@ public class UserControllerWebMvcTest {
 		when(userManagementFacade.createUser(userCreateDto)).thenReturn(userDto);
 
 		String responseJson = mockMvc.perform(post("/v1/users/create")
-						.content(new ObjectMapper().writeValueAsString(userCreateDto))
+						.content(JsonConvertor.convertObjectToJson(userCreateDto))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk())
@@ -99,7 +99,7 @@ public class UserControllerWebMvcTest {
 		when(userManagementFacade.updateUser("1", userUpdateDto)).thenReturn(userDto);
 
 		String responseJson = mockMvc.perform(put("/v1/users/{userId}", "1")
-						.content(new ObjectMapper().writeValueAsString(userUpdateDto))
+						.content(JsonConvertor.convertObjectToJson(userUpdateDto))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk())
@@ -156,7 +156,7 @@ public class UserControllerWebMvcTest {
 		when(userManagementFacade.createAccount("1", accountCreateDto)).thenReturn(accountDto);
 
 		String responseJson = mockMvc.perform(post("/v1/users/{userId}/accounts/create", "1")
-						.content(new ObjectMapper().writeValueAsString(accountCreateDto))
+						.content(JsonConvertor.convertObjectToJson(accountCreateDto))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk())
