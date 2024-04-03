@@ -79,7 +79,7 @@ class TransactionControllerTest {
         ResponseEntity<Void> responseEntity = transactionController.createTransaction(transactionCreateDto);
 
         Mockito.verify(transactionManagementFacade).createTransaction(transactionCreateDto);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
     }
 }
