@@ -27,8 +27,9 @@ public class NationalityBirthNumberValidator implements ConstraintValidator<Nati
             return false;
         }
 
-        Nationality nationality = Nationality.fromString(nationalityStr);
         try {
+            Nationality nationality = Nationality.fromString(nationalityStr);
+
             if (nationality == Nationality.SK || nationality == Nationality.CZ) {
                 new CzechSlovakBirthNumber(birthDateStr);
             }
@@ -44,13 +45,8 @@ public class NationalityBirthNumberValidator implements ConstraintValidator<Nati
             return null;
         }
 
-        String getterName = "get" + propertyName.substring(0, 1).toUpperCase();
-        if (propertyName.length() > 1) {
-            getterName += propertyName.substring(1);
-        }
-
         try {
-            return object.getClass().getMethod(getterName);
+            return object.getClass().getMethod(propertyName);
         } catch (NoSuchMethodException e) {
             return null;
         }

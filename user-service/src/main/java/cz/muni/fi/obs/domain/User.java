@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @Getter
@@ -16,7 +16,7 @@ public class User extends Dbo {
     private String lastName;
     private String phoneNumber;
     private String email;
-    private Date birthDate;
+    private LocalDate birthDate;
     private Nationality nationality;
     private String birthNumber;
     private Boolean active;
