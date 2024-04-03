@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.AccountDto;
@@ -44,16 +43,16 @@ public class UserControllerWebMvcTest {
 	@Test
 	public void createUser_userCreated_returnsUser() throws Exception {
 		UserCreateDto userCreateDto = new UserCreateDto("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ.name(), "900101/1234");
+				LocalDate.of(2001, 4, 13), Nationality.SK.name(), "010413/2215");
 		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+				LocalDate.of(2001, 4, 13), Nationality.SK, "010413/2215", false);
 		when(userManagementFacade.createUser(userCreateDto)).thenReturn(userDto);
 
 		String responseJson = mockMvc.perform(post("/v1/users/create")
 						.content(JsonConvertor.convertObjectToJson(userCreateDto))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isOk())
+				.andExpect(status().isCreated())
 				.andReturn()
 				.getResponse()
 				.getContentAsString(StandardCharsets.UTF_8);
@@ -66,7 +65,7 @@ public class UserControllerWebMvcTest {
 	@Test
 	public void getUser_userFound_returnsUser() throws Exception {
 		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+				LocalDate.now(), Nationality.CZ, "900101/123", false);
 		when(userManagementFacade.getUser("1")).thenReturn(userDto);
 
 		String responseJson = mockMvc.perform(get("/v1/users/{userId}", "1")
@@ -95,7 +94,7 @@ public class UserControllerWebMvcTest {
 	public void updateUser_userUpdated_returnsUser() throws Exception {
 		UserUpdateDto userUpdateDto = new UserUpdateDto("Joe", "Doe", "123456789", "test@gmail.com");
 		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+				LocalDate.now(), Nationality.CZ, "900101/123", false);
 		when(userManagementFacade.updateUser("1", userUpdateDto)).thenReturn(userDto);
 
 		String responseJson = mockMvc.perform(put("/v1/users/{userId}", "1")
@@ -115,7 +114,7 @@ public class UserControllerWebMvcTest {
 	@Test
 	public void deactivateUser_userDeactivated_returnsUser() throws Exception {
 		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+				LocalDate.now(), Nationality.CZ, "900101/123", false);
 		when(userManagementFacade.deactivateUser("1")).thenReturn(userDto);
 
 		String responseJson = mockMvc.perform(post("/v1/users/{userId}/deactivate", "1")
@@ -134,7 +133,7 @@ public class UserControllerWebMvcTest {
 	@Test
 	public void activateUser_userActivated_returnsUser() throws Exception {
 		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		when(userManagementFacade.activateUser("1")).thenReturn(userDto);
 
 		String responseJson = mockMvc.perform(post("/v1/users/{userId}/activate", "1")
@@ -159,7 +158,7 @@ public class UserControllerWebMvcTest {
 						.content(JsonConvertor.convertObjectToJson(accountCreateDto))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isOk())
+				.andExpect(status().isCreated())
 				.andReturn()
 				.getResponse()
 				.getContentAsString(StandardCharsets.UTF_8);
@@ -177,7 +176,7 @@ public class UserControllerWebMvcTest {
 		);
 		when(userManagementFacade.getUserAccounts("1")).thenReturn(accounts);
 
-		String responseJson = mockMvc.perform(get("/v1/users/{userId}/accounts/", "1")
+		String responseJson = mockMvc.perform(get("/v1/users/{userId}/accounts", "1")
 						.accept(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk())
 				.andReturn()

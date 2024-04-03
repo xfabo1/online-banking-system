@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
@@ -31,9 +32,9 @@ class UserServiceTest {
 	@Test
 	void createUser_userCreated_returnsUser() {
 		UserCreateDto userCreateDto = new UserCreateDto("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ.name(), "900101/1234");
+				LocalDate.now(), Nationality.CZ.name(), "900101/1234");
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		when(userRepository.create(any())).thenReturn(user);
 
 		User response = userService.createUser(userCreateDto);
@@ -45,7 +46,7 @@ class UserServiceTest {
 	@Test
 	void getUser_userFound_returnsUser() {
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		when(userRepository.findById("1")).thenReturn(user);
 
 		User response = userService.getUser("1");
@@ -58,7 +59,7 @@ class UserServiceTest {
 	void updateUser_userUpdated_returnsUser() {
 		UserUpdateDto userUpdateDto = new UserUpdateDto("Joe", "Doe", "123456789", "test@gmail.com");
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		when(userRepository.update(user)).thenReturn(user);
 		when(userRepository.findById("1")).thenReturn(user);
 
@@ -71,7 +72,7 @@ class UserServiceTest {
 	@Test
 	void deactivateUser_userDeactivated_returnsUser() {
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		when(userRepository.findById("1")).thenReturn(user);
 		when(userRepository.update(user)).thenReturn(user);
 
@@ -84,7 +85,7 @@ class UserServiceTest {
 	@Test
 	void activateUser_userActivated_returnsUser() {
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		when(userRepository.findById("1")).thenReturn(user);
 		when(userRepository.update(user)).thenReturn(user);
 

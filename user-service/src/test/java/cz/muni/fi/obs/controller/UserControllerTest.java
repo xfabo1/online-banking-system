@@ -1,12 +1,12 @@
 package cz.muni.fi.obs.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
@@ -23,6 +22,7 @@ import cz.muni.fi.obs.api.UserCreateDto;
 import cz.muni.fi.obs.api.UserDto;
 import cz.muni.fi.obs.api.UserUpdateDto;
 import cz.muni.fi.obs.enums.Nationality;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.facade.UserManagementFacade;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,9 +37,9 @@ class UserControllerTest {
 	@Test
 	public void createUser_userCreated_returnsUser() {
 		UserCreateDto userCreateDto = new UserCreateDto("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ.name(), "900101/1234");
-		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+				LocalDate.now(), Nationality.CZ.name(), "900101/1234");
+		UserDto userDto = new UserDto("1", "Joe", "Doe", "123456789", "test@gmail.com",
+				LocalDate.now(), Nationality.CZ, "900101/123", false);
 		when(userManagementFacade.createUser(userCreateDto)).thenReturn(userDto);
 
 		ResponseEntity<UserDto> response = userController.createUser(userCreateDto);
@@ -50,8 +50,8 @@ class UserControllerTest {
 
 	@Test
 	public void getUser_userFound_returnsUser() {
-		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+		UserDto userDto = new UserDto("1", "Joe", "Doe", "123456789", "test@gmail.com",
+				LocalDate.now(), Nationality.CZ, "900101/123", false);
 		when(userManagementFacade.getUser("1")).thenReturn(userDto);
 
 		ResponseEntity<UserDto> response = userController.getUser("1");
@@ -64,18 +64,16 @@ class UserControllerTest {
 	public void getUser_userNotFound_returns404() {
 		when(userManagementFacade.getUser("1")).thenReturn(null);
 
-		ResponseEntity<UserDto> response = userController.getUser("1");
-
+		assertThatThrownBy(() -> userController.getUser("1")).isInstanceOf(ResourceNotFoundException.class)
+				.hasMessage("User with id: 1 not found");
 		verify(userManagementFacade).getUser("1");
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-		assertThat(response.getBody()).isNull();
 	}
 
 	@Test
 	public void updateUser_userUpdated_returnsUser() {
 		UserUpdateDto userUpdateDto = new UserUpdateDto("Joe", "Doe", "123456789", "test@gmail.com");
-		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+		UserDto userDto = new UserDto("1", "Joe", "Doe", "123456789", "test@gmail.com",
+				LocalDate.now(), Nationality.CZ, "900101/123", false);
 		when(userManagementFacade.updateUser("1", userUpdateDto)).thenReturn(userDto);
 
 		ResponseEntity<UserDto> response = userController.updateUser("1", userUpdateDto);
@@ -86,8 +84,8 @@ class UserControllerTest {
 
 	@Test
 	public void deactivateUser_userDeactivated_returnsUser() {
-		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", false);
+		UserDto userDto = new UserDto("1", "Joe", "Doe", "123456789", "test@gmail.com",
+				LocalDate.now(), Nationality.CZ, "900101/123", false);
 		when(userManagementFacade.deactivateUser("1")).thenReturn(userDto);
 
 		ResponseEntity<UserDto> response = userController.deactivateUser("1");
@@ -98,8 +96,8 @@ class UserControllerTest {
 
 	@Test
 	public void activateUser_userActivated_returnsUser() {
-		UserDto userDto = new UserDto("1","Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+		UserDto userDto = new UserDto("1", "Joe", "Doe", "123456789", "test@gmail.com",
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		when(userManagementFacade.activateUser("1")).thenReturn(userDto);
 
 		ResponseEntity<UserDto> response = userController.activateUser("1");

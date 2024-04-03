@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,7 @@ class UserManagementFacadeTest {
 	@Test
 	public void createUser_userCreated_returnsUser() {
 		UserCreateDto userCreateDto = new UserCreateDto("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ.name(), "900101/1234");
+				LocalDate.now(), Nationality.CZ.name(), "900101/1234");
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",userCreateDto.birthDate(), Nationality.CZ, "900101/123", true);
 		UserDto userDto = new UserDto(user.getId(), "Joe", "Doe", "123456789", "test@gmail.com",
 				userCreateDto.birthDate(), Nationality.CZ, "900101/123", true);
@@ -54,7 +55,7 @@ class UserManagementFacadeTest {
 	@Test
 	public void getUser_userFound_returnsUser() {
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		UserDto userDto = new UserDto(user.getId(), "Joe", "Doe", "123456789", "test@gmail.com",
 				user.getBirthDate(), Nationality.CZ, "900101/123", true);
 		when(userService.getUser("1")).thenReturn(user);
@@ -69,7 +70,7 @@ class UserManagementFacadeTest {
 	public void updateUser_userUpdated_returnsUser() {
 		UserUpdateDto userUpdateDto = new UserUpdateDto("Joe", "Doe", "123456789", "test@gmail.com");
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		UserDto userDto = new UserDto(user.getId(), "Joe", "Doe", "123456789", "test@gmail.com",
 				user.getBirthDate(), Nationality.CZ, "900101/123", true);
 		when(userService.updateUser("1", userUpdateDto)).thenReturn(user);
@@ -83,7 +84,7 @@ class UserManagementFacadeTest {
 	@Test
 	public void deactivateUser_userDeactivated_returnsUser() {
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		UserDto userDto = new UserDto(user.getId(), "Joe", "Doe", "123456789", "test@gmail.com",
 				user.getBirthDate(), Nationality.CZ, "900101/123", true);
 		when(userService.deactivateUser("1")).thenReturn(user);
@@ -97,7 +98,7 @@ class UserManagementFacadeTest {
 	@Test
 	public void activateUser_userActivated_returnsUser() {
 		User user = new User("Joe", "Doe", "123456789", "test@gmail.com",
-				new Date(), Nationality.CZ, "900101/123", true);
+				LocalDate.now(), Nationality.CZ, "900101/123", true);
 		UserDto userDto = new UserDto(user.getId(), "Joe", "Doe", "123456789", "test@gmail.com",
 				user.getBirthDate(), Nationality.CZ, "900101/123", true);
 		when(userService.activateUser("1")).thenReturn(user);
