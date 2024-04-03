@@ -14,9 +14,7 @@ public class JsonConvertor {
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
 			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-			.registerModule(new JavaTimeModule())
-			.setPropertyNamingStrategy(new PropertyNamingStrategies.SnakeCaseStrategy())
-			.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+			.registerModule(new JavaTimeModule());
 
 	public static <T> T convertJsonToObject(String serializedObject, Class<T> objectClass) throws
 			JsonProcessingException {
