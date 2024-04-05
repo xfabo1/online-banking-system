@@ -16,8 +16,8 @@ public class DataStore {
 
     public DataStore(){
         DailyTransaction transaction1 = new DailyTransaction(
-                new BigDecimal(5),
-                new BigDecimal(5),
+                5,
+                5,
                 new BigDecimal(30000),
                 new BigDecimal(20000),
                 new BigDecimal(10000),
@@ -27,8 +27,8 @@ public class DataStore {
                 new Date(2021, 1, 1)
         );
         DailyTransaction transaction2 = new DailyTransaction(
-                new BigDecimal(10),
-                new BigDecimal(10),
+                10,
+                10,
                 new BigDecimal(40000),
                 new BigDecimal(20000),
                 new BigDecimal(20000),
@@ -39,8 +39,8 @@ public class DataStore {
 
         );
         DailyTransaction transaction3 = new DailyTransaction(
-                new BigDecimal(4),
-                new BigDecimal(2),
+                4,
+                2,
                 new BigDecimal(10000),
                 new BigDecimal(8000),
                 new BigDecimal(2000),

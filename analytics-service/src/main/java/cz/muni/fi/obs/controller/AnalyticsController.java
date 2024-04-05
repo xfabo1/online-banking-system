@@ -5,6 +5,7 @@ import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryRequest;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
 import cz.muni.fi.obs.facade.AnalyticsFacade;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +22,14 @@ public class AnalyticsController {
     }
 
     @PostMapping("/daily-summary")
-    public ResponseEntity<DailySummaryResult> getDailySummary(@PathVariable String accountNumber, @RequestBody DailySummaryRequest request) {
+    public ResponseEntity<DailySummaryResult> getDailySummary(@PathVariable String accountNumber, @Valid @RequestBody DailySummaryRequest request) {
         log.info("Received request for daily summary for account number: {}, year: {}, month: {}", accountNumber, request.year(), request.month());
         DailySummaryResult result = analyticsFacade.getDailySummary(accountNumber, request.year(), request.month());
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/monthly-summary")
-    public ResponseEntity<MonthlySummaryResult> getMonthlySummary(@PathVariable String accountNumber, @RequestBody MonthlySummaryRequest request) {
+    public ResponseEntity<MonthlySummaryResult> getMonthlySummary(@PathVariable String accountNumber, @Valid @RequestBody MonthlySummaryRequest request) {
         log.info("Received request for monthly summary for account number: {}, year: {}", accountNumber, request.year());
         MonthlySummaryResult result = analyticsFacade.getMonthlySummary(accountNumber, request.year(), request.month());
         return ResponseEntity.ok(result);

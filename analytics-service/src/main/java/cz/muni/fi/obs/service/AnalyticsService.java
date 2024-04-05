@@ -26,9 +26,6 @@ public class AnalyticsService {
     public DailySummaryResult getDailySummary(String accountNumber, int year, int month) {
         List<DailyTransaction> transactions = analyticsRepository.getDailyTransactions(accountNumber, year, month);
         if (transactions.isEmpty()) {
-            if (month < 1 || month > 12) {
-                throw new IllegalArgumentException("Month must be between 1 and 12");
-            }
             return new DailySummaryResult(LocalDate.now(), new ArrayList<>());
         }
         return createDailySummaryResult(transactions);
@@ -36,10 +33,7 @@ public class AnalyticsService {
     public MonthlySummaryResult getMonthlySummary(String accountNumber, int year, int month) {
         List<DailyTransaction> transactions = analyticsRepository.getDailyTransactions(accountNumber, year, month);
         if (transactions.isEmpty()) {
-            if (month < 1 || month > 12) {
-                throw new IllegalArgumentException("Month must be between 1 and 12");
-            }
-            return new MonthlySummaryResult(LocalDate.now(), new MonthlySummary(Month.of(month).name(), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0)));
+            return new MonthlySummaryResult(LocalDate.now(), new MonthlySummary(Month.of(month).name(), 0, 0, new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0)));
         }
         return createMonthlySummaryResult(transactions);
     }
@@ -65,19 +59,19 @@ public class AnalyticsService {
     }
     private MonthlySummary createMonthlySummary(List<DailyTransaction> transactions) {
         String month = Month.of(transactions.getFirst().getDate().getMonth()).name();
-        BigDecimal totalWithdrawalTransactions = new BigDecimal(0);
-        BigDecimal totalDepositTransactions = new BigDecimal(0);
+        Integer totalWithdrawalTransactions = 0;
+        Integer totalDepositTransactions = 0;
         BigDecimal totalWithdrawalAmount = new BigDecimal(0);
         BigDecimal totalDepositAmount = new BigDecimal(0);
 
         for (DailyTransaction transaction : transactions) {
-            totalWithdrawalTransactions = totalWithdrawalTransactions.add(transaction.getTotalWithdrawalTransactions());
-            totalDepositTransactions = totalDepositTransactions.add(transaction.getTotalDepositTransactions());
+            totalWithdrawalTransactions += transaction.getTotalWithdrawalTransactions();
+            totalDepositTransactions += transaction.getTotalDepositTransactions();
             totalWithdrawalAmount = totalWithdrawalAmount.add(transaction.getTotalWithdrawalAmount());
             totalDepositAmount = totalDepositAmount.add(transaction.getTotalDepositAmount());
         }
-        BigDecimal averageWithdrawalAmount = totalWithdrawalAmount.divide(totalWithdrawalTransactions, 2, RoundingMode.HALF_UP);
-        BigDecimal averageDepositAmount = totalDepositAmount.divide(totalDepositTransactions, 2, RoundingMode.HALF_UP);
+        BigDecimal averageWithdrawalAmount = totalWithdrawalAmount.divide(BigDecimal.valueOf(totalWithdrawalTransactions), 2, RoundingMode.HALF_UP);
+        BigDecimal averageDepositAmount = totalDepositAmount.divide(BigDecimal.valueOf(totalDepositTransactions), 2, RoundingMode.HALF_UP);
 
         return new MonthlySummary(month,
                 totalWithdrawalTransactions,

@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class DailyTransaction extends Dbo {
-    BigDecimal totalWithdrawalTransactions;
-    BigDecimal totalDepositTransactions;
+    Integer totalWithdrawalTransactions;
+    Integer totalDepositTransactions;
     BigDecimal totalTransactionAmount;
     BigDecimal totalWithdrawalAmount;
     BigDecimal totalDepositAmount;
@@ -20,7 +20,7 @@ public class DailyTransaction extends Dbo {
     Date date;
 
 
-    public DailyTransaction(BigDecimal totalWithdrawalTransactions, BigDecimal totalDepositTransactions, BigDecimal totalTransactionAmount, BigDecimal totalWithdrawalAmount, BigDecimal totalDepositAmount, BigDecimal averageWithdrawalAmount, BigDecimal averageDepositAmount, Account account, Date date) {
+    public DailyTransaction(Integer totalWithdrawalTransactions, Integer totalDepositTransactions, BigDecimal totalTransactionAmount, BigDecimal totalWithdrawalAmount, BigDecimal totalDepositAmount, BigDecimal averageWithdrawalAmount, BigDecimal averageDepositAmount, Account account, Date date) {
         this.totalWithdrawalTransactions = totalWithdrawalTransactions;
         this.totalDepositTransactions = totalDepositTransactions;
         this.totalTransactionAmount = totalTransactionAmount;
