@@ -9,3 +9,4 @@ build:
     - mvn clean install
   only:
     - merge_requests
+    - master
