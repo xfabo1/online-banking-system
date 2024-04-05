@@ -1,7 +1,9 @@
 package cz.muni.fi.obs.facade;
 
 import cz.muni.fi.obs.TestData;
+import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.service.AccountService;
 import cz.muni.fi.obs.service.TransactionService;
@@ -17,7 +19,10 @@ import org.springframework.data.domain.PageImpl;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,4 +82,41 @@ class TransactionManagementFacadeTest {
         assertEquals(BigDecimal.valueOf(42), balance);
     }
 
+    @Test
+    public void createAccount_createsAccount() {
+        AccountCreateDto accountCreateDto = new AccountCreateDto("owner", "CZK", "1234567890");
+
+        Mockito.doNothing().when(accountService).createAccount(any(AccountCreateDto.class));
+
+        transactionManagementFacade.createAccount(accountCreateDto);
+
+        Mockito.verify(accountService).createAccount(accountCreateDto);
+    }
+
+    @Test
+    public void findAccountById_returnsAccount() {
+        String accountId = "1";
+        AccountDbo expectedAccount = AccountDbo.builder()
+                .id(accountId)
+                .customerId("owner")
+                .currencyCode("CZK")
+                .accountNumber("1234567890")
+                .build();
+
+        when(accountService.findAccountById(accountId)).thenReturn(expectedAccount);
+
+        AccountDbo foundAccount = transactionManagementFacade.findAccountById(accountId);
+        verify(accountService).findAccountById(accountId);
+        assertEquals(expectedAccount, foundAccount);
+    }
+
+    @Test
+    void testFindAccountById_nonExistingId_returnsNull() {
+        String accountId = "non-existing-id";
+        when(accountService.findAccountById(accountId)).thenReturn(null);
+
+        AccountDbo foundAccount = transactionManagementFacade.findAccountById(accountId);
+        verify(accountService).findAccountById(accountId);
+        assertNull(foundAccount);
+    }
 }
