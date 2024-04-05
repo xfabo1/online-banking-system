@@ -3,13 +3,13 @@ package cz.muni.fi.obs.data;
 import cz.muni.fi.obs.data.dbo.Account;
 import cz.muni.fi.obs.data.dbo.DailyTransaction;
 import cz.muni.fi.obs.data.dbo.Date;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
+@Component
 public class DataStore {
     public List<DailyTransaction> transactions = new ArrayList<>();
     private static final Account account = new Account("1234567890");
