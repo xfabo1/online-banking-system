@@ -56,7 +56,7 @@ services:
   user-service:
     container_name: user-service
     build:
-      context: currency-service
+      context: user-service
       dockerfile: Dockerfile
     ports:
       - 8083:8080
