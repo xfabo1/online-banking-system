@@ -18,6 +18,6 @@ public class CurrencyService {
     }
 
     public Page<Currency> listPage(Pageable pageable) {
-        return currencyRepository.listPage(pageable);
+        return currencyRepository.findAllPaged(pageable);
     }
 }

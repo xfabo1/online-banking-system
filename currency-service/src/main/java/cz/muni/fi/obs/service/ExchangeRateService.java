@@ -41,8 +41,8 @@ public class ExchangeRateService {
     public CurrencyExchangeResult exchange(String codeFrom, String codeTo, BigDecimal amount) {
         final Currency from = findByCode(codeFrom);
         final Currency to = findByCode(codeTo);
-        final Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findCurrentExchangeRate(from, to);
-        final Optional<ExchangeRate> inverseExchangeRate = exchangeRateRepository.findCurrentExchangeRate(to, from);
+        final Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findCurrentExchangeRate(from.getId(), to.getId());
+        final Optional<ExchangeRate> inverseExchangeRate = exchangeRateRepository.findCurrentExchangeRate(to.getId(), from.getId());
 
         CurrencyExchangeResult currencyExchangeResult = null;
 

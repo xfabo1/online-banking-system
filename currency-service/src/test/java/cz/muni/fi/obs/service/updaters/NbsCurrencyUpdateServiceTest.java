@@ -32,6 +32,6 @@ public class NbsCurrencyUpdateServiceTest {
 
         nbsCurrencyUpdateService.updateCurrencies();
 
-        assertTrue(currencyRepository.listPage(Pageable.ofSize(100)).getTotalElements() > 3);
+        assertTrue(currencyRepository.findAllPaged(Pageable.ofSize(100)).getTotalElements() > 3);
     }
 }

@@ -6,3 +6,16 @@ currency:
   auto-update:
     urls:
       nbs: https://nbs.sk/export/sk/exchange-rate/latest/csv
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/currency_db
+    username: currency_service
+    password: changemelater
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    locations: db.migration

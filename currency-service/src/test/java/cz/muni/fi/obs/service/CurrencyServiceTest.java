@@ -31,7 +31,7 @@ class CurrencyServiceTest {
     @Test
     public void listPage_whenThreeCurrenciesPresent_returnsThreeCurrencies() {
         Pageable pageable = Pageable.ofSize(10);
-        when(currencyRepository.listPage(pageable)).thenReturn(new PageImpl<>(mockData, pageable, 3));
+        when(currencyRepository.findAllPaged(pageable)).thenReturn(new PageImpl<>(mockData, pageable, 3));
 
         Page<Currency> currencies = currencyService.listPage(pageable);
 

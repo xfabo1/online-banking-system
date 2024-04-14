@@ -33,7 +33,7 @@ class CurrencyRepositoryTest {
     @Test
     void listFirstPage_whenThreePresent_returnsThree() {
         Pageable pageRequest = Pageable.ofSize(10);
-        Page<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
+        Page<Currency> currencyPagedResult = currencyRepository.findAllPaged(pageRequest);
 
         assertEquals(3, currencyPagedResult.getTotalElements());
         assertEquals(pageRequest, currencyPagedResult.getPageable());
@@ -43,7 +43,7 @@ class CurrencyRepositoryTest {
     @Test
     void listSmallPage_whenThreePresent_returnsLess() {
         Pageable pageRequest = Pageable.ofSize(2);
-        Page<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
+        Page<Currency> currencyPagedResult = currencyRepository.findAllPaged(pageRequest);
 
         assertEquals(3, currencyPagedResult.getTotalElements());
         assertEquals(pageRequest, currencyPagedResult.getPageable());
@@ -53,7 +53,7 @@ class CurrencyRepositoryTest {
     @Test
     void listNextPage_whenThreePresent_returnsNothing() {
         Pageable pageRequest = Pageable.ofSize(2).withPage(2);
-        Page<Currency> currencyPagedResult = currencyRepository.listPage(pageRequest);
+        Page<Currency> currencyPagedResult = currencyRepository.findAllPaged(pageRequest);
 
         assertEquals(3, currencyPagedResult.getTotalElements());
         assertEquals(pageRequest, currencyPagedResult.getPageable());

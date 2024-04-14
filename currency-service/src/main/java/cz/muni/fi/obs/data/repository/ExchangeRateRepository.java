@@ -1,24 +1,19 @@
 package cz.muni.fi.obs.data.repository;
 
-import cz.muni.fi.obs.data.dbo.Currency;
 import cz.muni.fi.obs.data.dbo.ExchangeRate;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.Comparator;
 import java.util.Optional;
 
 @Repository
-public class ExchangeRateRepository {
+public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, String> {
 
-    // fixme: temporary way of finding exchange rate
-    public Optional<ExchangeRate> findCurrentExchangeRate(Currency from, Currency to) {
-        return from.getExchangeRates().stream().filter(rate -> rate.getFrom().equals(from) && rate.getTo().equals(to))
-                .filter(rate -> {
-                    Instant now = Instant.now();
-                    return rate.getCreatedAt().isBefore(now) && rate.getValidUntil().isAfter(now);
-                })
-                .min(Comparator.comparing(ExchangeRate::getValidUntil)).stream()
-                .findFirst();
-    }
+    // fixme: temporary solution, create a better solution that traverses exchange rates and bridges gap between not intermediatelly
+    // exchangable currencies
+    // ex:
+    // If I have exchange rate from euro to yuan and euro to usd, I should be able to exchange yuan to usd by converting to euro and then to usd
+    @Query("SELECT ex FROM ExchangeRate ex WHERE ex.from=?1 and ex.to=?2 and ex.validUntil > NOW()")
+    Optional<ExchangeRate> findCurrentExchangeRate(String fromId, String toId);
 }

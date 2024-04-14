@@ -44,15 +44,16 @@ class ExchangeRateServiceTest {
 
     @Test
     void givenTwoCurrencies_currenciesCanBeExchanged_calculatesExchangeRate() {
+        ExchangeRate exchangeRate = new ExchangeRate(
+                Instant.now(),
+                Instant.now().plusSeconds(300),
+                usd,
+                euro,
+                1.2D
+        );
         when(currencyRepository.findByCode("eur")).thenReturn(Optional.ofNullable((euro)));
         when(currencyRepository.findByCode("usd")).thenReturn(Optional.ofNullable(usd));
-        when(exchangeRateRepository.findCurrentExchangeRate(usd, euro)).thenReturn(Optional.of(ExchangeRate
-                .builder()
-                .conversionRate(1.2)
-                .from(usd)
-                .to(euro)
-                .createdAt(Instant.now())
-                .validUntil(Instant.now().plusSeconds(100)).build()));
+        when(exchangeRateRepository.findCurrentExchangeRate(usd.getId(), euro.getId())).thenReturn(Optional.of(exchangeRate));
 
         CurrencyExchangeResult result = exchangeRateService.exchange("usd",
                 "eur",
@@ -69,8 +70,8 @@ class ExchangeRateServiceTest {
     void givenTwoCurrencies_currenciesCantBeExchanged_throwException() {
         when(currencyRepository.findByCode("yuan")).thenReturn(Optional.ofNullable(yuan));
         when(currencyRepository.findByCode("usd")).thenReturn(Optional.ofNullable(usd));
-        when(exchangeRateRepository.findCurrentExchangeRate(yuan, usd)).thenReturn(Optional.empty());
-        when(exchangeRateRepository.findCurrentExchangeRate(usd, yuan)).thenReturn(Optional.empty());
+        when(exchangeRateRepository.findCurrentExchangeRate(yuan.getId(), usd.getId())).thenReturn(Optional.empty());
+        when(exchangeRateRepository.findCurrentExchangeRate(usd.getId(), yuan.getId())).thenReturn(Optional.empty());
 
 
         assertThrows( NoExchangeRate.class, () -> exchangeRateService.exchange("usd",
