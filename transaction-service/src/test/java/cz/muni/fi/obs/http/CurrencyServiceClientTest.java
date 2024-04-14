@@ -25,14 +25,12 @@ import com.github.tomakehurst.wiremock.core.Options;
 
 import cz.muni.fi.obs.api.CurrencyExchangeRequest;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
-import cz.muni.fi.obs.config.FeignClientConfiguration;
 import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
 import io.github.resilience4j.springboot3.timelimiter.autoconfigure.TimeLimiterAutoConfiguration;
 import util.JsonConvertor;
 
 @SpringBootTest(
 		webEnvironment = NONE,
-		classes = FeignClientConfiguration.FeignConfiguration.class,
 		properties = "clients.currency-service.url=http://localhost:${wiremock.server.port}"
 )
 @ImportAutoConfiguration({
