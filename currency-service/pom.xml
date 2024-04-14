@@ -40,6 +40,11 @@
             <artifactId>opencsv</artifactId>
             <version>5.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>10.11.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -50,6 +55,18 @@
                 <version>${spring.boot.version}</version>
                 <configuration>
                     <executable>true</executable>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>10.11.0</version>
+                <configuration>
+                    <user>currency_service</user>
+                    <password>password123</password>
+                    <schemas>
+                        <schema>public</schema>
+                    </schemas>
                 </configuration>
             </plugin>
         </plugins>
