@@ -14,6 +14,6 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Stri
     // exchangable currencies
     // ex:
     // If I have exchange rate from euro to yuan and euro to usd, I should be able to exchange yuan to usd by converting to euro and then to usd
-    @Query("SELECT ex FROM ExchangeRate ex WHERE ex.from=?1 and ex.to=?2 and ex.validUntil > NOW()")
+    @Query("SELECT ex FROM ExchangeRate ex WHERE ex.from=?1 and ex.to=?2")
     Optional<ExchangeRate> findCurrentExchangeRate(String fromId, String toId);
 }
