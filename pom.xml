@@ -27,6 +27,7 @@
         <feign.version>4.1.1</feign.version>
         <resilient.version>3.1.1</resilient.version>
         <wiremock.version>4.1.2</wiremock.version>
+
     </properties>
 
     <dependencyManagement>
@@ -58,17 +59,16 @@
                 <scope>test</scope>
                 <version>${wiremock.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.7.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>10.11.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
