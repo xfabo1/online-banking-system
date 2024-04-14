@@ -9,7 +9,7 @@ import lombok.Builder;
 @Builder
 public record TransactionDbo(
 		@Id String id,
-		BigDecimal conversionRate,
+		Double conversionRate,
 		String withdrawsFrom,
 		String depositsTo,
 		BigDecimal withdrawAmount,
