@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
-import cz.muni.fi.obs.web.CurrencyServiceClient;
+import cz.muni.fi.obs.http.CurrencyServiceClient;
 
 @Service
 public class TransactionService {
@@ -47,7 +47,7 @@ public class TransactionService {
 	}
 
 	public void createTransaction(TransactionCreateDto transaction) {
-		var conversionRate = client.getConversionRate();
+		var conversionRate = client.getCurrencyExchange(null);
 
 		var transactionDbo = TransactionDbo.builder()
 				.id(UUID.randomUUID().toString())
@@ -57,7 +57,7 @@ public class TransactionService {
 				.depositAmount(transaction.depositAmount())
 				.withdrawAmount(transaction.withdrawAmount())
 				.variableSymbol(transaction.variableSymbol())
-				.conversionRate(conversionRate.exchangedRate())
+				.conversionRate(conversionRate.exchangeRate())
 				.build();
 
 		repository.createTransaction(transactionDbo);

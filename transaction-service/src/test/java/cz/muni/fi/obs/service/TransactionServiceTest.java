@@ -1,10 +1,11 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.TestData;
+import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
-import cz.muni.fi.obs.web.CurrencyServiceClient;
+import cz.muni.fi.obs.http.CurrencyServiceClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -89,7 +90,13 @@ class TransactionServiceTest {
 
     @Test
     void createTransaction_createsTransaction() {
-        when(client.getConversionRate()).thenCallRealMethod();
+        CurrencyExchangeResult exchangeResult = CurrencyExchangeResult.builder()
+                .sourceAmount(BigDecimal.valueOf(100))
+                .destAmount(BigDecimal.valueOf(4))
+                .exchangeRate(4.0)
+                .symbolFrom("CZK")
+                .symbolTo("EUR").build();
+        when(client.getCurrencyExchange(any())).thenReturn(exchangeResult);
         TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
                 TestData.withdrawTransactions.getFirst().withdrawsFrom(),
                 TestData.withdrawTransactions.getFirst().depositsTo(),

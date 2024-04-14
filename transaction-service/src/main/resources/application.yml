@@ -1,3 +1,25 @@
 server:
   servlet:
     context-path: '/api/transaction-service'
+
+spring:
+  application:
+    name: transaction-service
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          default:
+            logger-level: basic
+
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 30s
+
+clients:
+  currency-service:
+    url: 'http://localhost:8080/api/currency-service'
