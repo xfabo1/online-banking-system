@@ -2,6 +2,17 @@ server:
   servlet:
     context-path: '/api/currency-service'
 
+spring:
+  datasource:
+    url: jdbc:postgresql://currency-db:5433/currency_db
+    username: currency_user
+    password: changemelater
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
 currency:
   auto-update:
     urls:
