@@ -1,13 +1,11 @@
 package cz.muni.fi.obs.data.dbo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -28,9 +26,9 @@ public class Currency extends Dbo {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "from")
-    private Set<ExchangeRate> exchangeRatesFrom;
+    @OneToMany(mappedBy = "from", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    private Set<ExchangeRate> exchangeRatesFrom = new HashSet<>();
 
-    @OneToMany(mappedBy = "to")
-    private Set<ExchangeRate> exchangeRatesTo;
+    @OneToMany(mappedBy = "to", cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    private Set<ExchangeRate> exchangeRatesTo = new HashSet<>();
 }

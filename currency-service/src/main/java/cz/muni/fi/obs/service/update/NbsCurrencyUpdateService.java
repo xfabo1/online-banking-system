@@ -69,8 +69,8 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
                             .validUntil(LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC))
                             .build();
 
-                    euro.getExchangeRates().add(exchangeRate);
-                    currency.getExchangeRates().add(exchangeRate);
+                    euro.getExchangeRatesFrom().add(exchangeRate);
+                    currency.getExchangeRatesTo().add(exchangeRate);
                     currencyRepository.save(currency);
                 }
                 currencyRepository.save(euro);

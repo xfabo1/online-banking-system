@@ -1,6 +1,7 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.provider.RepositoryDataProvider;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = {RepositoryDataProvider.class})
 class CurrencyServiceTest {
 
     @Mock

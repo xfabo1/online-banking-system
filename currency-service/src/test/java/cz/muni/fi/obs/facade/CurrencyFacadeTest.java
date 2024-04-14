@@ -1,6 +1,7 @@
 package cz.muni.fi.obs.facade;
 
 import cz.muni.fi.obs.data.dbo.Currency;
+import cz.muni.fi.obs.data.provider.RepositoryDataProvider;
 import cz.muni.fi.obs.dto.CurrencyDto;
 import cz.muni.fi.obs.dto.CurrencyExchangeResult;
 import cz.muni.fi.obs.service.CurrencyService;
@@ -21,7 +22,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = {RepositoryDataProvider.class})
 class CurrencyFacadeTest {
 
     @Mock

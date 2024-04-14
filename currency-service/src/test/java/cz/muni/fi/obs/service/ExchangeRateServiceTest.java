@@ -2,6 +2,7 @@ package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.data.dbo.Currency;
 import cz.muni.fi.obs.data.dbo.ExchangeRate;
+import cz.muni.fi.obs.data.provider.RepositoryDataProvider;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.data.repository.ExchangeRateRepository;
 import cz.muni.fi.obs.dto.CurrencyExchangeResult;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = {RepositoryDataProvider.class})
 class ExchangeRateServiceTest {
 
     @Mock

@@ -1,23 +1,51 @@
 package cz.muni.fi.obs.repository;
 
+import cz.muni.fi.obs.Application;
 import cz.muni.fi.obs.data.dbo.Currency;
-import cz.muni.fi.obs.data.provider.RepositoryDataProvider;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.exception.MissingObject;
+import org.junit.ClassRule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.containers.PostgreSQLContainer;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {CurrencyRepository.class, RepositoryDataProvider.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+@ContextConfiguration(initializers = {CurrencyRepositoryTest.Initializer.class})
 class CurrencyRepositoryTest {
 
     @Autowired
     private CurrencyRepository currencyRepository;
+
+    @Autowired
+    private List<Currency> initialData;
+
+    @ClassRule
+    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.5")
+            .withDatabaseName("currency_db")
+            .withUsername("currency_service")
+            .withPassword("changemelater");
+
+    @BeforeEach
+    public void setUp() {
+        currencyRepository.saveAll(initialData);
+    }
+
 
     @Test
     void findByCode_whenPresent_returnsCurrency() {
@@ -58,5 +86,16 @@ class CurrencyRepositoryTest {
         assertEquals(3, currencyPagedResult.getTotalElements());
         assertEquals(pageRequest, currencyPagedResult.getPageable());
         assertEquals(0, currencyPagedResult.getContent().size());
+    }
+
+    static class Initializer
+            implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            TestPropertyValues.of(
+                    "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
+                    "spring.datasource.username=" + postgreSQLContainer.getUsername(),
+                    "spring.datasource.password=" + postgreSQLContainer.getPassword()
+            ).applyTo(configurableApplicationContext.getEnvironment());
+        }
     }
 }
