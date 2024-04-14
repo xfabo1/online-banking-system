@@ -20,7 +20,7 @@ public class Currency extends Dbo {
         this.name = name;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String code;
 
     @Column(nullable = false)

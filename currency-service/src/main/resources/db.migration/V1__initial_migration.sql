@@ -2,7 +2,8 @@ CREATE TABLE cs_currency
 (
     id   varchar(40) primary key,
     code varchar(10)  not null,
-    name varchar(255) not null
+    name varchar(255) not null,
+    constraint cs_currency_unique_code unique (code)
 );
 
 CREATE TABLE cs_exchange_rate
