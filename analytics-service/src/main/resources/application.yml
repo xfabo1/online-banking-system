@@ -1,14 +1,3 @@
 server:
   servlet:
     context-path: '/api/analytics-service'
-
-spring:
-  datasource:
-    url: jdbc:postgresql://analytics-db:5432/analytics_db
-    username: analytics_user
-    password: changemelater
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
