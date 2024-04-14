@@ -27,7 +27,8 @@
         <feign.version>4.1.1</feign.version>
         <resilient.version>3.1.1</resilient.version>
         <wiremock.version>4.1.2</wiremock.version>
-
+        <flyway.version>10.11.0</flyway.version>
+        <postgresql.version>42.7.3</postgresql.version>
     </properties>
 
     <dependencyManagement>
@@ -62,12 +63,18 @@
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.7.3</version>
+                <version>${postgresql.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-core</artifactId>
-                <version>10.11.0</version>
+                <artifactId>flyway-database-postgresql</artifactId>
+                <version>${flyway.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>${spring.boot.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

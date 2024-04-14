@@ -15,7 +15,7 @@ services:
       - analytics-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=changemelater
-      - POSTGRES_USER=analytics_user
+      - POSTGRES_USER=analytics_service
       - POSTGRES_DB=analytics_db
   currency-service:
     container_name: currency-service
@@ -33,7 +33,7 @@ services:
       - currency-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=changemelater
-      - POSTGRES_USER=currency_user
+      - POSTGRES_USER=currency_service
       - POSTGRES_DB=currency_db
   transaction-service:
     container_name: transaction-service
@@ -51,12 +51,12 @@ services:
       - transaction-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=changemelater
-      - POSTGRES_USER=transaction_user
+      - POSTGRES_USER=transaction_service
       - POSTGRES_DB=transaction_db
   user-service:
     container_name: user-service
     build:
-      context: currency-service
+      context: user-service
       dockerfile: Dockerfile
     ports:
       - 8083:8080
@@ -69,7 +69,7 @@ services:
       - user-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=changemelater
-      - POSTGRES_USER=user_user
+      - POSTGRES_USER=user_service
       - POSTGRES_DB=user_db
   database-fe:
     image: adminer:standalone

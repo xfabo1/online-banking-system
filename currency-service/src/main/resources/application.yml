@@ -4,14 +4,16 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://currency-db:5433/currency_db
-    username: currency_user
+    url: jdbc:postgresql://localhost:5433/currency_db
+    username: currency_service
     password: changemelater
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  flyway:
+    locations: db.migration
 
 currency:
   auto-update:
