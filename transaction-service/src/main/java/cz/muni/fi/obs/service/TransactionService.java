@@ -1,12 +1,15 @@
 package cz.muni.fi.obs.service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import cz.muni.fi.obs.api.CurrencyExchangeRequest;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
@@ -25,8 +28,8 @@ public class TransactionService {
 	}
 
 	public BigDecimal checkAccountBalance(String accountId) {
-		var withdraws = repository.getTransactionsByWithdrawId(accountId);
-		var deposits = repository.getTransactionsByDepositId(accountId);
+		var withdraws = repository.findTransactionsDboByWithdrawsFrom(accountId);
+		var deposits = repository.findTransactionsDboByDepositsTo(accountId);
 
 		BigDecimal withdrawSum = withdraws.stream()
 				.map(TransactionDbo::withdrawAmount)
@@ -39,15 +42,22 @@ public class TransactionService {
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountId, int pageNumber, int pageSize) {
-		return repository.getTransactionHistory(accountId, pageNumber, pageSize);
+		PageRequest request = PageRequest.of(pageNumber, pageSize);
+		return repository.findAllById(accountId, request);
 	}
 
-	public TransactionDbo getTransactionById(String id) {
-		return repository.getTransactionById(id);
+	public Optional<TransactionDbo> getTransactionById(String id) {
+		return repository.findById(id);
 	}
 
 	public void createTransaction(TransactionCreateDto transaction) {
-		var conversionRate = client.getCurrencyExchange(null);
+		CurrencyExchangeRequest request = CurrencyExchangeRequest.builder()
+				.from(transaction.withdrawsFrom())
+				.to(transaction.depositsTo())
+				.amount(transaction.depositAmount())
+				.build();
+
+		var conversionRate = client.getCurrencyExchange(request);
 
 		var transactionDbo = TransactionDbo.builder()
 				.id(UUID.randomUUID().toString())
@@ -60,6 +70,6 @@ public class TransactionService {
 				.conversionRate(conversionRate.exchangeRate())
 				.build();
 
-		repository.createTransaction(transactionDbo);
+		repository.save(transactionDbo);
 	}
 }

@@ -1,71 +1,89 @@
 package cz.muni.fi.obs.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.facade.TransactionManagementFacade;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import util.JsonConvertor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(AccountController.class)
 class AccountControllerTest {
-    @Mock
-    private TransactionManagementFacade facade;
-    private AccountController accountController;
 
-    @BeforeEach
-    void setUp() {
-        accountController = new AccountController(facade);
-    }
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Test
-    void createAccount_validRequest_returnsCreated() {
-        AccountCreateDto accountCreateDto = new AccountCreateDto("owner", "CZK", "1234567890");
-        ResponseEntity<Void> responseEntity = accountController.createAccount(accountCreateDto);
+	@MockBean
+	private TransactionManagementFacade facade;
 
-        verify(facade).createAccount(accountCreateDto);
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-    }
+	@Test
+	void createAccount_validRequest_returnsNothing() throws Exception {
+		AccountCreateDto accountCreateDto = new AccountCreateDto("owner", "CZK", "1234567890");
 
-    @Test
-    void findAccountById_accountFound_returnsAccount() {
-        String accountId = "1";
-        AccountDbo expectedAccount = AccountDbo.builder()
-                .id("1")
-                .customerId("owner")
-                .currencyCode("CZK")
-                .accountNumber("1234567890").build();
+		mockMvc.perform(post("/v1/accounts/create")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(JsonConvertor.convertObjectToJson(accountCreateDto)))
+				.andExpect(status().isCreated());
 
-        when(facade.findAccountById(accountId)).thenReturn(expectedAccount);
+		verify(facade).createAccount(accountCreateDto);
+	}
 
-        ResponseEntity<AccountDbo> responseEntity = accountController.findAccountById(accountId);
+	@Test
+	void createAccount_invalidRequest_returnsBadRequest() throws Exception {
+		AccountCreateDto accountCreateDto = new AccountCreateDto(null, "CZK", "1234567890");
 
-        verify(facade).findAccountById(accountId);
+		mockMvc.perform(post("/v1/accounts/create")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(JsonConvertor.convertObjectToJson(accountCreateDto)))
+				.andExpect(status().isBadRequest());
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedAccount, responseEntity.getBody());
-    }
+		verifyNoInteractions(facade);
+	}
 
-    @Test
-    void testFindAccountById_nonExistingId_returnsNotFound() {
-        String accountId = "1";
+	@Test
+	void findAccountById_accountFound_returnsAccount() throws Exception {
+		AccountDbo expectedAccount = AccountDbo.builder()
+				.id("1")
+				.customerId("owner")
+				.currencyCode("CZK")
+				.accountNumber("1234567890").build();
 
-        when(facade.findAccountById(accountId)).thenReturn(null);
+		when(facade.findAccountById("1")).thenReturn(Optional.of(expectedAccount));
 
-        ResponseEntity<AccountDbo> responseEntity = accountController.findAccountById(accountId);
+		var response = mockMvc.perform(get("/v1/accounts/account/{id}", "1")
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		var actualAccount = JsonConvertor.convertJsonToObject(response, AccountDbo.class);
 
-        verify(facade).findAccountById(accountId);
+		verify(facade).findAccountById("1");
+		assertThat(actualAccount).isEqualTo(expectedAccount);
+	}
 
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        assertNull(responseEntity.getBody());
-    }
+	@Test
+	void testFindAccountById_nonExistingId_returnsNotFound() throws Exception {
+		when(facade.findAccountById(any())).thenReturn(Optional.empty());
+
+		mockMvc.perform(get("/v1/accounts/account/{id}", "1")
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		verify(facade).findAccountById("1");
+	}
 }

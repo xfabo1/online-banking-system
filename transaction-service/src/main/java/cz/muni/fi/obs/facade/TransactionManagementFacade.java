@@ -1,6 +1,7 @@
 package cz.muni.fi.obs.facade;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ public class TransactionManagementFacade {
 		this.accountService = accountService;
 	}
 
-	public TransactionDbo getTransactionById(String id) {
+	public Optional<TransactionDbo> getTransactionById(String id) {
 		return transactionService.getTransactionById(id);
 	}
 
@@ -45,7 +46,7 @@ public class TransactionManagementFacade {
 		accountService.createAccount(accountCreateDto);
 	}
 
-	public AccountDbo findAccountById(String id) {
+	public Optional<AccountDbo> findAccountById(String id) {
 		return accountService.findAccountById(id);
 	}
 }
