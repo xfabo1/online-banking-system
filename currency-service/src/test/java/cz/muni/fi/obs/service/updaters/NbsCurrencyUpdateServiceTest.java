@@ -1,5 +1,6 @@
 package cz.muni.fi.obs.service.updaters;
 
+import cz.muni.fi.obs.common.PostgresqlTest;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.service.update.NbsCurrencyUpdateService;
 import okhttp3.mockwebserver.MockResponse;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @TestPropertySource(properties = {"currency.auto-update.urls.nbs:https://nbs.sk/export/sk/exchange-rate/latest/csv"})
-public class NbsCurrencyUpdateServiceTest {
+public class NbsCurrencyUpdateServiceTest extends PostgresqlTest {
 
     @Autowired
     private MockWebServer mockServer;
@@ -32,6 +33,6 @@ public class NbsCurrencyUpdateServiceTest {
 
         nbsCurrencyUpdateService.updateCurrencies();
 
-        assertTrue(currencyRepository.findAllPaged(Pageable.ofSize(100)).getTotalElements() > 3);
+        assertTrue(currencyRepository.findAll(Pageable.ofSize(100)).getTotalElements() > 3);
     }
 }

@@ -1,8 +1,8 @@
 package cz.muni.fi.obs.service;
 
+import cz.muni.fi.obs.config.RepositoryDataProvider;
 import cz.muni.fi.obs.data.dbo.Currency;
 import cz.muni.fi.obs.data.dbo.ExchangeRate;
-import cz.muni.fi.obs.data.provider.RepositoryDataProvider;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
 import cz.muni.fi.obs.data.repository.ExchangeRateRepository;
 import cz.muni.fi.obs.dto.CurrencyExchangeResult;
@@ -11,7 +11,6 @@ import cz.muni.fi.obs.exception.NoExchangeRate;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
@@ -34,14 +33,11 @@ class ExchangeRateServiceTest {
     @InjectMocks
     private ExchangeRateService exchangeRateService;
 
-    @Autowired
-    private Currency euro;
+    private Currency euro = RepositoryDataProvider.euro();
 
-    @Autowired
-    private Currency usd;
+    private Currency usd = RepositoryDataProvider.usd();
 
-    @Autowired
-    private Currency yuan;
+    private Currency yuan = RepositoryDataProvider.yuan();
 
     @Test
     void givenTwoCurrencies_currenciesCanBeExchanged_calculatesExchangeRate() {
