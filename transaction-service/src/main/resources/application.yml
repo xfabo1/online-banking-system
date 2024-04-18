@@ -25,6 +25,7 @@ spring:
     show-sql: true
   flyway:
     locations: db.migration
+    baseline-on-migrate: true
 
 resilience4j:
   timelimiter:

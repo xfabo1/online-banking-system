@@ -81,8 +81,8 @@ class TransactionControllerTest {
 	@Test
 	public void createTransaction_createsTransaction() throws Exception {
 		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().getWithdrawsFrom(),
-				TestData.withdrawTransactions.getFirst().getDepositsTo(),
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
 				TestData.withdrawTransactions.getFirst().getDepositAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),

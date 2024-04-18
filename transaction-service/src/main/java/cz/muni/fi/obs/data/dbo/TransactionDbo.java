@@ -29,15 +29,15 @@ public class TransactionDbo {
 	private String id;
 	@Column(name = "conversion_rate", nullable = false)
 	private Double conversionRate;
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "withdraws_from", nullable = false)
 	private AccountDbo withdrawsFrom;
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "deposits_to", nullable = false)
 	private AccountDbo depositsTo;
-	@Column(name = "withdraw_amount", nullable = false)
+	@Column(name = "withdrawn_amount", nullable = false)
 	private BigDecimal withdrawAmount;
-	@Column(name = "deposit_amount", nullable = false)
+	@Column(name = "deposited_amount", nullable = false)
 	private BigDecimal depositAmount;
 	@Column(name = "note")
 	private String note;

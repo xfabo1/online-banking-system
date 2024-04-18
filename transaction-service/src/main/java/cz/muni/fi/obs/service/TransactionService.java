@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import cz.muni.fi.obs.api.CurrencyExchangeRequest;
 import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
@@ -61,9 +62,9 @@ public class TransactionService {
 
 		var transactionDbo = TransactionDbo.builder()
 				.id(UUID.randomUUID().toString())
-				.withdrawsFrom(transaction.withdrawsFrom())
+				.withdrawsFrom(AccountDbo.builder().build())
 				.note(transaction.note())
-				.depositsTo(transaction.depositsTo())
+				.depositsTo(AccountDbo.builder().build())
 				.depositAmount(transaction.depositAmount())
 				.withdrawAmount(transaction.withdrawAmount())
 				.variableSymbol(transaction.variableSymbol())
