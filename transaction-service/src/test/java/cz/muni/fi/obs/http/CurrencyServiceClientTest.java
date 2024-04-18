@@ -13,12 +13,14 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
@@ -41,6 +43,7 @@ import util.JsonConvertor;
 })
 @AutoConfigureWebMvc
 @AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
+@ActiveProfiles("test")
 class CurrencyServiceClientTest {
 
 	private static final String CURRENCY_EXCHANGE_PATH = "/v1/currencies/exchange";

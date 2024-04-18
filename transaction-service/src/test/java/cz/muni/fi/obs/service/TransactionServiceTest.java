@@ -91,7 +91,7 @@ class TransactionServiceTest {
 
 	@Test
 	void getTransactionById_returnsTransaction() {
-		String transactionId = TestData.withdrawTransactions.getFirst().id();
+		String transactionId = TestData.withdrawTransactions.getFirst().getId();
 		when(repository.findById(transactionId)).thenReturn(Optional.of(TestData.withdrawTransactions.getFirst()));
 
 		Optional<TransactionDbo> actualTransaction = transactionService.getTransactionById(transactionId);
@@ -110,12 +110,12 @@ class TransactionServiceTest {
 
 		when(client.getCurrencyExchange(any())).thenReturn(exchangeResult);
 		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().withdrawsFrom(),
-				TestData.withdrawTransactions.getFirst().depositsTo(),
-				TestData.withdrawTransactions.getFirst().withdrawAmount(),
-				TestData.withdrawTransactions.getFirst().depositAmount(),
-				TestData.withdrawTransactions.getFirst().note(),
-				TestData.withdrawTransactions.getFirst().variableSymbol()
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom(),
+				TestData.withdrawTransactions.getFirst().getDepositsTo(),
+				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
+				TestData.withdrawTransactions.getFirst().getDepositAmount(),
+				TestData.withdrawTransactions.getFirst().getNote(),
+				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
 
 		transactionService.createTransaction(transactionCreateDto);

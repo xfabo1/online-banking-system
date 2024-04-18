@@ -5,6 +5,8 @@ spring:
     username: sa
     password: password
   jpa:
+    hibernate:
+      ddl-auto: create
     database-platform: org.hibernate.dialect.H2Dialect
 
 

@@ -32,10 +32,10 @@ public class TransactionService {
 		var deposits = repository.findTransactionsDboByDepositsTo(accountId);
 
 		BigDecimal withdrawSum = withdraws.stream()
-				.map(TransactionDbo::withdrawAmount)
+				.map(TransactionDbo::getWithdrawAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal depositSum = deposits.stream()
-				.map(TransactionDbo::depositAmount)
+				.map(TransactionDbo::getDepositAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		return depositSum.subtract(withdrawSum);
