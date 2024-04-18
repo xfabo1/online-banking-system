@@ -27,6 +27,7 @@ import com.github.tomakehurst.wiremock.core.Options;
 
 import cz.muni.fi.obs.api.CurrencyExchangeRequest;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
 import io.github.resilience4j.springboot3.timelimiter.autoconfigure.TimeLimiterAutoConfiguration;
 import util.JsonConvertor;
@@ -72,7 +73,9 @@ class CurrencyServiceClientTest {
 
 		var exchangeResult = currencyServiceClient.getCurrencyExchange(request);
 
-		assertThat(exchangeResult)
+		assertThat(exchangeResult).isPresent();
+
+		assertThat(exchangeResult.get())
 				.returns(BigDecimal.valueOf(4), CurrencyExchangeResult::destAmount)
 				.returns(BigDecimal.valueOf(100), CurrencyExchangeResult::sourceAmount)
 				.returns(4.0, CurrencyExchangeResult::exchangeRate)
@@ -91,6 +94,6 @@ class CurrencyServiceClientTest {
 
 		var exchangeResult = currencyServiceClient.getCurrencyExchange(request);
 
-		assertThat(exchangeResult).isNull();
+		assertThat(exchangeResult).isEmpty();
 	}
 }

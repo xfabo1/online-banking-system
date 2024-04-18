@@ -64,26 +64,26 @@ class AccountControllerTest {
 				.currencyCode("CZK")
 				.accountNumber("1234567890").build();
 
-		when(facade.findAccountById("1")).thenReturn(Optional.of(expectedAccount));
+		when(facade.findAccountByAccountNumber("1")).thenReturn(Optional.of(expectedAccount));
 
-		var response = mockMvc.perform(get("/v1/accounts/account/{id}", "1")
+		var response = mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "1")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 		var actualAccount = JsonConvertor.convertJsonToObject(response, AccountDbo.class);
 
-		verify(facade).findAccountById("1");
+		verify(facade).findAccountByAccountNumber("1");
 		assertThat(actualAccount).isEqualTo(expectedAccount);
 	}
 
 	@Test
 	void testFindAccountById_nonExistingId_returnsNotFound() throws Exception {
-		when(facade.findAccountById(any())).thenReturn(Optional.empty());
+		when(facade.findAccountByAccountNumber(any())).thenReturn(Optional.empty());
 
-		mockMvc.perform(get("/v1/accounts/account/{id}", "1")
+		mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "1")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 
-		verify(facade).findAccountById("1");
+		verify(facade).findAccountByAccountNumber("1");
 	}
 }

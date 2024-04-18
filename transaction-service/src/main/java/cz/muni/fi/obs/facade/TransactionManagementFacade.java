@@ -11,9 +11,12 @@ import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.service.AccountService;
 import cz.muni.fi.obs.service.TransactionService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class TransactionManagementFacade {
 
@@ -34,20 +37,30 @@ public class TransactionManagementFacade {
 		transactionService.createTransaction(transaction);
 	}
 
-	public Page<TransactionDbo> viewTransactionHistory(String accountId, int pageNumber, int pageSize) {
-		return transactionService.viewTransactionHistory(accountId, pageNumber, pageSize);
+	public Page<TransactionDbo> viewTransactionHistory(String accountNumber, int pageNumber, int pageSize) {
+		AccountDbo account = accountService.findAccountByAccountNumber(accountNumber)
+				.orElseThrow(() -> {
+					log.info("Account not found: {}", accountNumber);
+					return new ResourceNotFoundException("Account not found");
+				});
+		return transactionService.viewTransactionHistory(account.getId(), pageNumber, pageSize);
 	}
 
-	public BigDecimal checkAccountBalance(String accountId) {
-		return transactionService.checkAccountBalance(accountId);
+	public BigDecimal checkAccountBalance(String accountNumber) {
+		AccountDbo account = accountService.findAccountByAccountNumber(accountNumber)
+				.orElseThrow(() -> {
+					log.info("Account not found: {}", accountNumber);
+					return new ResourceNotFoundException("Account not found");
+				});
+		return transactionService.checkAccountBalance(account.getId());
 	}
 
 	public void createAccount(AccountCreateDto accountCreateDto) {
 		accountService.createAccount(accountCreateDto);
 	}
 
-	public Optional<AccountDbo> findAccountById(String id) {
-		return accountService.findAccountById(id);
+	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
+		return accountService.findAccountByAccountNumber(accountNumber);
 	}
 }
 

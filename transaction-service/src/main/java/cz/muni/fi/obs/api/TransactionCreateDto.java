@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 @Builder
 public record TransactionCreateDto(
 		@NotBlank
-		String withdrawsFrom,
+		String withdrawsFromAccountNumber,
 		@NotBlank
-		String depositsTo,
+		String depositsToAccountNumber,
 		@Min(0) BigDecimal withdrawAmount,
 		@Min(0) BigDecimal depositAmount,
 		String note,

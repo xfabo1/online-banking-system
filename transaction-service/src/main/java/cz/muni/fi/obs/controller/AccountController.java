@@ -55,18 +55,22 @@ public class AccountController {
 	}
 
 	@Operation(
-			summary = "Find account by ID",
-			description = "Finds an account by its ID",
+			summary = "Find account by account number",
+			description = "Finds an account by its account number",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Account found"),
 					@ApiResponse(responseCode = "404", description = "Account not found")
 			}
 
 	)
-	@GetMapping(value = "/account/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AccountDbo> findAccountById(@PathVariable("id") String id) {
-		Optional<AccountDbo> account = facade.findAccountById(id);
-		return account.map(ResponseEntity::ok)
-				.orElseThrow(() -> new ResourceNotFoundException(id));
+	@GetMapping(value = "/account/{accountNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<AccountDbo> findAccountById(@PathVariable("accountNumber") String accountNumber) {
+		return facade.findAccountByAccountNumber(accountNumber)
+				.map(ResponseEntity::ok)
+				.orElseThrow(() -> {
+							log.info("Account not found: {}", accountNumber);
+							return new ResourceNotFoundException(accountNumber);
+						}
+				);
 	}
 }

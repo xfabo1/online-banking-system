@@ -29,7 +29,7 @@ public class AccountService {
 		repository.save(accountDbo);
 	}
 
-	public Optional<AccountDbo> findAccountById(String id) {
-		return repository.findById(id);
+	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
+		return repository.findAccountDboByAccountNumber(accountNumber);
 	}
 }

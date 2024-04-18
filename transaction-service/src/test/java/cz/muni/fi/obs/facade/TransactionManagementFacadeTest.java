@@ -60,8 +60,6 @@ class TransactionManagementFacadeTest {
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
 
-		Mockito.doNothing().when(transactionService).createTransaction(any(TransactionCreateDto.class));
-
 		transactionManagementFacade.createTransaction(transactionCreateDto);
 
 		Mockito.verify(transactionService).createTransaction(transactionCreateDto);
@@ -71,23 +69,37 @@ class TransactionManagementFacadeTest {
 	void viewTransactionHistory_returnsHistory() {
 		when(transactionService.viewTransactionHistory(TestData.accountId, 0, 10))
 				.thenReturn(new PageImpl<>(TestData.withdrawTransactions));
+		when(accountService.findAccountByAccountNumber("1234567890"))
+				.thenReturn(Optional.of(AccountDbo.builder()
+						.id(TestData.accountId)
+						.currencyCode("CZK")
+						.accountNumber("1234567890")
+						.build()));
 
-		Page<TransactionDbo> actualPage = transactionManagementFacade.viewTransactionHistory(TestData.accountId, 0, 10);
+		Page<TransactionDbo> actualPage = transactionManagementFacade
+				.viewTransactionHistory("1234567890", 0, 10);
 		assertEquals(new PageImpl<>(TestData.withdrawTransactions), actualPage);
 	}
 
 	@Test
 	public void checkAccountBalance_returnsBalance() {
 		when(transactionService.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
+		when(accountService.findAccountByAccountNumber("1234567890"))
+				.thenReturn(Optional.of(AccountDbo.builder()
+						.id(TestData.accountId)
+						.currencyCode("CZK")
+						.accountNumber("1234567890")
+						.build()));
 
-		BigDecimal balance = transactionManagementFacade.checkAccountBalance(TestData.accountId);
+		BigDecimal balance = transactionManagementFacade.checkAccountBalance("1234567890");
 
 		assertEquals(BigDecimal.valueOf(42), balance);
 	}
 
 	@Test
 	public void createAccount_createsAccount() {
-		AccountCreateDto accountCreateDto = new AccountCreateDto("owner", "CZK", "1234567890");
+		AccountCreateDto accountCreateDto =
+				new AccountCreateDto("owner", "CZK", "1234567890");
 
 		Mockito.doNothing().when(accountService).createAccount(any(AccountCreateDto.class));
 
@@ -98,28 +110,26 @@ class TransactionManagementFacadeTest {
 
 	@Test
 	public void findAccountById_returnsAccount() {
-		String accountId = "1";
 		AccountDbo expectedAccount = AccountDbo.builder()
-				.id(accountId)
+				.id("1")
 				.customerId("owner")
 				.currencyCode("CZK")
 				.accountNumber("1234567890")
 				.build();
 
-		when(accountService.findAccountById(accountId)).thenReturn(Optional.of(expectedAccount));
+		when(accountService.findAccountByAccountNumber("1234567890")).thenReturn(Optional.of(expectedAccount));
 
-		Optional<AccountDbo> foundAccount = transactionManagementFacade.findAccountById(accountId);
-		verify(accountService).findAccountById(accountId);
+		Optional<AccountDbo> foundAccount = transactionManagementFacade.findAccountByAccountNumber("1234567890");
+		verify(accountService).findAccountByAccountNumber("1234567890");
 		assertThat(foundAccount).isPresent();
 	}
 
 	@Test
 	void testFindAccountById_nonExistingId_returnsNull() {
-		String accountId = "non-existing-id";
-		when(accountService.findAccountById(accountId)).thenReturn(Optional.empty());
+		when(accountService.findAccountByAccountNumber("non-existing")).thenReturn(Optional.empty());
 
-		Optional<AccountDbo> foundAccount = transactionManagementFacade.findAccountById(accountId);
-		verify(accountService).findAccountById(accountId);
+		Optional<AccountDbo> foundAccount = transactionManagementFacade.findAccountByAccountNumber("non-existing");
+		verify(accountService).findAccountByAccountNumber("non-existing");
 		assertThat(foundAccount).isEmpty();
 	}
 }

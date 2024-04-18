@@ -67,15 +67,15 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Transaction history not found")
 			}
 	)
-	@GetMapping(value = "/account/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/account/{accountNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PagedResponse<TransactionDbo>> viewTransactionHistory(
-			@PathVariable("accountId") String accountId,
+			@PathVariable("accountNumber") String accountNumber,
 			@RequestParam("pageNumber") int pageNumber,
 			@RequestParam("pageSize") int pageSize) {
-		log.info("Getting transaction history for account: {}", accountId);
-		Page<TransactionDbo> page = facade.viewTransactionHistory(accountId, pageNumber, pageSize);
+		log.info("Getting transaction history for account: {}", accountNumber);
+		Page<TransactionDbo> page = facade.viewTransactionHistory(accountNumber, pageNumber, pageSize);
 		if (page.isEmpty()) {
-			log.info("Transaction history not found for account: {}", accountId);
+			log.info("Transaction history not found for account: {}", accountNumber);
 			throw new ResourceNotFoundException("Transaction history not found");
 		}
 		return ResponseEntity.ok(PagedResponse.fromPage(page));
@@ -89,15 +89,10 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Account balance not found")
 			}
 	)
-	@GetMapping(value = "/account/{accountId}/balance", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<BigDecimal> checkAccountBalance(@PathVariable("accountId") String accountId) {
-		log.info("Checking account balance for account: {}", accountId);
-		BigDecimal balance = facade.checkAccountBalance(accountId);
-		if (balance == null) {
-			log.info("Account balance not found for account: {}", accountId);
-			throw new ResourceNotFoundException("Account balance not found");
-		}
-		return ResponseEntity.ok(balance);
+	@GetMapping(value = "/account/{accountNumber}/balance", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<BigDecimal> checkAccountBalance(@PathVariable("accountNumber") String accountNumber) {
+		log.info("Checking account balance for account: {}", accountNumber);
+		return ResponseEntity.ok(facade.checkAccountBalance(accountNumber));
 	}
 
 	@Operation(

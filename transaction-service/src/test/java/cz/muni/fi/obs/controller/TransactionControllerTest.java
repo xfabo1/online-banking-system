@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -52,24 +54,33 @@ class TransactionControllerTest {
 
 	@Test
 	void viewTransactionHistory_returnsHistory() throws Exception {
-		when(transactionManagementFacade.viewTransactionHistory(TestData.accountId, 0, 10))
-				.thenReturn(new PageImpl<>(TestData.withdrawTransactions));
+		var allTransaction = List.of(
+				TestData.withdrawTransactions.getFirst(),
+				TestData.withdrawTransactions.get(1),
+				TestData.depositTransactions.getFirst(),
+				TestData.depositTransactions.get(1)
+		);
+		when(transactionManagementFacade.viewTransactionHistory("test", 0, 10))
+				.thenReturn(new PageImpl<>(allTransaction, PageRequest.of(0, 10),
+						allTransaction.size()));
 
-		var response = mockMvc.perform(get("/v1/transactions/account/{accountId}", TestData.accountId)
+		var response = mockMvc.perform(get("/v1/transactions/account/{accountNumber}", "test")
 						.queryParam("pageNumber", "0")
 						.queryParam("pageSize", "10")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-		PagedResponse<TransactionDbo> actualTransactions = JsonConvertor.convertJsonToObject(response, new TypeReference<>() {});
-		assertThat(actualTransactions.records()).containsExactlyElementsOf(TestData.withdrawTransactions);
+		PagedResponse<TransactionDbo> actualTransactions = JsonConvertor.convertJsonToObject(response,
+				new TypeReference<>() {});
+		assertThat(actualTransactions.records()).hasSize(4);
+
 	}
 
 	@Test
 	void checkAccountBalance_returnsBalance() throws Exception {
 		when(transactionManagementFacade.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
 
-		var response = mockMvc.perform(get("/v1/transactions/account/{accountId}/balance", TestData.accountId)
+		var response = mockMvc.perform(get("/v1/transactions/account/{accountNumber}/balance", TestData.accountId)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();

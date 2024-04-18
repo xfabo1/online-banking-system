@@ -14,6 +14,7 @@ import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
 
 @Service
@@ -29,8 +30,8 @@ public class TransactionService {
 	}
 
 	public BigDecimal checkAccountBalance(String accountId) {
-		var withdraws = repository.findTransactionsDboByWithdrawsFrom(accountId);
-		var deposits = repository.findTransactionsDboByDepositsTo(accountId);
+		var withdraws = repository.findTransactionsDboByWithdrawsFrom_Id(accountId);
+		var deposits = repository.findTransactionsDboByDepositsTo_Id(accountId);
 
 		BigDecimal withdrawSum = withdraws.stream()
 				.map(TransactionDbo::getWithdrawAmount)
@@ -44,7 +45,7 @@ public class TransactionService {
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountId, int pageNumber, int pageSize) {
 		PageRequest request = PageRequest.of(pageNumber, pageSize);
-		return repository.findAllById(accountId, request);
+		return repository.findTransactionHistory(accountId, request);
 	}
 
 	public Optional<TransactionDbo> getTransactionById(String id) {
@@ -53,12 +54,13 @@ public class TransactionService {
 
 	public void createTransaction(TransactionCreateDto transaction) {
 		CurrencyExchangeRequest request = CurrencyExchangeRequest.builder()
-				.from(transaction.withdrawsFrom())
-				.to(transaction.depositsTo())
+				.from(transaction.withdrawsFromAccountNumber())
+				.to(transaction.depositsToAccountNumber())
 				.amount(transaction.depositAmount())
 				.build();
 
-		var conversionRate = client.getCurrencyExchange(request);
+		var conversionRate = client.getCurrencyExchange(request)
+				.orElseThrow(() -> new ResourceNotFoundException("Currency exchange rate not found"));
 
 		var transactionDbo = TransactionDbo.builder()
 				.id(UUID.randomUUID().toString())

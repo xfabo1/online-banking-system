@@ -8,25 +8,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TestData {
-    public static final String accountId = "123456-7890123456";
+    public static final String accountId = "account-id";
+
     public static final List<TransactionDbo> withdrawTransactions = Arrays.asList(
             TransactionDbo.builder()
                     .id("1")
-                    .depositsTo(AccountDbo.builder().build())
+                    .depositsTo(depositAccount())
                     .conversionRate(0.25)
                     .note("note")
                     .withdrawAmount(BigDecimal.valueOf(1000))
-                    .withdrawsFrom(AccountDbo.builder().id(accountId).build())
+                    .withdrawsFrom(withdrawAccount())
                     .depositAmount(BigDecimal.valueOf(250))
                     .variableSymbol("123")
                     .build(),
             TransactionDbo.builder()
                     .id("2")
-                    .depositsTo(AccountDbo.builder().build())
+                    .depositsTo(depositAccount())
                     .conversionRate(2.0)
                     .note("note")
                     .withdrawAmount(BigDecimal.valueOf(2))
-                    .withdrawsFrom(AccountDbo.builder().id(accountId).build())
+                    .withdrawsFrom(withdrawAccount())
                     .depositAmount(BigDecimal.valueOf(2))
                     .variableSymbol("123")
                     .build()
@@ -35,24 +36,39 @@ public class TestData {
     public static final List<TransactionDbo> depositTransactions = Arrays.asList(
             TransactionDbo.builder()
                     .id("3")
-                    .depositsTo(AccountDbo.builder().id(accountId).build())
+                    .depositsTo(depositAccount())
                     .conversionRate(3.0)
                     .note("note")
                     .withdrawAmount(BigDecimal.valueOf(1000.5))
-                    .withdrawsFrom(AccountDbo.builder().id(accountId).build())
+                    .withdrawsFrom(withdrawAccount())
                     .depositAmount(BigDecimal.valueOf(3001.5))
                     .variableSymbol("123")
                     .build(),
 
             TransactionDbo.builder()
                     .id("4")
-                    .depositsTo(AccountDbo.builder().id(accountId).build())
+                    .depositsTo(depositAccount())
                     .conversionRate(11.0)
                     .note("note")
                     .withdrawAmount(BigDecimal.valueOf(4))
-                    .withdrawsFrom(AccountDbo.builder().build())
+                    .withdrawsFrom(withdrawAccount())
                     .depositAmount(BigDecimal.valueOf(44))
                     .variableSymbol("123")
                     .build()
     );
+
+    private static AccountDbo withdrawAccount() {
+        return AccountDbo.builder()
+                .id(accountId)
+                .currencyCode("CZK")
+                .accountNumber("1234567890")
+                .build();
+    }
+    private static AccountDbo depositAccount() {
+        return AccountDbo.builder()
+                .id("test")
+                .currencyCode("CZK")
+                .accountNumber("123456789")
+                .build();
+    }
 }
