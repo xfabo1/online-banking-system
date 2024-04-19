@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
@@ -53,7 +54,18 @@ class TransactionControllerTest {
 	}
 
 	@Test
-	void viewTransactionHistory_returnsHistory() throws Exception {
+	void getTransactionById_TransactionNotFound_Returns404() throws Exception {
+		String transactionId = TestData.withdrawTransactions.getFirst().getId();
+		when(transactionManagementFacade.getTransactionById(transactionId))
+				.thenReturn(Optional.empty());
+
+		mockMvc.perform(get("/v1/transactions/transaction/{id}", transactionId)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void viewTransactionHistory_historyFound_returnsHistory() throws Exception {
 		var allTransaction = List.of(
 				TestData.withdrawTransactions.getFirst(),
 				TestData.withdrawTransactions.get(1),
@@ -77,7 +89,19 @@ class TransactionControllerTest {
 	}
 
 	@Test
-	void checkAccountBalance_returnsBalance() throws Exception {
+	void viewTransactionHistory_historyNotFound_returns404() throws Exception {
+		when(transactionManagementFacade.viewTransactionHistory("test", 0, 10))
+				.thenReturn(Page.empty());
+
+		mockMvc.perform(get("/v1/transactions/account/{accountNumber}", "test")
+						.queryParam("pageNumber", "0")
+						.queryParam("pageSize", "10")
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void checkAccountBalance_balanceCalculated_returnsBalance() throws Exception {
 		when(transactionManagementFacade.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
 
 		var response = mockMvc.perform(get("/v1/transactions/account/{accountNumber}/balance", TestData.accountId)
@@ -90,10 +114,37 @@ class TransactionControllerTest {
 	}
 
 	@Test
-	public void createTransaction_createsTransaction() throws Exception {
+	public void createTransaction_correctRequest_createsTransaction() throws Exception {
 		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
 				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
+				TestData.withdrawTransactions.getFirst().getDepositAmount(),
+				TestData.withdrawTransactions.getFirst().getNote(),
+				TestData.withdrawTransactions.getFirst().getVariableSymbol()
+		);
+		when(transactionManagementFacade.createTransaction(transactionCreateDto))
+				.thenReturn(TestData.withdrawTransactions.getFirst());
+
+		String result = mockMvc.perform(post("/v1/transactions/transaction/create")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(JsonConvertor.convertObjectToJson(transactionCreateDto)))
+				.andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+
+		TransactionDbo actualTransaction = JsonConvertor.convertJsonToObject(result, TransactionDbo.class);
+
+		assertThat(actualTransaction)
+				.returns(TestData.withdrawTransactions.getFirst().getNote(), TransactionDbo::getNote)
+				.returns(TestData.withdrawTransactions.getFirst().getVariableSymbol(), TransactionDbo::getVariableSymbol)
+				.returns(TestData.withdrawTransactions.getFirst().getWithdrawAmount(), TransactionDbo::getWithdrawAmount)
+				.returns(TestData.withdrawTransactions.getFirst().getDepositAmount(), TransactionDbo::getDepositAmount);
+	}
+
+	@Test
+	public void createTransaction_incorrectRequest_returns404() throws Exception {
+		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
+				null,
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
 				TestData.withdrawTransactions.getFirst().getDepositAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
@@ -103,7 +154,6 @@ class TransactionControllerTest {
 		mockMvc.perform(post("/v1/transactions/transaction/create")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(JsonConvertor.convertObjectToJson(transactionCreateDto)))
-				.andExpect(status().isCreated());
-
+				.andExpect(status().isBadRequest());
 	}
 }

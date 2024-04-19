@@ -59,10 +59,12 @@ class TransactionManagementFacadeTest {
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
+		AccountDbo emptyAccount = new AccountDbo();
+		when(accountService.findAccountByAccountNumber(any())).thenReturn(Optional.of(emptyAccount));
 
 		transactionManagementFacade.createTransaction(transactionCreateDto);
 
-		Mockito.verify(transactionService).createTransaction(transactionCreateDto);
+		Mockito.verify(transactionService).createTransaction(transactionCreateDto, emptyAccount, emptyAccount);
 	}
 
 	@Test

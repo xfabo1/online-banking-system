@@ -103,11 +103,12 @@ public class TransactionController {
 					@ApiResponse(responseCode = "400", description = "Invalid request body")
 			}
 	)
-	@PostMapping(value = "/transaction/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createTransaction(@Valid @RequestBody TransactionCreateDto transaction) {
+	@PostMapping(value = "/transaction/create",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<TransactionDbo> createTransaction(@Valid @RequestBody TransactionCreateDto transaction) {
 		log.info("Creating transaction: {}", transaction);
-		facade.createTransaction(transaction);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		return ResponseEntity.status(HttpStatus.CREATED).body(facade.createTransaction(transaction));
 	}
 }
 

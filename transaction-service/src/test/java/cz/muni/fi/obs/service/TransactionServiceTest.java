@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import cz.muni.fi.obs.TestData;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
@@ -119,7 +120,7 @@ class TransactionServiceTest {
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
 
-		transactionService.createTransaction(transactionCreateDto);
+		transactionService.createTransaction(transactionCreateDto, new AccountDbo(), new AccountDbo());
 
 		verify(repository).save(any(TransactionDbo.class));
 	}

@@ -33,8 +33,17 @@ public class TransactionManagementFacade {
 		return transactionService.getTransactionById(id);
 	}
 
-	public void createTransaction(TransactionCreateDto transaction) {
-		transactionService.createTransaction(transaction);
+	public TransactionDbo createTransaction(TransactionCreateDto transaction) {
+		Optional<AccountDbo> withdrawsFromAccount = accountService
+				.findAccountByAccountNumber(transaction.withdrawsFromAccountNumber());
+		Optional<AccountDbo> depositsToAccount = accountService
+				.findAccountByAccountNumber(transaction.depositsToAccountNumber());
+
+		if (withdrawsFromAccount.isEmpty() || depositsToAccount.isEmpty()) {
+			log.info("Account not found");
+			throw new ResourceNotFoundException("Account not found");
+		}
+		return transactionService.createTransaction(transaction, withdrawsFromAccount.get(), depositsToAccount.get());
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountNumber, int pageNumber, int pageSize) {

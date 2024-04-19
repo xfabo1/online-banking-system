@@ -52,7 +52,8 @@ public class TransactionService {
 		return repository.findById(id);
 	}
 
-	public void createTransaction(TransactionCreateDto transaction) {
+	public TransactionDbo createTransaction(TransactionCreateDto transaction, AccountDbo withdrawAccount,
+			AccountDbo depositAccount) {
 		CurrencyExchangeRequest request = CurrencyExchangeRequest.builder()
 				.from(transaction.withdrawsFromAccountNumber())
 				.to(transaction.depositsToAccountNumber())
@@ -64,15 +65,15 @@ public class TransactionService {
 
 		var transactionDbo = TransactionDbo.builder()
 				.id(UUID.randomUUID().toString())
-				.withdrawsFrom(AccountDbo.builder().build())
+				.withdrawsFrom(withdrawAccount)
 				.note(transaction.note())
-				.depositsTo(AccountDbo.builder().build())
+				.depositsTo(depositAccount)
 				.depositAmount(transaction.depositAmount())
 				.withdrawAmount(transaction.withdrawAmount())
 				.variableSymbol(transaction.variableSymbol())
 				.conversionRate(conversionRate.exchangeRate())
 				.build();
 
-		repository.save(transactionDbo);
+		return repository.save(transactionDbo);
 	}
 }

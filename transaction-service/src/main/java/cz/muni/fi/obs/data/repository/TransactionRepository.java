@@ -13,8 +13,8 @@ import cz.muni.fi.obs.data.dbo.TransactionDbo;
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionDbo, String> {
 
-	List<TransactionDbo> findTransactionsDboByWithdrawsFrom_Id(String withdrawsFrom);
-	List<TransactionDbo> findTransactionsDboByDepositsTo_Id(String depositsTo);
+	List<TransactionDbo> findTransactionsDboByWithdrawsFrom_Id(String accountId);
+	List<TransactionDbo> findTransactionsDboByDepositsTo_Id(String accountId);
 
 	@Query("SELECT t FROM TransactionDbo t WHERE t.withdrawsFrom.id = :accountId OR t.depositsTo.id = :accountId")
 	Page<TransactionDbo> findTransactionHistory(String accountId, Pageable pageable);
