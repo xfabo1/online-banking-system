@@ -1,12 +1,13 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.data.UserAccountRepository;
-import cz.muni.fi.obs.domain.Account;
+import cz.muni.fi.obs.api.AccountDto;
+import cz.muni.fi.obs.data.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserAccountService {
@@ -19,17 +20,11 @@ public class UserAccountService {
 
     }
 
-    public Account create(String userId, AccountCreateDto accountCreateDto) {
-        Account account = new Account(
-                userId,
-                accountCreateDto.accountNumber(),
-                accountCreateDto.currencyCode()
-        );
-
-        return userAccountRepository.create(account);
+    public AccountDto create(UUID userId, AccountCreateDto accountCreateDto) {
+        return userAccountRepository.create(accountCreateDto);
     }
 
-    public List<Account> getUserAccounts(String userId) {
+    public List<AccountDto> getUserAccounts(UUID userId) {
         return userAccountRepository.findByUserId(userId);
     }
 }

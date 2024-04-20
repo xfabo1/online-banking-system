@@ -33,7 +33,7 @@ public record UserCreateDto(
         @Past(message = "Birth date must be in the past") LocalDate birthDate,
 
         @Schema(description = "Nationality code of the user", example = "CZ")
-        @Nationality(message = "Nationality is not valid") String nationality,
+        @Nationality(message = "Nationality is not valid") cz.muni.fi.obs.data.enums.Nationality nationality,
 
         @Schema(description = "Birth number of the user, corresponding with the nationality", example = "010704/4267")
         @NotBlank(message = "Birth number is required") String birthNumber) {

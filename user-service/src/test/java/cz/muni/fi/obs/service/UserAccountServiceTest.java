@@ -1,8 +1,8 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.domain.Account;
-import cz.muni.fi.obs.data.UserAccountRepository;
+import cz.muni.fi.obs.api.AccountDto;
+import cz.muni.fi.obs.data.repository.UserAccountRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,34 +21,37 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UserAccountServiceTest {
 
-	@Mock
-	private UserAccountRepository userAccountRepository;
+    @Mock
+    private UserAccountRepository userAccountRepository;
 
-	@InjectMocks
-	private UserAccountService userAccountService;
+    @InjectMocks
+    private UserAccountService userAccountService;
 
-	@Test
-	void create_accountCreated_returnsAccount() {
-		AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
-		Account account = new Account("1", "1234567890", "Joe's Account");
-		when(userAccountRepository.create(any())).thenReturn(account);
+    @Test
+    void create_accountCreated_returnsAccount() {
+        AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
+        AccountDto account = new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account");
+        when(userAccountRepository.create(any())).thenReturn(account);
 
-		Account response = userAccountService.create("1", accountCreateDto);
+        AccountDto response = userAccountService.create(UUID.randomUUID(), accountCreateDto);
 
-		verify(userAccountRepository).create(any());
-		assertThat(response).isEqualTo(account);
-	}
+        verify(userAccountRepository).create(any());
+        assertThat(response).isEqualTo(account);
+    }
 
-	@Test
-	void getUserAccounts_accountsFound_returnsAccounts() {
-		Account account1 = new Account("1", "1234567890", "Joe's Account");
-		Account account2 = new Account("1", "0987654321", "Joe's Other Account");
-		List<Account> accounts = Arrays.asList(account1, account2);
-		when(userAccountRepository.findByUserId("1")).thenReturn(accounts);
+    @Test
+    void getUserAccounts_accountsFound_returnsAccounts() {
+        UUID userId = UUID.randomUUID();
 
-		List<Account> response = userAccountService.getUserAccounts("1");
+        List<AccountDto> accounts = Arrays.asList(
+                new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account"),
+                new AccountDto(UUID.randomUUID(), "0987654321", "Joe's Other Account")
+        );
+        when(userAccountRepository.findByUserId(userId)).thenReturn(accounts);
 
-		verify(userAccountRepository).findByUserId("1");
-		assertThat(response).isEqualTo(accounts);
-	}
+        List<AccountDto> response = userAccountService.getUserAccounts(userId);
+
+        verify(userAccountRepository).findByUserId(userId);
+        assertThat(response).isEqualTo(accounts);
+    }
 }

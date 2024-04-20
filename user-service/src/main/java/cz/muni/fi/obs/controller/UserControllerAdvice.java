@@ -4,17 +4,15 @@ import cz.muni.fi.obs.api.NotFoundResponse;
 import cz.muni.fi.obs.api.ValidationErrors;
 import cz.muni.fi.obs.api.ValidationFailedResponse;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +22,8 @@ public class UserControllerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<NotFoundResponse> handleNotFoundExceptions(ResourceNotFoundException ex) {
         NotFoundResponse response = NotFoundResponse.builder()
-                .message(ex.getMessage())
-                .build();
+                                                    .message(ex.getMessage())
+                                                    .build();
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -33,34 +31,95 @@ public class UserControllerAdvice {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ValidationFailedResponse> handleValidationExceptions(BindException ex) {
         ValidationFailedResponse response = ValidationFailedResponse.builder()
-                .message("Validation failed")
-                .validationErrors(getValidationErrors(ex))
-                .build();
+                                                                    .message("Validation failed")
+                                                                    .validationErrors(ValidationErrors.fromBindException(
+                                                                            ex))
+                                                                    .build();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ValidationFailedResponse> handleNonReadableExceptions(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ValidationFailedResponse> handleNonReadableExceptions() {
         ValidationFailedResponse response = ValidationFailedResponse.builder()
-                .message("Validation failed")
-                .validationErrors(ValidationErrors.builder().globalErrors(List.of(ex.getMessage())).build())
-                .build();
+                                                                    .message("Validation failed")
+                                                                    .validationErrors(
+                                                                            ValidationErrors.builder()
+                                                                                            .globalErrors(List.of(
+                                                                                                    "Http message not" +
+                                                                                                            " readable"))
+                                                                                            .build()
+                                                                    )
+                                                                    .build();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    private ValidationErrors getValidationErrors(BindException ex) {
-        Map<String, String> fieldErrors = new HashMap<>();
-        for (FieldError fieldError : ex.getFieldErrors()) {
-            fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ValidationFailedResponse> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex) {
+        String fieldName = ex.getParameter().getParameterName();
+        if (fieldName == null) {
+            fieldName = "Unknown";
         }
 
-        List<String> globalErrors = new ArrayList<>();
-        for (ObjectError error : ex.getGlobalErrors()) {
-            globalErrors.add(error.getDefaultMessage());
+        ValidationFailedResponse response = ValidationFailedResponse.builder()
+                                                                    .message("Validation failed")
+                                                                    .validationErrors(
+                                                                            ValidationErrors.builder()
+                                                                                            .fieldErrors(Map.of(
+                                                                                                    fieldName,
+                                                                                                    "Invalid format"
+                                                                                            ))
+                                                                                            .build()
+                                                                    )
+                                                                    .build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PSQLException.class)
+    public ResponseEntity<ValidationFailedResponse> handlePSQLException(PSQLException ex) {
+        String fieldName = extractFieldName(ex.getMessage());
+
+        if (fieldName != null) {
+            ValidationFailedResponse response = ValidationFailedResponse.builder()
+                                                                        .message("Validation failed")
+                                                                        .validationErrors(
+                                                                                ValidationErrors.builder()
+                                                                                                .fieldErrors(Map.of(
+                                                                                                        fieldName,
+                                                                                                        "Already used" +
+                                                                                                                " by " +
+                                                                                                                "another user - must be unique"
+                                                                                                ))
+                                                                                                .build()
+                                                                        )
+                                                                        .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else {
+            throw new InternalError("Unexpected error occurred.");
+        }
+    }
+
+    private String extractFieldName(String message) {
+        String fieldName = null;
+        if (message.contains("Key (")) {
+            int start = message.indexOf("Key (") + 5;
+            int end = message.indexOf(")");
+            fieldName = message.substring(start, end);
         }
 
-        return ValidationErrors.builder().fieldErrors(fieldErrors).globalErrors(globalErrors).build();
+        // change snake_case to camelCase
+        if (fieldName != null) {
+            String[] parts = fieldName.split("_");
+            StringBuilder camelCase = new StringBuilder(parts[0]);
+            for (int i = 1; i < parts.length; i++) {
+                camelCase.append(parts[i].substring(0, 1).toUpperCase()).append(parts[i].substring(1));
+            }
+            fieldName = camelCase.toString();
+        }
+
+        return fieldName;
     }
 }

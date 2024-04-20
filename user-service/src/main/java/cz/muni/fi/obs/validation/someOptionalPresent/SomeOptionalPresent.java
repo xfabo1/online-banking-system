@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.validation.nationality;
+package cz.muni.fi.obs.validation.someOptionalPresent;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -7,15 +7,15 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({FIELD})
+@Target({TYPE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = {NationalityValidator.class})
+@Constraint(validatedBy = SomeOptionalPresentValidator.class)
 @Documented
-public @interface Nationality {
-    String message() default "Nationality is not valid.";
+public @interface SomeOptionalPresent {
+    String message() default "At least one optional field must be present";
 
     Class<?>[] groups() default {};
 

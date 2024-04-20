@@ -2,8 +2,7 @@ package cz.muni.fi.obs.facade;
 
 
 import cz.muni.fi.obs.api.*;
-import cz.muni.fi.obs.domain.Account;
-import cz.muni.fi.obs.domain.User;
+import cz.muni.fi.obs.data.dbo.User;
 import cz.muni.fi.obs.service.UserAccountService;
 import cz.muni.fi.obs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class UserManagementFacade {
@@ -30,22 +30,22 @@ public class UserManagementFacade {
     }
 
 
-    public UserDto updateUser(String userId, UserUpdateDto userUpdateDto) {
+    public UserDto updateUser(UUID userId, UserUpdateDto userUpdateDto) {
         User user = userService.updateUser(userId, userUpdateDto);
         return UserDto.fromUser(user);
     }
 
-    public UserDto deactivateUser(String userId) {
+    public UserDto deactivateUser(UUID userId) {
         User user = userService.deactivateUser(userId);
         return UserDto.fromUser(user);
     }
 
-    public UserDto activateUser(String userId) {
+    public UserDto activateUser(UUID userId) {
         User user = userService.activateUser(userId);
         return UserDto.fromUser(user);
     }
 
-    public UserDto getUser(String userId) {
+    public UserDto getUser(UUID userId) {
         User user = userService.getUser(userId);
         return UserDto.fromUser(user);
     }
@@ -55,14 +55,11 @@ public class UserManagementFacade {
         return users.map(UserDto::fromUser);
     }
 
-    public AccountDto createAccount(String userId, AccountCreateDto accountCreateDto) {
-        Account account = userAccountService.create(userId, accountCreateDto);
-        return AccountDto.fromAccount(account);
+    public AccountDto createAccount(UUID userId, AccountCreateDto accountCreateDto) {
+        return userAccountService.create(userId, accountCreateDto);
     }
 
-    public List<AccountDto> getUserAccounts(String userId) {
-        List<Account> accounts = userAccountService.getUserAccounts(userId);
-
-        return accounts.stream().map(AccountDto::fromAccount).toList();
+    public List<AccountDto> getUserAccounts(UUID userId) {
+        return userAccountService.getUserAccounts(userId);
     }
 }

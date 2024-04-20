@@ -3,15 +3,11 @@ package cz.muni.fi.obs.validation.nationality;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class NationalityValidator implements ConstraintValidator<Nationality, String> {
-    @Override
-    public void initialize(Nationality constraintAnnotation) {
-    }
+public class NationalityValidator implements ConstraintValidator<Nationality, cz.muni.fi.obs.data.enums.Nationality> {
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(cz.muni.fi.obs.data.enums.Nationality value, ConstraintValidatorContext context) {
         try {
-            cz.muni.fi.obs.enums.Nationality.fromString(value);
             return true;
         } catch (Exception e) {
             return false;

@@ -1,17 +1,18 @@
 package cz.muni.fi.obs.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import cz.muni.fi.obs.domain.User;
-import cz.muni.fi.obs.enums.Nationality;
+import cz.muni.fi.obs.data.dbo.User;
+import cz.muni.fi.obs.data.enums.Nationality;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Builder
 public record UserDto(
         @Schema(description = "Unique ID of the user", example = "d333c127-470b-4680-8c7c-70988998b329")
-        String id,
+        UUID id,
 
         @Schema(description = "First name of the user", example = "John")
         String firstName,
@@ -42,6 +43,9 @@ public record UserDto(
         if (user == null) {
             return null;
         }
-        return UserDto.builder().id(user.getId()).firstName(user.getFirstName()).lastName(user.getLastName()).phoneNumber(user.getPhoneNumber()).email(user.getEmail()).birthDate(user.getBirthDate()).nationality(user.getNationality()).birthNumber(user.getBirthNumber()).active(user.getActive()).build();
+        return UserDto.builder().id(user.getId()).firstName(user.getFirstName()).lastName(user.getLastName())
+                      .phoneNumber(user.getPhoneNumber()).email(user.getEmail()).birthDate(user.getBirthDate())
+                      .nationality(user.getNationality()).birthNumber(user.getBirthNumber()).active(user.isActive())
+                      .build();
     }
 }
