@@ -9,8 +9,11 @@ spring:
     password: changemelater
     driver-class-name: org.postgresql.Driver
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
     show-sql: true
-  flyway:
-    locations: db.migration
+
+clients:
+  transaction-service:
+    url: 'http://localhost:8080/api/transaction-service'

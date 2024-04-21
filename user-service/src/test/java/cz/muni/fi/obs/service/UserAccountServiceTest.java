@@ -2,7 +2,9 @@ package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.AccountDto;
-import cz.muni.fi.obs.data.repository.UserAccountRepository;
+import cz.muni.fi.obs.http.TransactionServiceClient;
+import cz.muni.fi.obs.http.api.TSAccount;
+import cz.muni.fi.obs.http.api.TSAccountCreate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,9 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,20 +24,33 @@ import static org.mockito.Mockito.when;
 class UserAccountServiceTest {
 
     @Mock
-    private UserAccountRepository userAccountRepository;
+    private TransactionServiceClient transactionServiceClient;
 
     @InjectMocks
     private UserAccountService userAccountService;
 
     @Test
     void create_accountCreated_returnsAccount() {
+        UUID userId = UUID.randomUUID();
         AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
-        AccountDto account = new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account");
-        when(userAccountRepository.create(any())).thenReturn(account);
+        TSAccountCreate tsAccountCreate = new TSAccountCreate(userId.toString(),
+                                                              accountCreateDto.currencyCode(),
+                                                              accountCreateDto.accountNumber()
+        );
+        TSAccount tsAccount = new TSAccount(UUID.randomUUID().toString(),
+                                            userId.toString(),
+                                            accountCreateDto.accountNumber(),
+                                            accountCreateDto.currencyCode()
+        );
+        AccountDto account = new AccountDto(UUID.fromString(tsAccount.id()),
+                                            tsAccount.accountNumber(),
+                                            tsAccount.currencyCode()
+        );
+        when(transactionServiceClient.createAccount(tsAccountCreate)).thenReturn(tsAccount);
 
-        AccountDto response = userAccountService.create(UUID.randomUUID(), accountCreateDto);
+        AccountDto response = userAccountService.create(userId, accountCreateDto);
 
-        verify(userAccountRepository).create(any());
+        verify(transactionServiceClient).createAccount(tsAccountCreate);
         assertThat(response).isEqualTo(account);
     }
 
@@ -47,11 +62,18 @@ class UserAccountServiceTest {
                 new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account"),
                 new AccountDto(UUID.randomUUID(), "0987654321", "Joe's Other Account")
         );
-        when(userAccountRepository.findByUserId(userId)).thenReturn(accounts);
+        List<TSAccount> tsAccounts = accounts.stream()
+                                             .map(account -> new TSAccount(account.id().toString(),
+                                                                           userId.toString(),
+                                                                           account.currencyCode(),
+                                                                           account.accountNumber()
+                                             ))
+                                             .collect(Collectors.toList());
+        when(transactionServiceClient.getAccountsByCustomerId(userId.toString())).thenReturn(tsAccounts);
 
         List<AccountDto> response = userAccountService.getUserAccounts(userId);
 
-        verify(userAccountRepository).findByUserId(userId);
+        verify(transactionServiceClient).getAccountsByCustomerId(userId.toString());
         assertThat(response).isEqualTo(accounts);
     }
 }

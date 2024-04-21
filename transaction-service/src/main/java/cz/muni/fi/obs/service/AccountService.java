@@ -1,14 +1,14 @@
 package cz.muni.fi.obs.service;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AccountService {
@@ -31,5 +31,9 @@ public class AccountService {
 
 	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
 		return repository.findAccountDboByAccountNumber(accountNumber);
+	}
+
+	public List<AccountDbo> findAccountsByCustomerId(String customerId) {
+		return repository.findAccountDbosByCustomerId(customerId);
 	}
 }

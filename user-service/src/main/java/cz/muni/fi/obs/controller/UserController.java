@@ -158,7 +158,7 @@ public class UserController {
     @PostMapping("/{userId}/deactivate")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> deactivateUser(
-            @org.hibernate.validator.constraints.UUID @PathVariable("userId") UUID userId) {
+            @PathVariable("userId") UUID userId) {
         log.info("Deactivating user with id: " + userId);
         UserDto user = userManagementFacade.deactivateUser(userId);
         if (user == null) {
@@ -207,6 +207,10 @@ public class UserController {
     ) {
         log.info("Creating user account for user with id: " + userId);
         AccountDto account = userManagementFacade.createAccount(userId, accountCreateDto);
+        if (account == null) {
+            log.error("Could not create account for user with id: " + userId);
+            return ResponseEntity.internalServerError().build();
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
 
@@ -226,6 +230,10 @@ public class UserController {
     ) {
         log.info("Getting user accounts for user with id: " + userId);
         List<AccountDto> accounts = userManagementFacade.getUserAccounts(userId);
+        if (accounts == null) {
+            log.error("Could not get accounts for user with id: " + userId);
+            return ResponseEntity.internalServerError().build();
+        }
         return ResponseEntity.ok(accounts);
     }
 }

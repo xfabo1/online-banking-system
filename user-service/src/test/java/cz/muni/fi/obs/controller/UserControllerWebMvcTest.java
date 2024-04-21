@@ -1,9 +1,9 @@
 package cz.muni.fi.obs.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import cz.muni.fi.obs.UserManagement;
 import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.enums.Nationality;
+import cz.muni.fi.obs.exceptions.UserNotFoundException;
 import cz.muni.fi.obs.facade.UserManagementFacade;
 import cz.muni.fi.obs.util.JsonConvertor;
 import org.json.JSONObject;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
@@ -29,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@ContextConfiguration(classes = {UserManagement.class})
 @WebMvcTest(UserController.class)
 public class UserControllerWebMvcTest {
 
@@ -97,7 +95,7 @@ public class UserControllerWebMvcTest {
     @Test
     public void getUser_userNotFound_returns404() throws Exception {
         UUID nonexistentUserId = UUID.randomUUID();
-        when(userManagementFacade.getUser(nonexistentUserId)).thenReturn(null);
+        when(userManagementFacade.getUser(nonexistentUserId)).thenThrow(UserNotFoundException.class);
 
         mockMvc.perform(get("/v1/users/{userId}", nonexistentUserId).accept(MediaType.APPLICATION_JSON_VALUE))
                .andExpect(status().isNotFound());

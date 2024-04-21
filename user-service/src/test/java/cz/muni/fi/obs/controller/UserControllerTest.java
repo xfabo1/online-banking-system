@@ -82,11 +82,10 @@ class UserControllerTest {
     @Test
     public void getUser_userNotFound_returns404() {
         UUID nonexistentUserId = UUID.randomUUID();
-        when(userManagementFacade.getUser(nonexistentUserId)).thenReturn(null);
+        when(userManagementFacade.getUser(nonexistentUserId)).thenThrow(UserNotFoundException.class);
 
         assertThatThrownBy(() -> userController.getUser(nonexistentUserId))
-                .isInstanceOf(UserNotFoundException.class).hasMessage(
-                        "User with id: " + nonexistentUserId + " not found");
+                .isInstanceOf(UserNotFoundException.class);
         verify(userManagementFacade).getUser(nonexistentUserId);
     }
 

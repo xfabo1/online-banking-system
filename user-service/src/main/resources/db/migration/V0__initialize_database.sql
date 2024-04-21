@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS us_user;
 CREATE TABLE us_user
 (
     id           uuid primary key,

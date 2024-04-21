@@ -60,6 +60,7 @@ public class UserManagementFacade {
     }
 
     public List<AccountDto> getUserAccounts(UUID userId) {
+        userService.getUser(userId);
         return userAccountService.getUserAccounts(userId);
     }
 }

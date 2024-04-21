@@ -12,3 +12,4 @@ public record AccountCreateDto(
 		@NotBlank
 		String accountNumber) {
 }
+
