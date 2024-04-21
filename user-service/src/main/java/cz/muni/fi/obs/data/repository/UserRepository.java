@@ -1,7 +1,7 @@
 package cz.muni.fi.obs.data.repository;
 
 import cz.muni.fi.obs.data.dbo.User;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.exceptions.UserNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     default User findByIdOrThrow(UUID id) {
-        return findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        return findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Query("SELECT u FROM User u WHERE " +

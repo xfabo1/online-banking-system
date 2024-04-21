@@ -2,7 +2,6 @@ package cz.muni.fi.obs.controller;
 
 import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.enums.Nationality;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.facade.UserManagementFacade;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -107,10 +106,6 @@ public class UserController {
     ) {
         log.info("Getting user with id: " + userId);
         UserDto user = userManagementFacade.getUser(userId);
-        if (user == null) {
-            log.info("User with id: " + userId + " not found");
-            throw new ResourceNotFoundException("User with id: " + userId + " not found");
-        }
         return ResponseEntity.ok(user);
     }
 
@@ -149,10 +144,6 @@ public class UserController {
             @Valid @RequestBody UserUpdateDto userUpdateDto) {
         log.info("Updating user with id: " + userId);
         UserDto user = userManagementFacade.updateUser(userId, userUpdateDto);
-        if (user == null) {
-            log.info("User with id: " + userId + " not found");
-            throw new ResourceNotFoundException("User with id: " + userId + " not found");
-        }
         return ResponseEntity.ok(user);
     }
 
@@ -166,7 +157,8 @@ public class UserController {
     )
     @PostMapping("/{userId}/deactivate")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<UserDto> deactivateUser(@PathVariable("userId") UUID userId) {
+    public ResponseEntity<UserDto> deactivateUser(
+            @org.hibernate.validator.constraints.UUID @PathVariable("userId") UUID userId) {
         log.info("Deactivating user with id: " + userId);
         UserDto user = userManagementFacade.deactivateUser(userId);
         if (user == null) {

@@ -3,7 +3,7 @@ package cz.muni.fi.obs.controller;
 import cz.muni.fi.obs.api.NotFoundResponse;
 import cz.muni.fi.obs.api.ValidationErrors;
 import cz.muni.fi.obs.api.ValidationFailedResponse;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.exceptions.UserNotFoundException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class UserControllerAdvice {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<NotFoundResponse> handleNotFoundExceptions(ResourceNotFoundException ex) {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<NotFoundResponse> handleNotFoundExceptions(UserNotFoundException ex) {
         NotFoundResponse response = NotFoundResponse.builder()
                                                     .message(ex.getMessage())
                                                     .build();

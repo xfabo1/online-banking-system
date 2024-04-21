@@ -2,7 +2,7 @@ package cz.muni.fi.obs.controller;
 
 import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.enums.Nationality;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.exceptions.UserNotFoundException;
 import cz.muni.fi.obs.facade.UserManagementFacade;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,7 +85,7 @@ class UserControllerTest {
         when(userManagementFacade.getUser(nonexistentUserId)).thenReturn(null);
 
         assertThatThrownBy(() -> userController.getUser(nonexistentUserId))
-                .isInstanceOf(ResourceNotFoundException.class).hasMessage(
+                .isInstanceOf(UserNotFoundException.class).hasMessage(
                         "User with id: " + nonexistentUserId + " not found");
         verify(userManagementFacade).getUser(nonexistentUserId);
     }
