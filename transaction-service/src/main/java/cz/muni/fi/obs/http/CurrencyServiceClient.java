@@ -1,5 +1,7 @@
 package cz.muni.fi.obs.http;
 
+import java.util.Optional;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -17,15 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 public interface CurrencyServiceClient {
 
     @PostMapping("/v1/currencies/exchange")
-    CurrencyExchangeResult getCurrencyExchange(CurrencyExchangeRequest currencyExchangeRequest);
+    Optional<CurrencyExchangeResult> getCurrencyExchange(CurrencyExchangeRequest currencyExchangeRequest);
 
     @Slf4j
     class Fallback implements CurrencyServiceClient {
 
         @Override
-        public CurrencyExchangeResult getCurrencyExchange(CurrencyExchangeRequest currencyExchangeRequest) {
+        public Optional<CurrencyExchangeResult> getCurrencyExchange(CurrencyExchangeRequest currencyExchangeRequest) {
             log.warn("Could not get currency exchange rate, returning null");
-            return null;
+            return Optional.empty();
         }
     }
 }

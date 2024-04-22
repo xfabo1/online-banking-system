@@ -13,6 +13,19 @@ spring:
         config:
           default:
             logger-level: basic
+  datasource:
+    url: jdbc:postgresql://localhost:5434/transaction_db
+    username: transaction_service
+    password: changemelater
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    locations: db.migration
+    baseline-on-migrate: true
 
 resilience4j:
   timelimiter:

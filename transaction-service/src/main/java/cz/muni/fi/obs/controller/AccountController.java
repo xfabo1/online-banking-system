@@ -1,14 +1,10 @@
 package cz.muni.fi.obs.controller;
 
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.facade.TransactionManagementFacade;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import static cz.muni.fi.obs.controller.AccountController.ACCOUNT_PATH;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static cz.muni.fi.obs.controller.AccountController.ACCOUNT_PATH;
+import cz.muni.fi.obs.api.AccountCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.facade.TransactionManagementFacade;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Validated
@@ -43,27 +46,30 @@ public class AccountController {
 					@ApiResponse(responseCode = "400", description = "Invalid request body")
 			}
 	)
-	@PostMapping("/create")
-	public ResponseEntity<Void> createAccount(@Valid @RequestBody AccountCreateDto account) {
-		facade.createAccount(account);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<AccountDbo> createAccount(@Valid @RequestBody AccountCreateDto account) {
+		log.info("Creating account: {}", account);
+		AccountDbo accountDbo = facade.createAccount(account);
+		return ResponseEntity.status(HttpStatus.CREATED).body(accountDbo);
 	}
 
 	@Operation(
-			summary = "Find account by ID",
-			description = "Finds an account by its ID",
+			summary = "Find account by account number",
+			description = "Finds an account by its account number",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Account found"),
 					@ApiResponse(responseCode = "404", description = "Account not found")
 			}
 
 	)
-	@GetMapping("/account/{id}")
-	public ResponseEntity<AccountDbo> findAccountById(@PathVariable("id") String id) {
-		AccountDbo account = facade.findAccountById(id);
-		if (account == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok(account);
+	@GetMapping(value = "/account/{accountNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<AccountDbo> findAccountById(@PathVariable("accountNumber") String accountNumber) {
+		return facade.findAccountByAccountNumber(accountNumber)
+				.map(ResponseEntity::ok)
+				.orElseThrow(() -> {
+							log.info("Account not found: {}", accountNumber);
+							return new ResourceNotFoundException(accountNumber);
+						}
+				);
 	}
 }

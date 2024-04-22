@@ -1,85 +1,159 @@
 package cz.muni.fi.obs.controller;
 
-import cz.muni.fi.obs.TestData;
-import cz.muni.fi.obs.api.TransactionCreateDto;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.facade.TransactionManagementFacade;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-@ExtendWith(MockitoExtension.class)
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import cz.muni.fi.obs.TestData;
+import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.controller.pagination.PagedResponse;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.facade.TransactionManagementFacade;
+import util.JsonConvertor;
+
+@WebMvcTest(TransactionController.class)
 class TransactionControllerTest {
 
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Mock
-    TransactionManagementFacade transactionManagementFacade;
+	@MockBean
+	TransactionManagementFacade transactionManagementFacade;
 
-    @InjectMocks
-    TransactionController transactionController;
+	@Test
+	void getTransactionById_TransactionFound_ReturnsTransaction() throws Exception {
+		String transactionId = TestData.withdrawTransactions.getFirst().getId();
+		when(transactionManagementFacade.getTransactionById(transactionId))
+				.thenReturn(Optional.of(TestData.withdrawTransactions.getFirst()));
 
+		var response = mockMvc.perform(get("/v1/transactions/transaction/{id}", transactionId)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
 
-    @Test
-    void getTransactionById() {
-        String transactionId = TestData.withdrawTransactions.getFirst().id();
-        when(transactionManagementFacade.getTransactionById(transactionId)).thenReturn(TestData.withdrawTransactions.getFirst());
+		TransactionDbo actualTransaction = JsonConvertor.convertJsonToObject(response, TransactionDbo.class);
+		assertThat(actualTransaction).isEqualTo(TestData.withdrawTransactions.getFirst());
+	}
 
-        ResponseEntity<TransactionDbo> responseEntity = transactionController.getTransactionById(transactionId);
-        assertEquals(TestData.withdrawTransactions.getFirst(), responseEntity.getBody());
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
+	@Test
+	void getTransactionById_TransactionNotFound_Returns404() throws Exception {
+		String transactionId = TestData.withdrawTransactions.getFirst().getId();
+		when(transactionManagementFacade.getTransactionById(transactionId))
+				.thenReturn(Optional.empty());
 
-    @Test
-    void viewTransactionHistory_returnsHistory() {
-        when(transactionManagementFacade.viewTransactionHistory(TestData.accountId, 0, 10)).thenReturn(new PageImpl<>(TestData.withdrawTransactions));
+		mockMvc.perform(get("/v1/transactions/transaction/{id}", transactionId)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
 
-        ResponseEntity<Page<TransactionDbo>> responseEntity = transactionController.viewTransactionHistory(TestData.accountId, 0, 10);
+	@Test
+	void viewTransactionHistory_historyFound_returnsHistory() throws Exception {
+		var allTransaction = List.of(
+				TestData.withdrawTransactions.getFirst(),
+				TestData.withdrawTransactions.get(1),
+				TestData.depositTransactions.getFirst(),
+				TestData.depositTransactions.get(1)
+		);
+		when(transactionManagementFacade.viewTransactionHistory("test", 0, 10))
+				.thenReturn(new PageImpl<>(allTransaction, PageRequest.of(0, 10),
+						allTransaction.size()));
 
-        assertEquals(new PageImpl<>(TestData.withdrawTransactions), responseEntity.getBody());
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
+		var response = mockMvc.perform(get("/v1/transactions/account/{accountNumber}", "test")
+						.queryParam("pageNumber", "0")
+						.queryParam("pageSize", "10")
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		PagedResponse<TransactionDbo> actualTransactions = JsonConvertor.convertJsonToObject(response,
+				new TypeReference<>() {});
+		assertThat(actualTransactions.records()).hasSize(4);
 
-    @Test
-    void checkAccountBalance_returnsBalance() {
-        when(transactionManagementFacade.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
+	}
 
-        ResponseEntity<BigDecimal> responseEntity = transactionController.checkAccountBalance(TestData.accountId);
+	@Test
+	void viewTransactionHistory_historyNotFound_returns404() throws Exception {
+		when(transactionManagementFacade.viewTransactionHistory("test", 0, 10))
+				.thenReturn(Page.empty());
 
-        assertEquals(BigDecimal.valueOf(42), responseEntity.getBody());
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
+		mockMvc.perform(get("/v1/transactions/account/{accountNumber}", "test")
+						.queryParam("pageNumber", "0")
+						.queryParam("pageSize", "10")
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
 
-    @Test
-    public void createTransaction_createsTransaction() {
-        TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
-                TestData.withdrawTransactions.getFirst().withdrawsFrom(),
-                TestData.withdrawTransactions.getFirst().depositsTo(),
-                TestData.withdrawTransactions.getFirst().withdrawAmount(),
-                TestData.withdrawTransactions.getFirst().depositAmount(),
-                TestData.withdrawTransactions.getFirst().note(),
-                TestData.withdrawTransactions.getFirst().variableSymbol()
-        );
+	@Test
+	void checkAccountBalance_balanceCalculated_returnsBalance() throws Exception {
+		when(transactionManagementFacade.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
 
-        Mockito.doNothing().when(transactionManagementFacade).createTransaction(any(TransactionCreateDto.class));
+		var response = mockMvc.perform(get("/v1/transactions/account/{accountNumber}/balance", TestData.accountId)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
 
+		BigDecimal actualBalance = JsonConvertor.convertJsonToObject(response, BigDecimal.class);
+		assertThat(actualBalance).isEqualTo(BigDecimal.valueOf(42));
+	}
 
-        ResponseEntity<Void> responseEntity = transactionController.createTransaction(transactionCreateDto);
+	@Test
+	public void createTransaction_correctRequest_createsTransaction() throws Exception {
+		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
+				TestData.withdrawTransactions.getFirst().getDepositAmount(),
+				TestData.withdrawTransactions.getFirst().getNote(),
+				TestData.withdrawTransactions.getFirst().getVariableSymbol()
+		);
+		when(transactionManagementFacade.createTransaction(transactionCreateDto))
+				.thenReturn(TestData.withdrawTransactions.getFirst());
 
-        Mockito.verify(transactionManagementFacade).createTransaction(transactionCreateDto);
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+		String result = mockMvc.perform(post("/v1/transactions/transaction/create")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(JsonConvertor.convertObjectToJson(transactionCreateDto)))
+				.andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
 
-    }
+		TransactionDbo actualTransaction = JsonConvertor.convertJsonToObject(result, TransactionDbo.class);
+
+		assertThat(actualTransaction)
+				.returns(TestData.withdrawTransactions.getFirst().getNote(), TransactionDbo::getNote)
+				.returns(TestData.withdrawTransactions.getFirst().getVariableSymbol(), TransactionDbo::getVariableSymbol)
+				.returns(TestData.withdrawTransactions.getFirst().getWithdrawAmount(), TransactionDbo::getWithdrawAmount)
+				.returns(TestData.withdrawTransactions.getFirst().getDepositAmount(), TransactionDbo::getDepositAmount);
+	}
+
+	@Test
+	public void createTransaction_incorrectRequest_returns404() throws Exception {
+		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
+				null,
+				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
+				TestData.withdrawTransactions.getFirst().getDepositAmount(),
+				TestData.withdrawTransactions.getFirst().getNote(),
+				TestData.withdrawTransactions.getFirst().getVariableSymbol()
+		);
+
+		mockMvc.perform(post("/v1/transactions/transaction/create")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(JsonConvertor.convertObjectToJson(transactionCreateDto)))
+				.andExpect(status().isBadRequest());
+	}
 }

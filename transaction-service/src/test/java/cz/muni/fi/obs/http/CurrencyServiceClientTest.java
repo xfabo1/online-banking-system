@@ -13,18 +13,21 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
 
 import cz.muni.fi.obs.api.CurrencyExchangeRequest;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
 import io.github.resilience4j.springboot3.timelimiter.autoconfigure.TimeLimiterAutoConfiguration;
 import util.JsonConvertor;
@@ -41,6 +44,7 @@ import util.JsonConvertor;
 })
 @AutoConfigureWebMvc
 @AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
+@ActiveProfiles("test")
 class CurrencyServiceClientTest {
 
 	private static final String CURRENCY_EXCHANGE_PATH = "/v1/currencies/exchange";
@@ -69,7 +73,9 @@ class CurrencyServiceClientTest {
 
 		var exchangeResult = currencyServiceClient.getCurrencyExchange(request);
 
-		assertThat(exchangeResult)
+		assertThat(exchangeResult).isPresent();
+
+		assertThat(exchangeResult.get())
 				.returns(BigDecimal.valueOf(4), CurrencyExchangeResult::destAmount)
 				.returns(BigDecimal.valueOf(100), CurrencyExchangeResult::sourceAmount)
 				.returns(4.0, CurrencyExchangeResult::exchangeRate)
@@ -88,6 +94,6 @@ class CurrencyServiceClientTest {
 
 		var exchangeResult = currencyServiceClient.getCurrencyExchange(request);
 
-		assertThat(exchangeResult).isNull();
+		assertThat(exchangeResult).isEmpty();
 	}
 }

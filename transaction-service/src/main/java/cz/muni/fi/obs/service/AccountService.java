@@ -1,5 +1,6 @@
 package cz.muni.fi.obs.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,17 @@ public class AccountService {
 		this.repository = repository;
 	}
 
-	public void createAccount(AccountCreateDto accountCreateDto) {
+	public AccountDbo createAccount(AccountCreateDto accountCreateDto) {
 		var accountDbo = AccountDbo.builder()
 				.id(UUID.randomUUID().toString())
 				.accountNumber(accountCreateDto.accountNumber())
 				.currencyCode(accountCreateDto.currencyCode())
 				.customerId(accountCreateDto.customerId())
 				.build();
-		repository.createAccount(accountDbo);
+		return repository.save(accountDbo);
 	}
 
-	public AccountDbo findAccountById(String id) {
-		return repository.findAccountById(id);
+	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
+		return repository.findAccountDboByAccountNumber(accountNumber);
 	}
 }
