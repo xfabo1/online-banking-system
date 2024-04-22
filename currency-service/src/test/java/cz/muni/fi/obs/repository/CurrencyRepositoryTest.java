@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
-@Transactional
 class CurrencyRepositoryTest extends PostgresqlTest {
 
     @Autowired
@@ -35,9 +33,12 @@ class CurrencyRepositoryTest extends PostgresqlTest {
 
     @BeforeEach
     public void setUp() {
-        exchangeRateRepository.saveAll(usdExchangeRates);
-        exchangeRateRepository.saveAll(yuanExchangeRates);
-        exchangeRateRepository.saveAll(euroExchangeRates);
+        exchangeRateRepository.saveAll(fromUsdExchangeRates);
+        exchangeRateRepository.saveAll(fromYuanExchangeRates);
+        exchangeRateRepository.saveAll(fromEurExchangeRates);
+        exchangeRateRepository.saveAll(toEurExchangeRates);
+        exchangeRateRepository.saveAll(toYuanExchangeRates);
+        exchangeRateRepository.saveAll(toUsdExchangeRates);
         currencyRepository.saveAll(initialData);
     }
 

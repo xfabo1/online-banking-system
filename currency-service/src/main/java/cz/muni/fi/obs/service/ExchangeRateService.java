@@ -9,8 +9,10 @@ import cz.muni.fi.obs.exception.MissingObject;
 import cz.muni.fi.obs.exception.NoExchangeRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -38,11 +40,12 @@ public class ExchangeRateService {
      * @param amount to exchange
      * @return result of exchange
      */
+    @Transactional(readOnly = true)
     public CurrencyExchangeResult exchange(String codeFrom, String codeTo, BigDecimal amount) {
         final Currency from = findByCode(codeFrom);
         final Currency to = findByCode(codeTo);
-        final Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findCurrentExchangeRate(from.getId(), to.getId());
-        final Optional<ExchangeRate> inverseExchangeRate = exchangeRateRepository.findCurrentExchangeRate(to.getId(), from.getId());
+        final Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findCurrentExchangeRate(from.getId(), to.getId(), Instant.now());
+        final Optional<ExchangeRate> inverseExchangeRate = exchangeRateRepository.findCurrentExchangeRate(to.getId(), from.getId(), Instant.now());
 
         CurrencyExchangeResult currencyExchangeResult = null;
 

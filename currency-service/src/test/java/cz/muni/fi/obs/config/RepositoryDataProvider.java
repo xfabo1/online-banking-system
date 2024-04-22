@@ -15,11 +15,18 @@ public class RepositoryDataProvider {
 
     private static final Currency yuan = new Currency("yuan", "Chinese Yuan");
 
-    public static final Set<ExchangeRate> usdExchangeRates = new HashSet<>();
+    public static final Set<ExchangeRate> fromUsdExchangeRates = new HashSet<>();
 
-    public static final Set<ExchangeRate> euroExchangeRates = new HashSet<>();
+    public static final Set<ExchangeRate> fromEurExchangeRates = new HashSet<>();
 
-    public static final Set<ExchangeRate> yuanExchangeRates = new HashSet<>();
+    public static final Set<ExchangeRate> fromYuanExchangeRates = new HashSet<>();
+
+    public static final Set<ExchangeRate> toUsdExchangeRates = new HashSet<>();
+
+    public static final Set<ExchangeRate> toEurExchangeRates = new HashSet<>();
+
+    public static final Set<ExchangeRate> toYuanExchangeRates = new HashSet<>();
+
 
     static {
         Instant now = Instant.now();
@@ -42,7 +49,7 @@ public class RepositoryDataProvider {
                 .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        usdExchangeRates.addAll(Set.of(expiredExchangeRateUSDToEuro, currentExchangeRateUSDToEuro, expiredExchangeRateUSDToYuan));
+        fromUsdExchangeRates.addAll(Set.of(expiredExchangeRateUSDToEuro, currentExchangeRateUSDToEuro, expiredExchangeRateUSDToYuan));
 
         ExchangeRate expiredExchangeRateEuroToUSD = ExchangeRate.builder()
                 .conversionRate(0.909091) // EUR to USD
@@ -68,7 +75,7 @@ public class RepositoryDataProvider {
                 .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        euroExchangeRates.addAll(Set.of(expiredExchangeRateEuroToUSD, expiredExchangeRateEuroToUSD2, currentExchangeRateEuroToUSD, expiredExchangeRateEuroToYuan));
+        fromEurExchangeRates.addAll(Set.of(expiredExchangeRateEuroToUSD, expiredExchangeRateEuroToUSD2, currentExchangeRateEuroToUSD, expiredExchangeRateEuroToYuan));
 
         ExchangeRate expiredExchangeRateYuanToUSD = ExchangeRate.builder()
                 .conversionRate(0.1375) // Chinese Yuan to USD
@@ -88,21 +95,29 @@ public class RepositoryDataProvider {
                 .validUntil(now.minusSeconds(120)) // Expired
                 .build();
 
-        yuanExchangeRates.addAll(Set.of(expiredExchangeRateYuanToUSD, expiredExchangeRateYuanToUSD2, expiredExchangeRateYuanToEuro));
+        toUsdExchangeRates.addAll(Set.of(expiredExchangeRateEuroToUSD, expiredExchangeRateEuroToUSD2, currentExchangeRateEuroToUSD, expiredExchangeRateYuanToUSD,
+                expiredExchangeRateYuanToUSD2));
+        toEurExchangeRates.addAll(Set.of(expiredExchangeRateUSDToEuro, currentExchangeRateUSDToEuro, expiredExchangeRateYuanToEuro));
+        toYuanExchangeRates.addAll(Set.of(expiredExchangeRateEuroToYuan, expiredExchangeRateUSDToYuan));
+
+        fromYuanExchangeRates.addAll(Set.of(expiredExchangeRateYuanToUSD, expiredExchangeRateYuanToUSD2, expiredExchangeRateYuanToEuro));
     }
 
     public static Currency usd() {
-        usd.getExchangeRatesFrom().addAll(usdExchangeRates);
+        usd.getExchangeRatesTo().addAll(toUsdExchangeRates);
+        usd.getExchangeRatesFrom().addAll(fromUsdExchangeRates);
         return usd;
     }
 
     public static Currency euro() {
-        euro.getExchangeRatesFrom().addAll(euroExchangeRates);
+        euro.getExchangeRatesTo().addAll(toEurExchangeRates);
+        euro.getExchangeRatesFrom().addAll(fromEurExchangeRates);
         return euro;
     }
 
     public static Currency yuan() {
-        yuan.getExchangeRatesFrom().addAll(yuanExchangeRates);
+        yuan.getExchangeRatesTo().addAll(toYuanExchangeRates);
+        yuan.getExchangeRatesFrom().addAll(fromYuanExchangeRates);
         return yuan;
     }
 }

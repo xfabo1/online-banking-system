@@ -26,11 +26,11 @@ public class Currency extends Dbo {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "from_id")
     private Set<ExchangeRate> exchangeRatesFrom = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "to_id")
     private Set<ExchangeRate> exchangeRatesTo = new HashSet<>();
 }

@@ -26,8 +26,7 @@ class CurrencyServiceTest {
     @InjectMocks
     private CurrencyService currencyService;
 
-    private List<Currency> mockData = List.of(usd(), euro(), yuan());
-    ;
+    private final List<Currency> mockData = List.of(usd(), euro(), yuan());
 
     @Test
     public void listPage_whenThreeCurrenciesPresent_returnsThreeCurrencies() {

@@ -19,6 +19,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {RepositoryDataProvider.class})
@@ -50,7 +52,7 @@ class ExchangeRateServiceTest {
         );
         when(currencyRepository.findByCode("eur")).thenReturn(Optional.ofNullable((euro)));
         when(currencyRepository.findByCode("usd")).thenReturn(Optional.ofNullable(usd));
-        when(exchangeRateRepository.findCurrentExchangeRate(usd.getId(), euro.getId())).thenReturn(Optional.of(exchangeRate));
+        when(exchangeRateRepository.findCurrentExchangeRate(eq(usd.getId()), eq(euro.getId()), any(Instant.class))).thenReturn(Optional.of(exchangeRate));
 
         CurrencyExchangeResult result = exchangeRateService.exchange("usd",
                 "eur",
@@ -67,8 +69,8 @@ class ExchangeRateServiceTest {
     void givenTwoCurrencies_currenciesCantBeExchanged_throwException() {
         when(currencyRepository.findByCode("yuan")).thenReturn(Optional.ofNullable(yuan));
         when(currencyRepository.findByCode("usd")).thenReturn(Optional.ofNullable(usd));
-        when(exchangeRateRepository.findCurrentExchangeRate(yuan.getId(), usd.getId())).thenReturn(Optional.empty());
-        when(exchangeRateRepository.findCurrentExchangeRate(usd.getId(), yuan.getId())).thenReturn(Optional.empty());
+        when(exchangeRateRepository.findCurrentExchangeRate(yuan.getId(), usd.getId(), Instant.now())).thenReturn(Optional.empty());
+        when(exchangeRateRepository.findCurrentExchangeRate(usd.getId(), yuan.getId(), Instant.now())).thenReturn(Optional.empty());
 
 
         assertThrows( NoExchangeRate.class, () -> exchangeRateService.exchange("usd",
