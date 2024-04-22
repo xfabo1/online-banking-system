@@ -10,7 +10,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,6 +34,7 @@ import cz.muni.fi.obs.http.CurrencyServiceClient;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 
+@TestMethodOrder(OrderAnnotation.class)
 class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 
 	private static final String SERVICE_API_PATH = "/api/transaction-service";
@@ -40,6 +45,7 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 	@MockBean
 	private CurrencyServiceClient currencyServiceClient;
 
+	@Order(1)
 	@ParameterizedTest
 	@MethodSource("provideAccountNumbersAndBalances")
 	public void calculateBalanceForAccountNumber_balanceCalculated_returnsBalance(String accountNumber, BigDecimal expectedBalance) {
@@ -56,6 +62,7 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 		assertThat(balance).isEqualTo(expectedBalance);
 	}
 
+	@Order(2)
 	@Test
 	public void calculateBalanceForAccountNumber_balanceNotFound_returnsZero() {
 		UriComponents components = UriComponentsBuilder.fromPath(buildBalancePath("account-6")).build();
@@ -71,6 +78,7 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 		assertThat(balance).isZero();
 	}
 
+	@Order(3)
 	@ParameterizedTest
 	@MethodSource("provideAccountNumbersAndTransactionCounts")
 	public void getTransactionHistory_historyFound_returnsHistory(String accountNumber, int count) {
@@ -90,6 +98,7 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 		assertThat(transactions.records()).hasSize(count);
 	}
 
+	@Order(4)
 	@Test
 	public void getTransactionHistory_historyNotFound_returns404() {
 		UriComponents components = UriComponentsBuilder.fromPath(buildHistoryPath("not-existing"))
@@ -104,6 +113,7 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 				.statusCode(HttpStatus.SC_NOT_FOUND);
 	}
 
+	@Order(100)
 	@Test
 	public void createTransaction_correctRequest_createsTransaction() {
 		prepareTheCurrencyClient();
@@ -112,9 +122,9 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 				.build();
 		TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
 				.depositsToAccountNumber("account-1")
-				.withdrawsFromAccountNumber("account-2")
-				.depositAmount(BigDecimal.valueOf(100000, 2))
-				.withdrawAmount(BigDecimal.valueOf(100000, 2))
+				.withdrawsFromAccountNumber("account-5")
+				.depositAmount(BigDecimal.valueOf(10000, 2))
+				.withdrawAmount(BigDecimal.valueOf(10000, 2))
 				.note("note")
 				.variableSymbol("123")
 				.build();
@@ -136,9 +146,10 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 				.returns(transactionCreateDto.depositAmount(), TransactionDbo::getDepositAmount)
 				.returns(transactionCreateDto.withdrawAmount(), TransactionDbo::getWithdrawAmount);
 
-		transactionRepository.deleteById(result.getId());
+		transactionRepository.deleteById(transaction.get().getId());
 	}
 
+	@Order(6)
 	@Test
 	public void createTransaction_incorrectRequest_returns400() {
 		prepareTheCurrencyClient();
@@ -160,6 +171,30 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 				.post()
 				.then()
 				.statusCode(HttpStatus.SC_BAD_REQUEST);
+	}
+
+	@Order(7)
+	@Test
+	public void createTransaction_insufficientBalance_returns409() {
+		prepareTheCurrencyClient();
+		UriComponents components = UriComponentsBuilder
+				.fromPath(TRANSACTION_CONTROLLER_PATH + "/transaction/create")
+				.build();
+		TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
+				.depositsToAccountNumber("account-1")
+				.withdrawsFromAccountNumber("account-5")
+				.depositAmount(BigDecimal.valueOf(100000, 2))
+				.withdrawAmount(BigDecimal.valueOf(100000, 2))
+				.note("note")
+				.variableSymbol("123")
+				.build();
+
+		requestSpecification(components)
+				.contentType(ContentType.JSON)
+				.body(transactionCreateDto)
+				.post()
+				.then()
+				.statusCode(HttpStatus.SC_CONFLICT);
 	}
 
 	private String buildBalancePath(String accountNumber) {

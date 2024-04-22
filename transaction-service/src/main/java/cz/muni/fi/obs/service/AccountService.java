@@ -19,14 +19,14 @@ public class AccountService {
 		this.repository = repository;
 	}
 
-	public void createAccount(AccountCreateDto accountCreateDto) {
+	public AccountDbo createAccount(AccountCreateDto accountCreateDto) {
 		var accountDbo = AccountDbo.builder()
 				.id(UUID.randomUUID().toString())
 				.accountNumber(accountCreateDto.accountNumber())
 				.currencyCode(accountCreateDto.currencyCode())
 				.customerId(accountCreateDto.customerId())
 				.build();
-		repository.save(accountDbo);
+		return repository.save(accountDbo);
 	}
 
 	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {

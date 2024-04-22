@@ -34,42 +34,35 @@ public class TransactionManagementFacade {
 	}
 
 	public TransactionDbo createTransaction(TransactionCreateDto transaction) {
-		Optional<AccountDbo> withdrawsFromAccount = accountService
-				.findAccountByAccountNumber(transaction.withdrawsFromAccountNumber());
-		Optional<AccountDbo> depositsToAccount = accountService
-				.findAccountByAccountNumber(transaction.depositsToAccountNumber());
-
-		if (withdrawsFromAccount.isEmpty() || depositsToAccount.isEmpty()) {
-			log.info("Account not found");
-			throw new ResourceNotFoundException("Account not found");
-		}
-		return transactionService.createTransaction(transaction, withdrawsFromAccount.get(), depositsToAccount.get());
+		AccountDbo withdrawsFromAccount = getAccountByAccountNumber(transaction.withdrawsFromAccountNumber());
+		AccountDbo depositsToAccount = getAccountByAccountNumber(transaction.depositsToAccountNumber());
+		return transactionService.createTransaction(transaction, withdrawsFromAccount, depositsToAccount);
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountNumber, int pageNumber, int pageSize) {
-		AccountDbo account = accountService.findAccountByAccountNumber(accountNumber)
-				.orElseThrow(() -> {
-					log.info("Account not found: {}", accountNumber);
-					return new ResourceNotFoundException("Account not found");
-				});
+		AccountDbo account = getAccountByAccountNumber(accountNumber);
 		return transactionService.viewTransactionHistory(account.getId(), pageNumber, pageSize);
 	}
 
 	public BigDecimal checkAccountBalance(String accountNumber) {
-		AccountDbo account = accountService.findAccountByAccountNumber(accountNumber)
-				.orElseThrow(() -> {
-					log.info("Account not found: {}", accountNumber);
-					return new ResourceNotFoundException("Account not found");
-				});
+		AccountDbo account = getAccountByAccountNumber(accountNumber);
 		return transactionService.checkAccountBalance(account.getId());
 	}
 
-	public void createAccount(AccountCreateDto accountCreateDto) {
-		accountService.createAccount(accountCreateDto);
+	public AccountDbo createAccount(AccountCreateDto accountCreateDto) {
+		return accountService.createAccount(accountCreateDto);
 	}
 
 	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
 		return accountService.findAccountByAccountNumber(accountNumber);
+	}
+
+	private AccountDbo getAccountByAccountNumber(String accountNumber) {
+		return accountService.findAccountByAccountNumber(accountNumber)
+				.orElseThrow(() -> {
+					log.info("Account not found: {}", accountNumber);
+					return new ResourceNotFoundException("Account not found");
+				});
 	}
 }
 

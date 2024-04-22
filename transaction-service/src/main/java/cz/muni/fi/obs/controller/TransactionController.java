@@ -100,7 +100,8 @@ public class TransactionController {
 			description = "Creates a new transaction from request body",
 			responses = {
 					@ApiResponse(responseCode = "201", description = "Transaction created successfully"),
-					@ApiResponse(responseCode = "400", description = "Invalid request body")
+					@ApiResponse(responseCode = "400", description = "Invalid request body"),
+					@ApiResponse(responseCode = "409", description = "Transaction creation failed due to insufficient funds")
 			}
 	)
 	@PostMapping(value = "/transaction/create",
@@ -108,6 +109,11 @@ public class TransactionController {
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TransactionDbo> createTransaction(@Valid @RequestBody TransactionCreateDto transaction) {
 		log.info("Creating transaction: {}", transaction);
+		TransactionDbo createdTransaction = facade.createTransaction(transaction);
+		if (createdTransaction == null) {
+			log.info("Transaction creation failed due to insufficient funds: {}", transaction);
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(facade.createTransaction(transaction));
 	}
 }

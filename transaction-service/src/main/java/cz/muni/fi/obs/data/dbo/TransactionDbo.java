@@ -42,6 +42,4 @@ public class TransactionDbo {
 	private String note;
 	@Column(name = "variable_symbol")
 	private String variableSymbol;
-	@Column(name = "state")
-	private TransactionState transactionState;
 }

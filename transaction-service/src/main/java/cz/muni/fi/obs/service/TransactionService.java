@@ -8,15 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cz.muni.fi.obs.api.CurrencyExchangeRequest;
+import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class TransactionService {
 
@@ -29,6 +33,7 @@ public class TransactionService {
 		this.client = client;
 	}
 
+	@Transactional
 	public BigDecimal checkAccountBalance(String accountId) {
 		var withdraws = repository.findTransactionsDboByWithdrawsFrom_Id(accountId);
 		var deposits = repository.findTransactionsDboByDepositsTo_Id(accountId);
@@ -52,6 +57,7 @@ public class TransactionService {
 		return repository.findById(id);
 	}
 
+	@Transactional
 	public TransactionDbo createTransaction(TransactionCreateDto transaction, AccountDbo withdrawAccount,
 			AccountDbo depositAccount) {
 		CurrencyExchangeRequest request = CurrencyExchangeRequest.builder()
@@ -60,8 +66,7 @@ public class TransactionService {
 				.amount(transaction.depositAmount())
 				.build();
 
-		var conversionRate = client.getCurrencyExchange(request)
-				.orElseThrow(() -> new ResourceNotFoundException("Currency exchange rate not found"));
+		CurrencyExchangeResult conversionRate = callCurrencyClient(request);
 
 		var transactionDbo = TransactionDbo.builder()
 				.id(UUID.randomUUID().toString())
@@ -74,6 +79,15 @@ public class TransactionService {
 				.conversionRate(conversionRate.exchangeRate())
 				.build();
 
+		if (checkAccountBalance(withdrawAccount.getId()).compareTo(transaction.depositAmount()) < 0) {
+			return null;
+		}
+
 		return repository.save(transactionDbo);
+	}
+
+	private CurrencyExchangeResult callCurrencyClient(CurrencyExchangeRequest request) {
+		return client.getCurrencyExchange(request)
+				.orElseThrow(() -> new ResourceNotFoundException("Currency exchange rate not found"));
 	}
 }

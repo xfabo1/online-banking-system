@@ -72,7 +72,8 @@ class TransactionServiceTest {
 	public void checkAccountBalance_multipleTransactions_calculatesCorrectly() {
 		when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(
 				TestData.withdrawTransactions);
-		when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(TestData.depositTransactions);
+		when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(
+				TestData.depositTransactions);
 		BigDecimal balance = transactionService.checkAccountBalance(TestData.accountId);
 
 		assertThat(balance).isEqualTo(BigDecimal.valueOf(2043.5));
@@ -111,17 +112,14 @@ class TransactionServiceTest {
 				.symbolTo("EUR").build();
 
 		when(client.getCurrencyExchange(any())).thenReturn(Optional.of(exchangeResult));
-		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
-				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
-				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
-				TestData.withdrawTransactions.getFirst().getDepositAmount(),
-				TestData.withdrawTransactions.getFirst().getNote(),
-				TestData.withdrawTransactions.getFirst().getVariableSymbol()
-		);
+		when(repository.findTransactionsDboByWithdrawsFrom_Id(any())).thenReturn(Collections.emptyList());
+		when(repository.findTransactionsDboByDepositsTo_Id(any())).thenReturn(TestData.depositTransactions);
+		when(repository.save(any())).thenReturn(TestData.withdrawTransactions.getFirst());
 
-		transactionService.createTransaction(transactionCreateDto, new AccountDbo(), new AccountDbo());
+		TransactionDbo createdTransaction = transactionService.createTransaction(TestData.transactionCreateDto(),
+				TestData.withdrawAccount(), TestData.depositAccount());
 
-		verify(repository).save(any(TransactionDbo.class));
+		verify(repository).save(any());
+		assertThat(createdTransaction).isEqualTo(TestData.withdrawTransactions.getFirst());
 	}
 }

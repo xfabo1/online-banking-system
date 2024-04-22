@@ -103,11 +103,18 @@ class TransactionManagementFacadeTest {
 		AccountCreateDto accountCreateDto =
 				new AccountCreateDto("owner", "CZK", "1234567890");
 
-		Mockito.doNothing().when(accountService).createAccount(any(AccountCreateDto.class));
+		AccountDbo accountDbo = AccountDbo.builder()
+				.id("1")
+				.customerId("owner")
+				.currencyCode("CZK")
+				.accountNumber("1234567890")
+				.build();
+		when(accountService.createAccount(accountCreateDto)).thenReturn(accountDbo);
 
-		transactionManagementFacade.createAccount(accountCreateDto);
+		AccountDbo createdAccount = transactionManagementFacade.createAccount(accountCreateDto);
 
-		Mockito.verify(accountService).createAccount(accountCreateDto);
+		verify(accountService).createAccount(accountCreateDto);
+		assertThat(createdAccount).isEqualTo(accountDbo);
 	}
 
 	@Test
