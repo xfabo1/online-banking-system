@@ -2,13 +2,15 @@ package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
+import cz.muni.fi.obs.common.PostgresqlTest;
+import cz.muni.fi.obs.common.RepositoryDataProvider;
 import cz.muni.fi.obs.data.AnalyticsRepository;
-import cz.muni.fi.obs.data.DataStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.Month;
@@ -20,9 +22,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AnalyticsServiceTest {
-
-    private final DataStore dataStore = new DataStore();
+@SpringBootTest(classes = RepositoryDataProvider.class)
+class AnalyticsServiceTest extends PostgresqlTest {
 
     @Mock
     private AnalyticsRepository analyticsRepository;
@@ -44,7 +45,7 @@ class AnalyticsServiceTest {
     @Test
     void getDailySummary_withFactsPresent_createsCorrectSummary() {
         when(analyticsRepository.getDailyTransactions(any(String.class), any(Integer.class), any(Integer.class)))
-                .thenReturn(dataStore.transactions);
+                .thenReturn(null);
 
         DailySummaryResult dailySummaryResult = analyticsService.getDailySummary("1234567890", 2023, 10);
 
@@ -74,7 +75,7 @@ class AnalyticsServiceTest {
     @Test
     void getMonthlySummary_withFactsPresent_createsCorrectSummary() {
         when(analyticsRepository.getDailyTransactions(any(String.class), any(Integer.class), any(Integer.class)))
-                .thenReturn(dataStore.transactions);
+                .thenReturn(null);
 
         MonthlySummaryResult monthlySummary = analyticsService.getMonthlySummary("1234567890", 2021, 1);
 
