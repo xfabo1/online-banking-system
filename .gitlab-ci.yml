@@ -1,8 +1,14 @@
-image: maven:3-eclipse-temurin-21
-stages:
-  - build
+services:
+  - name: docker:dind
+    command: [ "--tls=false" ]
+
+variables:
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
 
 build:
+  image: maven:3-eclipse-temurin-21
   tags: [shared-fi]
   stage: build
   script:
