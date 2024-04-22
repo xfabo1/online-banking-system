@@ -6,7 +6,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @Table(name = "transactions")
 public class TransactionDbo {
 	@Id
@@ -43,4 +42,6 @@ public class TransactionDbo {
 	private String note;
 	@Column(name = "variable_symbol")
 	private String variableSymbol;
+	@Column(name = "state")
+	private TransactionState transactionState;
 }

@@ -5,8 +5,11 @@ CREATE TABLE accounts
     currency_code  VARCHAR(10) NOT NULL,
     account_number VARCHAR(40) NOT NULL,
     constraint customer_id_unique unique (customer_id),
-    constraint account_number_unique unique (account_number)
+    constraint account_number_unique unique (account_number);
 );
+
+CREATE INDEX customer_id_index ON accounts(customer_id);
+CREATE INDEX account_number_index ON accounts(account_number);
 
 CREATE TABLE transactions
 (
@@ -22,3 +25,6 @@ CREATE TABLE transactions
     constraint fk_account_transaction_withdraws_from foreign key (withdraws_from) references accounts (id),
     constraint fk_account_transaction_deposits_to foreign key (deposits_to) references accounts (id)
 );
+
+CREATE INDEX withdraws_from_index ON transactions(withdraws_from);
+CREATE INDEX deposits_to_index ON transactions(deposits_to);

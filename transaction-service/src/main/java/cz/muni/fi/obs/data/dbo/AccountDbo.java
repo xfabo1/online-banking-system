@@ -17,13 +17,13 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @Table(name = "accounts")
 public class AccountDbo {
 
 	@Id
 	private String id;
-	@Column(name = "customer_id", nullable = false, unique = true)
+	@Column(name = "customer_id", nullable = false)
 	private String customerId;
 	@Column(name = "currency_code", nullable = false)
 	private String currencyCode;
