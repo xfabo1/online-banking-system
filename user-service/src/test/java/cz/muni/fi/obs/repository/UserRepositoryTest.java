@@ -19,11 +19,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_CLASS;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
-@Sql(value = {"/initialize_db.sql"}, executionPhase = BEFORE_TEST_CLASS)
-@Sql(value = {"/drop_all.sql"}, executionPhase = AFTER_TEST_CLASS)
+@Sql(value = {"/seed_db.sql"}, executionPhase = BEFORE_TEST_METHOD)
+@Sql(value = {"/clean_db.sql"}, executionPhase = AFTER_TEST_METHOD)
 @DataJpaTest
 @ActiveProfiles("test")
 public class UserRepositoryTest {

@@ -55,9 +55,7 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
         Optional<User> createdUser = userRepository.findById(userDto.id());
         assertThat(createdUser).isPresent();
-
         User user = createdUser.get();
-        userRepository.delete(user);
 
         assertThat(user)
                 .returns(userCreateDto.firstName(), User::getFirstName)
@@ -145,7 +143,6 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     public void updateUser_userExists_returnsUser() {
         UUID userId = UUID.fromString("5e4b3326-38b5-4484-8034-33d81f34bec2");
-        User origUser = userRepository.findById(userId).orElseThrow();
 
         UriComponents components = UriComponentsBuilder
                 .fromPath(USER_CONTROLLER_PATH + "/" + userId)
@@ -178,7 +175,6 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
                 .returns("987654321", User::getPhoneNumber)
                 .returns("newemail@email.cz", User::getEmail);
 
-        userRepository.save(origUser);
     }
 
     @Test
@@ -273,8 +269,6 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
         User updatedUser = userRepository.findById(userId).orElseThrow();
         assertThat(updatedUser.isActive()).isFalse();
         assertThat(userDto.active()).isFalse();
-
-        userRepository.save(origUser);
     }
 
     @Test
@@ -339,7 +333,5 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
         User updatedUser = userRepository.findById(userId).orElseThrow();
         assertThat(updatedUser.isActive()).isTrue();
         assertThat(userDto.active()).isTrue();
-
-        userRepository.save(origUser);
     }
 }
