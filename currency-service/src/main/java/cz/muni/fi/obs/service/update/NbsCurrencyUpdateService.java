@@ -7,6 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import cz.muni.fi.obs.data.dbo.Currency;
 import cz.muni.fi.obs.data.dbo.ExchangeRate;
 import cz.muni.fi.obs.data.repository.CurrencyRepository;
+import cz.muni.fi.obs.data.repository.ExchangeRateRepository;
 import cz.muni.fi.obs.exception.CsvFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.util.List;
 @ConditionalOnProperty(prefix = "currency.auto-update.urls", name = "nbs")
 @Slf4j
 public class NbsCurrencyUpdateService implements CurrencyUpdateService {
+    private final ExchangeRateRepository exchangeRateRepository;
 
     private final CurrencyRepository currencyRepository;
 
@@ -37,11 +39,14 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
     private final URI nbsCsvURI;
 
     @Autowired
-    public NbsCurrencyUpdateService(CurrencyRepository currencyRepository, CSVParser nbsCsvParser,
+    public NbsCurrencyUpdateService(CurrencyRepository currencyRepository,
+                                    ExchangeRateRepository exchangeRateRepository,
+                                    CSVParser nbsCsvParser,
                                     @Value("${currency.auto-update.urls.nbs}") String currencyFileUrl) throws URISyntaxException {
         this.currencyRepository = currencyRepository;
         this.nbsCsvParser = nbsCsvParser;
         this.nbsCsvURI = new URI(currencyFileUrl);
+        this.exchangeRateRepository = exchangeRateRepository;
     }
 
     @Scheduled(cron = "* * 1 * * *")
@@ -55,11 +60,16 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
                 List<Double> exchangeRateValues = exchangeRates.stream().skip(1).map(rate -> Double.parseDouble(sanitizeNumberFormat(rate))).toList();
                 log.info("Read: " + currencies.size() + " currencies. ");
 
-                Currency euro = currencyRepository.findByCode("eur").orElseGet(() -> new Currency("eur", "euro"));
+                Currency euro = currencyRepository.findByCode("eur").orElseGet(() -> {
+                    Currency currency = new Currency("eur", "euro");
+                    return currencyRepository.save(currency);
+                });
                 for (int i = 0; i < exchangeRateValues.size(); i++) {
                     final int index = i;
                     Currency currency = currencyRepository.findByCode(currencies.get(index).getCode())
                             .orElseGet(() -> currencies.get(index));
+
+                    currency = currencyRepository.save(currency);
 
                     ExchangeRate exchangeRate = ExchangeRate.builder()
                             .from(euro)
@@ -69,9 +79,9 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
                             .validUntil(LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC))
                             .build();
 
-                    euro.getExchangeRates().add(exchangeRate);
-                    currency.getExchangeRates().add(exchangeRate);
-                    currencyRepository.save(currency);
+                    euro.getExchangeRatesFrom().add(exchangeRate);
+                    currency.getExchangeRatesTo().add(exchangeRate);
+                    exchangeRateRepository.save(exchangeRate);
                 }
                 currencyRepository.save(euro);
                 log.info("Successfully updated: " + currencies.size() + " currencies.");
