@@ -1,7 +1,7 @@
 package cz.muni.fi.obs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.obs.AnalyticsManagement;
+import cz.muni.fi.obs.Application;
 import cz.muni.fi.obs.api.DailySummaryRequest;
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryRequest;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = AnalyticsController.class)
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AnalyticsManagement.class})
+@ContextConfiguration(classes = {Application.class})
 class AnalyticsControllerTest {
 
     @MockBean
