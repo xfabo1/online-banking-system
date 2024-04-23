@@ -15,8 +15,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -126,26 +125,6 @@ class UserServiceTest {
     }
 
     @Test
-    void deactivateUser_userDeactivated_returnsUser() {
-        User user = new User("Joe",
-                             "Doe",
-                             "123456789",
-                             "test@gmail.com",
-                             LocalDate.now(),
-                             Nationality.CZ,
-                             "900101" + "/123",
-                             true
-        );
-        when(userRepository.findByIdOrThrow(user.getId())).thenReturn(user);
-        when(userRepository.save(user)).thenReturn(user);
-
-        User response = userService.deactivateUser(user.getId());
-
-        verify(userRepository).findByIdOrThrow(user.getId());
-        assertThat(response).isEqualTo(user);
-    }
-
-    @Test
     void activateUser_userActivated_returnsUser() {
         User user = new User("Joe",
                              "Doe",
@@ -156,12 +135,76 @@ class UserServiceTest {
                              "900101" + "/123",
                              true
         );
+
         when(userRepository.findByIdOrThrow(user.getId())).thenReturn(user);
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         User response = userService.activateUser(user.getId());
 
         verify(userRepository).findByIdOrThrow(user.getId());
-        assertThat(response).isEqualTo(user);
+        assertThat(response.isActive()).isEqualTo(true);
+    }
+
+    @Test
+    void activateUser_userDeactivated_returnsUser() {
+        User user = new User("Joe",
+                             "Doe",
+                             "123456789",
+                             "test@gmail.com",
+                             LocalDate.now(),
+                             Nationality.CZ,
+                             "900101" + "/123",
+                             true
+        );
+
+        when(userRepository.findByIdOrThrow(user.getId())).thenReturn(user);
+        when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User response = userService.deactivateUser(user.getId());
+
+        verify(userRepository).findByIdOrThrow(user.getId());
+        assertThat(response.isActive()).isEqualTo(false);
+    }
+
+    @Test
+    void deactivateUser_userActivated_returnsUser() {
+        User user = new User("Joe",
+                             "Doe",
+                             "123456789",
+                             "test@gmail.com",
+                             LocalDate.now(),
+                             Nationality.CZ,
+                             "900101" + "/123",
+                             true
+        );
+
+        when(userRepository.findByIdOrThrow(user.getId())).thenReturn(user);
+        when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User response = userService.activateUser(user.getId());
+
+        verify(userRepository).findByIdOrThrow(user.getId());
+        assertThat(response.isActive()).isEqualTo(true);
+    }
+
+    @Test
+    void deactivateUser_userDeactivated_returnsUser() {
+        User user = new User("Joe",
+                             "Doe",
+                             "123456789",
+                             "test@gmail.com",
+                             LocalDate.now(),
+                             Nationality.CZ,
+                             "900101" + "/123",
+                             true
+        );
+
+        when(userRepository.findByIdOrThrow(user.getId())).thenReturn(user);
+        when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User response = userService.deactivateUser(user.getId());
+
+        verify(userRepository).findByIdOrThrow(user.getId());
+        assertThat(response.isActive()).isEqualTo(false);
     }
 }

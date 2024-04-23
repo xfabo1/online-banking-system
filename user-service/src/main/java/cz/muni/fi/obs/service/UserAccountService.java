@@ -5,9 +5,11 @@ import cz.muni.fi.obs.api.AccountDto;
 import cz.muni.fi.obs.http.TransactionServiceClient;
 import cz.muni.fi.obs.http.api.TSAccount;
 import cz.muni.fi.obs.http.api.TSAccountCreate;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,9 +32,6 @@ public class UserAccountService {
                 accountCreateDto.accountNumber()
         );
         TSAccount tsAccount = transactionServiceClient.createAccount(tsAccountCreate);
-        if (tsAccount == null) {
-            return null;
-        }
         return new AccountDto(
                 UUID.fromString(tsAccount.id()),
                 tsAccount.accountNumber(),
@@ -41,17 +40,17 @@ public class UserAccountService {
     }
 
     public List<AccountDto> getUserAccounts(UUID userId) {
-        List<TSAccount> tsAccounts = transactionServiceClient.getAccountsByCustomerId(userId.toString());
-        if (tsAccounts == null) {
-            return null;
+        try {
+            List<TSAccount> tsAccounts = transactionServiceClient.getAccountsByCustomerId(userId.toString());
+            return tsAccounts.stream()
+                             .map(tsAccount -> new AccountDto(
+                                     UUID.fromString(tsAccount.id()),
+                                     tsAccount.accountNumber(),
+                                     tsAccount.currencyCode()
+                             ))
+                             .collect(Collectors.toList());
+        } catch (FeignException.NotFound e) {
+            return Collections.emptyList();
         }
-
-        return tsAccounts.stream()
-                         .map(tsAccount -> new AccountDto(
-                                 UUID.fromString(tsAccount.id()),
-                                 tsAccount.accountNumber(),
-                                 tsAccount.currencyCode()
-                         ))
-                         .collect(Collectors.toList());
     }
 }

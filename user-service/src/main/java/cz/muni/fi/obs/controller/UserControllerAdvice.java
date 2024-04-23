@@ -3,6 +3,7 @@ package cz.muni.fi.obs.controller;
 import cz.muni.fi.obs.api.NotFoundResponse;
 import cz.muni.fi.obs.api.ValidationErrors;
 import cz.muni.fi.obs.api.ValidationFailedResponse;
+import cz.muni.fi.obs.exceptions.ClientConnectionException;
 import cz.muni.fi.obs.exceptions.UserNotFoundException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
@@ -100,6 +101,11 @@ public class UserControllerAdvice {
         } else {
             throw new InternalError("Unexpected error occurred.");
         }
+    }
+
+    @ExceptionHandler(ClientConnectionException.class)
+    public ResponseEntity<String> handleClientConnectionExceptions(ClientConnectionException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private String extractFieldName(String message) {

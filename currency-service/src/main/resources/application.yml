@@ -1,6 +1,7 @@
 server:
   servlet:
     context-path: '/api/currency-service'
+  port: 8081
 
 currency:
   auto-update:

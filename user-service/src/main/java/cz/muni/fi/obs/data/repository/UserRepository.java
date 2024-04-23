@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "(:lastName IS NULL OR u.lastName = :lastName) AND " +
             "(:phoneNumber IS NULL OR u.phoneNumber = :phoneNumber) AND " +
             "(:email IS NULL OR u.email = :email) AND " +
-            "(:birthDate IS NULL OR u.birthDate = :birthDate) AND " +
+            "(cast(:birthDate as date) IS NULL OR u.birthDate = cast(:birthDate as date)) AND " +
             "(:birthNumber IS NULL OR u.birthNumber = :birthNumber) AND " +
             "(:active IS NULL OR u.active = :active)")
     Page<User> findBySearchParams(
