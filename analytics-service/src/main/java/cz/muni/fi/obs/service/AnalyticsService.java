@@ -61,7 +61,7 @@ public class AnalyticsService {
     }
 
     private MonthlySummary createMonthlySummary(List<DailyTransaction> transactions) {
-        String month = Month.of(transactions.getFirst().getDate().getMonth()).name();
+        String month = Month.of(transactions.getFirst().getDate().getMonthNumber()).name();
         Integer totalWithdrawalTransactions = 0;
         Integer totalDepositTransactions = 0;
         BigDecimal totalWithdrawalAmount = new BigDecimal(0);

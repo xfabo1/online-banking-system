@@ -1,11 +1,3 @@
-DELETE
-FROM account_dim ac
-where ac.id = ac.id;
-
-DELETE
-FROM daily_transaction dt
-where dt.id = dt.id;
-
-DELETE
-FROM date_dim d
-where d.id = d.id;
+DROP TABLE account_dim CASCADE;
+DROP TABLE date_dim CASCADE;
+DROP TABLE daily_transaction CASCADE;

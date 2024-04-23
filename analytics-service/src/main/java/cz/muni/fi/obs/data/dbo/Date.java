@@ -17,21 +17,21 @@ import java.time.LocalDate;
 public class Date extends Dbo {
 
     @Column(nullable = false)
-    int year;
+    int yearNumber;
 
     @Column(nullable = false)
-    int month;
+    int monthNumber;
 
     @Column(nullable = false)
-    int day;
+    int dayNumber;
 
     @Column(nullable = false)
     LocalDate fullDate;
 
     public Date(int year, int month, int day) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
+        this.yearNumber = year;
+        this.monthNumber = month;
+        this.dayNumber = day;
         this.fullDate = LocalDate.of(year, month, day);
     }
 }

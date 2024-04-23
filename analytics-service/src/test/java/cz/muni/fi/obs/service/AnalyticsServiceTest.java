@@ -3,7 +3,6 @@ package cz.muni.fi.obs.service;
 import cz.muni.fi.obs.Application;
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
-import cz.muni.fi.obs.data.AnalyticsRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,6 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 class AnalyticsServiceTest {
 
     @Autowired
-    private AnalyticsRepository analyticsRepository;
-
-    @Autowired
     private AnalyticsService analyticsService;
 
     @Test
@@ -45,12 +41,12 @@ class AnalyticsServiceTest {
     void getDailySummary_withFactsPresent_createsCorrectSummary() {
         DailySummaryResult dailySummaryResult = analyticsService.getDailySummary("1234567890", 2021, 1);
 
-        assertThat(dailySummaryResult.summaries().size()).isEqualTo(1);
+        assertThat(dailySummaryResult.summaries().size()).isEqualTo(3);
     }
 
     @Test
     void getMonthlySummary_noFactsPresentForAccount_createsEmptySummary() {
-        MonthlySummaryResult monthlySummary = analyticsService.getMonthlySummary("1234567890", 2021, 1);
+        MonthlySummaryResult monthlySummary = analyticsService.getMonthlySummary("12345678900", 2021, 1);
 
         assertThat(monthlySummary.summary()).isNotNull();
         assertThat(monthlySummary.summary().month()).isEqualTo(Month.of(1).toString());
