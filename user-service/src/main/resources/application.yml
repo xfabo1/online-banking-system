@@ -1,6 +1,7 @@
 server:
   servlet:
     context-path: '/api/user-service'
+  port: 8083
 
 spring:
   datasource:
@@ -16,4 +17,5 @@ spring:
 
 clients:
   transaction-service:
-    url: 'http://localhost:8080/api/transaction-service'
+    #    url: 'http://localhost:8082/api/transaction-service'
+    url: 'http://transaction-service:8082/api/transaction-service'

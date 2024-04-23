@@ -1,6 +1,7 @@
 server:
   servlet:
     context-path: '/api/transaction-service'
+  port: 8082
 
 spring:
   application:
@@ -35,4 +36,5 @@ resilience4j:
 
 clients:
   currency-service:
-    url: 'http://localhost:8080/api/currency-service'
+    #    url: 'http://localhost:8081/api/currency-service'
+    url: 'http://currency-service:8081/api/currency-service'
