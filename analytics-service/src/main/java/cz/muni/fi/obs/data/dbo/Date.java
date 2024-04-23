@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "date")
-public class Date extends Dbo{
+@Table(name = "date_dim")
+public class Date extends Dbo {
 
     @Column(nullable = false)
     int year;
@@ -26,12 +26,12 @@ public class Date extends Dbo{
     int day;
 
     @Column(nullable = false)
-    LocalDate date;
+    LocalDate fullDate;
 
     public Date(int year, int month, int day) {
         this.year = year;
         this.month = month;
         this.day = day;
-        this.date = LocalDate.of(year, month, day);
+        this.fullDate = LocalDate.of(year, month, day);
     }
 }

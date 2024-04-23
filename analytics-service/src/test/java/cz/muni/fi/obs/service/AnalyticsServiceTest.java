@@ -7,6 +7,7 @@ import cz.muni.fi.obs.data.AnalyticsRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -24,6 +25,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @Sql(value = {"/drop_all.sql"}, executionPhase = AFTER_TEST_CLASS)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
+@SpringBootTest
 class AnalyticsServiceTest {
 
     @Autowired

@@ -1,20 +1,20 @@
 DROP TABLE IF EXISTS daily_transaction;
-DROP TABLE IF EXISTS account;
-DROP TABLE IF EXISTS date;
+DROP TABLE IF EXISTS account_dim;
+DROP TABLE IF EXISTS date_dim;
 
-CREATE TABLE account
+CREATE TABLE account_dim
 (
     id             varchar(40) PRIMARY KEY,
     account_number varchar(40) NOT NULL
 );
 
-CREATE TABLE date
+CREATE TABLE date_dim
 (
-    id    varchar(40) PRIMARY KEY,
-    year  INTEGER NOT NULL,
-    month INTEGER NOT NULL,
-    day   INTEGER NOT NULL,
-    date  DATE    NOT NULL
+    id        varchar(40) PRIMARY KEY,
+    year      INTEGER NOT NULL,
+    month     INTEGER NOT NULL,
+    day       INTEGER NOT NULL,
+    full_date DATE    NOT NULL
 );
 
 
@@ -31,6 +31,6 @@ CREATE TABLE daily_transaction
     account_id                    varchar(40)    NOT NULL,
     date_id                       varchar(40)    NOT NULL,
 
-    constraint fk_account_id foreign key (account_id) references account (id),
-    constraint fk_date_id foreign key (date_id) references date (id)
+    constraint fk_account_id foreign key (account_id) references account_dim (id),
+    constraint fk_date_id foreign key (date_id) references date_dim (id)
 );

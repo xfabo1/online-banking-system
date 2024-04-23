@@ -1,9 +1,9 @@
-INSERT INTO account (id, account_number)
+INSERT INTO account_dim (id, account_number)
 VALUES ('1', '1234567890');
 
-INSERT INTO date (id, year, month, day, date)
+INSERT INTO date_dim (id, year, month, day, full_date)
 VALUES ('1', 2021, 1, 1, '2021-01-01');
-INSERT INTO date (id, year, month, day, date)
+INSERT INTO date_dim (id, year, month, day, full_date)
 VALUES ('2', 2021, 1, 2, '2021-01-02');
 
 INSERT INTO daily_transaction (id, total_withdrawal_transactions, total_deposit_transactions, total_transaction_amount,
