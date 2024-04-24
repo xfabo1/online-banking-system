@@ -1,5 +1,14 @@
 # Online banking service
 
+How to run the project: 
+1. Run `mvn clean install` in the root directory
+2. Run `docker compose up` in the root directory
+Now all the services and the databases are running, and you can access them on the following ports:
+- User-service: `localhost:8081/api/user-service`
+- Transaction-service: `localhost:8082/api/transaction-service`
+- Currency-service: `localhost:8083/currency-service`
+- Analytics-service: `localhost:8080/api/analytics-service`
+
 ## Use case:
 ![img_2.png](img_2.png)
 
