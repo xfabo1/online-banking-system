@@ -7,9 +7,7 @@ import cz.muni.fi.obs.data.repository.UserRepository;
 import cz.muni.fi.obs.integration.ControllerIntegrationTest;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,7 +18,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(OrderAnnotation.class)
 class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
     private static final String USER_CONTROLLER_PATH = "/api/user-service/v1/users";
