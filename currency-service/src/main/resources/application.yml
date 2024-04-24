@@ -3,10 +3,15 @@ server:
     context-path: '/api/currency-service'
   port: 8081
 
+data:
+  initialize: true
+
 currency:
   auto-update:
-    urls:
-      nbs: https://nbs.sk/export/sk/exchange-rate/latest/csv
+    services:
+      nbs:
+        enabled: true
+        url: https://nbs.sk/export/sk/exchange-rate/latest/csv
 
 spring:
   datasource:

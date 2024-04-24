@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,9 +28,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-@ConditionalOnProperty(prefix = "currency.auto-update.urls", name = "nbs")
+@ConditionalOnProperty(prefix = "currency.auto-update.services.nbs", name = "url")
 @Slf4j
 public class NbsCurrencyUpdateService implements CurrencyUpdateService {
+
     private final ExchangeRateRepository exchangeRateRepository;
 
     private final CurrencyRepository currencyRepository;
@@ -42,7 +44,7 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
     public NbsCurrencyUpdateService(CurrencyRepository currencyRepository,
                                     ExchangeRateRepository exchangeRateRepository,
                                     CSVParser nbsCsvParser,
-                                    @Value("${currency.auto-update.urls.nbs}") String currencyFileUrl) throws URISyntaxException {
+                                    @Value("${currency.auto-update.services.nbs.url}") String currencyFileUrl) throws URISyntaxException {
         this.currencyRepository = currencyRepository;
         this.nbsCsvParser = nbsCsvParser;
         this.nbsCsvURI = new URI(currencyFileUrl);
@@ -50,6 +52,7 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
     }
 
     @Scheduled(cron = "* * 1 * * *")
+    @Transactional
     public void updateCurrencies() {
         log.info("Reading csv from nbs.sk url: " + nbsCsvURI);
         try (Reader reader = new InputStreamReader(nbsCsvURI.toURL().openStream())) {
@@ -73,7 +76,7 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
 
                     ExchangeRate exchangeRate = ExchangeRate.builder()
                             .from(euro)
-                            .to(currencies.get(index))
+                            .to(currency)
                             .conversionRate(exchangeRateValues.get(index))
                             .createdAt(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC))
                             .validUntil(LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC))
