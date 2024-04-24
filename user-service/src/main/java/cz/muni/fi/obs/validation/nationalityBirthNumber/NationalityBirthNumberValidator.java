@@ -1,6 +1,6 @@
 package cz.muni.fi.obs.validation.nationalityBirthNumber;
 
-import cz.muni.fi.obs.enums.Nationality;
+import cz.muni.fi.obs.data.enums.Nationality;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -20,18 +20,17 @@ public class NationalityBirthNumberValidator implements ConstraintValidator<Nati
     @Override
     public boolean isValid(Object object,
                            ConstraintValidatorContext constraintValidatorContext) {
-        String nationalityStr = getPropertyValue(object, nationalityProperty);
-        String birthDateStr = getPropertyValue(object, birthNumberProperty);
+        Nationality nationality = (Nationality) getPropertyValue(object, nationalityProperty);
+        String birthNumber = (String) getPropertyValue(object, birthNumberProperty);
 
-        if (nationalityStr == null || birthDateStr == null) {
+        if (nationality == null || birthNumber == null) {
             return false;
         }
 
         try {
-            Nationality nationality = Nationality.fromString(nationalityStr);
 
             if (nationality == Nationality.SK || nationality == Nationality.CZ) {
-                new CzechSlovakBirthNumber(birthDateStr);
+                new CzechSlovakBirthNumber(birthNumber);
             }
 
             return true;
@@ -52,14 +51,14 @@ public class NationalityBirthNumberValidator implements ConstraintValidator<Nati
         }
     }
 
-    private String getPropertyValue(Object object, String propertyName) {
+    private Object getPropertyValue(Object object, String propertyName) {
         Method valueGetter = getPropertyGetter(object, propertyName);
         if (valueGetter == null) {
             return null;
         }
 
         try {
-            return (String) valueGetter.invoke(object);
+            return valueGetter.invoke(object);
         } catch (Throwable e) {
             return null;
         }

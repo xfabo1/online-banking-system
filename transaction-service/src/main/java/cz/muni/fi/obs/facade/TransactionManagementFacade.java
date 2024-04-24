@@ -1,12 +1,5 @@
 package cz.muni.fi.obs.facade;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
-
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
@@ -15,6 +8,13 @@ import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.service.AccountService;
 import cz.muni.fi.obs.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -63,6 +63,10 @@ public class TransactionManagementFacade {
 					log.info("Account not found: {}", accountNumber);
 					return new ResourceNotFoundException("Account not found");
 				});
+	}
+
+	public List<AccountDbo> findAccountsByCustomerId(String customerId) {
+		return accountService.findAccountsByCustomerId(customerId);
 	}
 }
 

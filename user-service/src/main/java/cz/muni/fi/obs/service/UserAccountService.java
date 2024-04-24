@@ -1,35 +1,56 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.data.UserAccountRepository;
-import cz.muni.fi.obs.domain.Account;
+import cz.muni.fi.obs.api.AccountDto;
+import cz.muni.fi.obs.http.TransactionServiceClient;
+import cz.muni.fi.obs.http.api.TSAccount;
+import cz.muni.fi.obs.http.api.TSAccountCreate;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserAccountService {
 
-    private final UserAccountRepository userAccountRepository;
+    private final TransactionServiceClient transactionServiceClient;
 
     @Autowired
-    public UserAccountService(UserAccountRepository userAccountRepository) {
-        this.userAccountRepository = userAccountRepository;
+    public UserAccountService(TransactionServiceClient transactionServiceClient) {
+        this.transactionServiceClient = transactionServiceClient;
 
     }
 
-    public Account create(String userId, AccountCreateDto accountCreateDto) {
-        Account account = new Account(
-                userId,
-                accountCreateDto.accountNumber(),
-                accountCreateDto.currencyCode()
+    public AccountDto create(UUID userId, AccountCreateDto accountCreateDto) {
+        TSAccountCreate tsAccountCreate = new TSAccountCreate(
+                userId.toString(),
+                accountCreateDto.currencyCode(),
+                accountCreateDto.accountNumber()
         );
-
-        return userAccountRepository.create(account);
+        TSAccount tsAccount = transactionServiceClient.createAccount(tsAccountCreate);
+        return new AccountDto(
+                UUID.fromString(tsAccount.id()),
+                tsAccount.accountNumber(),
+                tsAccount.currencyCode()
+        );
     }
 
-    public List<Account> getUserAccounts(String userId) {
-        return userAccountRepository.findByUserId(userId);
+    public List<AccountDto> getUserAccounts(UUID userId) {
+        try {
+            List<TSAccount> tsAccounts = transactionServiceClient.getAccountsByCustomerId(userId.toString());
+            return tsAccounts.stream()
+                             .map(tsAccount -> new AccountDto(
+                                     UUID.fromString(tsAccount.id()),
+                                     tsAccount.accountNumber(),
+                                     tsAccount.currencyCode()
+                             ))
+                             .collect(Collectors.toList());
+        } catch (FeignException.NotFound e) {
+            return Collections.emptyList();
+        }
     }
 }

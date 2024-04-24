@@ -1,3 +1,4 @@
 server:
   servlet:
     context-path: '/api/analytics-service'
+  port: 8080

@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AccountCreateDto(
 
-        @Schema(description = "User ID of the account owner", example = "d333c127-470b-4680-8c7c-70988998b329")
-        @NotBlank(message = "User ID is required")
+        @Schema(description = "Account number", example = "19-2000145399/0800")
+        @NotBlank(message = "Account number is required")
         String accountNumber,
 
         @Schema(description = "Currency code of the account", example = "CZK")
