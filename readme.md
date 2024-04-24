@@ -53,3 +53,7 @@ Password: `changemelater`
 - [User-service](http://localhost:8084/?pgsql=user-db&username=user_service&db=user_db&)
 - [Transaction-service](http://localhost:8084/?pgsql=transaction-db&username=transaction_service&db=transaction_db&)
 - [Currency-service](http://localhost:8084/?pgsql=currency-db&username=currency_service&db=currency_db&)
+
+### Entity relationship Diagram
+
+![img_3.png](img_3.png)
