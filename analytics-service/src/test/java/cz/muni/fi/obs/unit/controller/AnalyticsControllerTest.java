@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.controller;
+package cz.muni.fi.obs.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.obs.Application;
@@ -6,6 +6,7 @@ import cz.muni.fi.obs.api.DailySummaryRequest;
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryRequest;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
+import cz.muni.fi.obs.controller.AnalyticsController;
 import cz.muni.fi.obs.facade.AnalyticsFacade;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

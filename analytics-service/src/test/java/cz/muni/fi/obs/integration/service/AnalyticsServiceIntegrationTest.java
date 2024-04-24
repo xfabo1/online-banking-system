@@ -1,8 +1,9 @@
-package cz.muni.fi.obs.service;
+package cz.muni.fi.obs.integration.service;
 
 import cz.muni.fi.obs.Application;
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
+import cz.muni.fi.obs.service.AnalyticsService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
-class AnalyticsServiceTest {
+class AnalyticsServiceIntegrationTest {
 
     @Autowired
     private AnalyticsService analyticsService;
@@ -34,14 +35,14 @@ class AnalyticsServiceTest {
     void getDailySummary_noFactsPresentForAccount_createsEmptySummary() {
         DailySummaryResult dailySummary = analyticsService.getDailySummary("12345", 2023, 10);
 
-        assertThat(dailySummary.summaries().size()).isEqualTo(0);
+        assertThat(dailySummary.summaries()).isEmpty();
     }
 
     @Test
     void getDailySummary_withFactsPresent_createsCorrectSummary() {
         DailySummaryResult dailySummaryResult = analyticsService.getDailySummary("1234567890", 2021, 1);
 
-        assertThat(dailySummaryResult.summaries().size()).isEqualTo(3);
+        assertThat(dailySummaryResult.summaries()).hasSize(3);
     }
 
     @Test
