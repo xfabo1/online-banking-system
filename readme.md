@@ -37,3 +37,23 @@ In M2 we need to implement creation and execution of scheduled payments.
 
 Service handles all currency related operation, it manages currencies so exchange rates are always up-to-date and
 provides needed services to the rest of the system.
+
+### Swagger Links
+
+- [Analytics-service](http://localhost:8080/api/analytics-service/swagger-ui/index.html)
+- [User-service](http://localhost:8083/api/user-service/swagger-ui/index.html)
+- [Transaction-service](http://localhost:8082/api/transaction-service/swagger-ui/index.html)
+- [Currency-service](http://localhost:8081/api/currency-service/swagger-ui/index.html)
+
+### Adminer
+
+Password: `changemelater`
+
+- [Analytics-service](http://localhost:8084/?pgsql=analytics-db&username=analytics_service&db=analytics_db&)
+- [User-service](http://localhost:8084/?pgsql=user-db&username=user_service&db=user_db&)
+- [Transaction-service](http://localhost:8084/?pgsql=transaction-db&username=transaction_service&db=transaction_db&)
+- [Currency-service](http://localhost:8084/?pgsql=currency-db&username=currency_service&db=currency_db&)
+
+### Entity relationship Diagram
+
+![img_3.png](img_3.png)

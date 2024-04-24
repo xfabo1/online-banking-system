@@ -31,7 +31,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://currency-db:5432/currency_db
     ports:
-      - 8081:8080
+      - 8081:8081
   currency-db:
     container_name: currency-db
     image: postgres:latest
@@ -53,7 +53,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://transaction-db:5432/transaction_db
     ports:
-      - 8082:8080
+      - 8082:8082
   transaction-db:
     container_name: transaction-db
     image: postgres:latest
@@ -75,7 +75,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/user_db
     ports:
-      - 8083:8080
+      - 8083:8083
   user-db:
     container_name: user-db
     image: postgres:latest

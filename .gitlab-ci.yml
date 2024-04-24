@@ -1,9 +1,15 @@
-image: maven:3-eclipse-temurin-21
-stages:
-  - build
+services:
+  - name: docker:dind
+    command: [ "--tls=false" ]
+
+variables:
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
 
 build:
-  tags: [shared-fi]
+  image: maven:3-eclipse-temurin-21
+  tags: [ obs-runner ]
   stage: build
   script:
     - mvn clean install

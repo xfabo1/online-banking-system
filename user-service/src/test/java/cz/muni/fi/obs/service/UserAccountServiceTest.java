@@ -1,8 +1,10 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.domain.Account;
-import cz.muni.fi.obs.data.UserAccountRepository;
+import cz.muni.fi.obs.api.AccountDto;
+import cz.muni.fi.obs.http.TransactionServiceClient;
+import cz.muni.fi.obs.http.api.TSAccount;
+import cz.muni.fi.obs.http.api.TSAccountCreate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,43 +13,67 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserAccountServiceTest {
 
-	@Mock
-	private UserAccountRepository userAccountRepository;
+    @Mock
+    private TransactionServiceClient transactionServiceClient;
 
-	@InjectMocks
-	private UserAccountService userAccountService;
+    @InjectMocks
+    private UserAccountService userAccountService;
 
-	@Test
-	void create_accountCreated_returnsAccount() {
-		AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
-		Account account = new Account("1", "1234567890", "Joe's Account");
-		when(userAccountRepository.create(any())).thenReturn(account);
+    @Test
+    void create_accountCreated_returnsAccount() {
+        UUID userId = UUID.randomUUID();
+        AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
+        TSAccountCreate tsAccountCreate = new TSAccountCreate(userId.toString(),
+                                                              accountCreateDto.currencyCode(),
+                                                              accountCreateDto.accountNumber()
+        );
+        TSAccount tsAccount = new TSAccount(UUID.randomUUID().toString(),
+                                            userId.toString(),
+                                            accountCreateDto.accountNumber(),
+                                            accountCreateDto.currencyCode()
+        );
+        AccountDto account = new AccountDto(UUID.fromString(tsAccount.id()),
+                                            tsAccount.accountNumber(),
+                                            tsAccount.currencyCode()
+        );
+        when(transactionServiceClient.createAccount(tsAccountCreate)).thenReturn(tsAccount);
 
-		Account response = userAccountService.create("1", accountCreateDto);
+        AccountDto response = userAccountService.create(userId, accountCreateDto);
 
-		verify(userAccountRepository).create(any());
-		assertThat(response).isEqualTo(account);
-	}
+        verify(transactionServiceClient).createAccount(tsAccountCreate);
+        assertThat(response).isEqualTo(account);
+    }
 
-	@Test
-	void getUserAccounts_accountsFound_returnsAccounts() {
-		Account account1 = new Account("1", "1234567890", "Joe's Account");
-		Account account2 = new Account("1", "0987654321", "Joe's Other Account");
-		List<Account> accounts = Arrays.asList(account1, account2);
-		when(userAccountRepository.findByUserId("1")).thenReturn(accounts);
+    @Test
+    void getUserAccounts_accountsFound_returnsAccounts() {
+        UUID userId = UUID.randomUUID();
 
-		List<Account> response = userAccountService.getUserAccounts("1");
+        List<AccountDto> accounts = Arrays.asList(
+                new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account"),
+                new AccountDto(UUID.randomUUID(), "0987654321", "Joe's Other Account")
+        );
+        List<TSAccount> tsAccounts = accounts.stream()
+                                             .map(account -> new TSAccount(account.id().toString(),
+                                                                           userId.toString(),
+                                                                           account.currencyCode(),
+                                                                           account.accountNumber()
+                                             ))
+                                             .collect(Collectors.toList());
+        when(transactionServiceClient.getAccountsByCustomerId(userId.toString())).thenReturn(tsAccounts);
 
-		verify(userAccountRepository).findByUserId("1");
-		assertThat(response).isEqualTo(accounts);
-	}
+        List<AccountDto> response = userAccountService.getUserAccounts(userId);
+
+        verify(transactionServiceClient).getAccountsByCustomerId(userId.toString());
+        assertThat(response).isEqualTo(accounts);
+    }
 }

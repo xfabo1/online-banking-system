@@ -3,12 +3,14 @@ package cz.muni.fi.obs.service;
 import cz.muni.fi.obs.api.UserCreateDto;
 import cz.muni.fi.obs.api.UserSearchParamsDto;
 import cz.muni.fi.obs.api.UserUpdateDto;
-import cz.muni.fi.obs.data.UserRepository;
-import cz.muni.fi.obs.domain.User;
-import cz.muni.fi.obs.enums.Nationality;
+import cz.muni.fi.obs.data.dbo.User;
+import cz.muni.fi.obs.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -27,48 +29,54 @@ public class UserService {
                 userCreateDto.phoneNumber(),
                 userCreateDto.email(),
                 userCreateDto.birthDate(),
-                Nationality.fromString(userCreateDto.nationality()),
+                userCreateDto.nationality(),
                 userCreateDto.birthNumber(),
                 true
         );
-        return userRepository.create(user);
+        return userRepository.save(user);
     }
 
-    public User updateUser(String userId, UserUpdateDto userUpdateDto) {
-        User user = userRepository.findById(userId);
-        user.setFirstName(userUpdateDto.firstName());
-        user.setLastName(userUpdateDto.lastName());
-        user.setPhoneNumber(userUpdateDto.phoneNumber());
-        user.setEmail(userUpdateDto.email());
+    public User updateUser(UUID userId, UserUpdateDto userUpdateDto) {
+        User user = userRepository.findByIdOrThrow(userId);
 
-        return userRepository.update(user);
+        userUpdateDto.firstName().ifPresent(user::setFirstName);
+        userUpdateDto.lastName().ifPresent(user::setLastName);
+        userUpdateDto.phoneNumber().ifPresent(user::setPhoneNumber);
+        userUpdateDto.email().ifPresent(user::setEmail);
+
+        return userRepository.save(user);
     }
 
-    public User deactivateUser(String userId) {
-        User user = userRepository.findById(userId);
-        if (user == null) {
-            return null;
-        }
+    public User deactivateUser(UUID userId) {
+        User user = userRepository.findByIdOrThrow(userId);
 
         user.setActive(false);
-        return userRepository.update(user);
+
+        return userRepository.save(user);
     }
 
-    public User activateUser(String userId) {
-        User user = userRepository.findById(userId);
-        if (user == null) {
-            return null;
-        }
+    public User activateUser(UUID userId) {
+        User user = userRepository.findByIdOrThrow(userId);
 
         user.setActive(true);
-        return userRepository.update(user);
+
+        return userRepository.save(user);
     }
 
-    public User getUser(String userId) {
-        return userRepository.findById(userId);
+    public User getUser(UUID userId) {
+        return userRepository.findByIdOrThrow(userId);
     }
 
     public Page<User> findUsers(UserSearchParamsDto searchParams) {
-        return userRepository.find(searchParams);
+        return userRepository.findBySearchParams(
+                searchParams.firstName(),
+                searchParams.lastName(),
+                searchParams.phoneNumber(),
+                searchParams.email(),
+                searchParams.birthDate(),
+                searchParams.birthNumber(),
+                searchParams.active().isEmpty() ? Optional.of(true) : searchParams.active(),
+                searchParams.pageable()
+        );
     }
 }

@@ -1,8 +1,7 @@
 package cz.muni.fi.obs.controller;
 
 import cz.muni.fi.obs.api.*;
-import cz.muni.fi.obs.enums.Nationality;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.data.enums.Nationality;
 import cz.muni.fi.obs.facade.UserManagementFacade;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,8 +12,6 @@ import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +25,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -44,17 +42,8 @@ import java.util.List;
                 - creating user account for user by ID
                 - getting user accounts by user ID
                 """,
-                contact = @Contact(name = "Vilem Gottwald", email = "553627@mail.muni.cz"),
-                license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0.html")),
-        servers = @Server(
-                description = "local server",
-                url = "{scheme}://{server}:{port}/api/user-service",
-                variables = {
-                        @ServerVariable(name = "scheme", defaultValue = "http"),
-                        @ServerVariable(name = "server", defaultValue = "localhost"),
-                        @ServerVariable(name = "port", defaultValue = "8080"),
-                }
-        )
+                     contact = @Contact(name = "Vilem Gottwald", email = "553627@mail.muni.cz"),
+                     license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0.html"))
 )
 @Tag(name = "User management", description = "Microservice for managing users and their bank accounts")
 @RequestMapping(path = "/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +68,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "User created"),
                     @ApiResponse(responseCode = "400", description = "Invalid input data",
-                            content = @Content(schema = @Schema(implementation = ValidationErrors.class))),
+                                 content = @Content(schema = @Schema(implementation = ValidationErrors.class))),
             }
     )
     @PostMapping("/create")
@@ -95,21 +84,17 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "User found"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
             }
     )
     @GetMapping("/{userId}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> getUser(
             @Parameter(description = "ID of the user to be retrieved")
-            @PathVariable("userId") String userId
+            @PathVariable("userId") UUID userId
     ) {
         log.info("Getting user with id: " + userId);
         UserDto user = userManagementFacade.getUser(userId);
-        if (user == null) {
-            log.info("User with id: " + userId + " not found");
-            throw new ResourceNotFoundException("User with id: " + userId + " not found");
-        }
         return ResponseEntity.ok(user);
     }
 
@@ -118,9 +103,9 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "User found"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid search parameters",
-                            content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
             }
     )
     @GetMapping("")
@@ -135,23 +120,19 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "User updated"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input data",
-                            content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
             }
     )
     @PutMapping("/{userId}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> updateUser(
             @Parameter(description = "ID of the user to be updated")
-            @PathVariable("userId") String userId,
+            @PathVariable("userId") UUID userId,
             @Valid @RequestBody UserUpdateDto userUpdateDto) {
         log.info("Updating user with id: " + userId);
         UserDto user = userManagementFacade.updateUser(userId, userUpdateDto);
-        if (user == null) {
-            log.info("User with id: " + userId + " not found");
-            throw new ResourceNotFoundException("User with id: " + userId + " not found");
-        }
         return ResponseEntity.ok(user);
     }
 
@@ -160,12 +141,13 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "User deactivated"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(schema = @Schema(implementation = NotFoundResponse.class)))
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class)))
             }
     )
     @PostMapping("/{userId}/deactivate")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<UserDto> deactivateUser(@PathVariable("userId") String userId) {
+    public ResponseEntity<UserDto> deactivateUser(
+            @PathVariable("userId") UUID userId) {
         log.info("Deactivating user with id: " + userId);
         UserDto user = userManagementFacade.deactivateUser(userId);
         if (user == null) {
@@ -180,12 +162,12 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "User activated"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(schema = @Schema(implementation = NotFoundResponse.class)))
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class)))
             }
     )
     @PostMapping("/{userId}/activate")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<UserDto> activateUser(@PathVariable("userId") String userId) {
+    public ResponseEntity<UserDto> activateUser(@PathVariable("userId") UUID userId) {
         log.info("Activating user with id: " + userId);
         UserDto user = userManagementFacade.activateUser(userId);
         if (user == null) {
@@ -200,20 +182,24 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Account created"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input data",
-                            content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
             }
     )
     @PostMapping("/{userId}/accounts/create")
     @CrossOrigin(origins = "*")
     public ResponseEntity<AccountDto> createUserAccount(
             @Parameter(description = "ID of the user for whom the account will be created")
-            @PathVariable("userId") String userId,
+            @PathVariable("userId") UUID userId,
             @Valid @RequestBody AccountCreateDto accountCreateDto
     ) {
         log.info("Creating user account for user with id: " + userId);
         AccountDto account = userManagementFacade.createAccount(userId, accountCreateDto);
+        if (account == null) {
+            log.error("Could not create account for user with id: " + userId);
+            return ResponseEntity.internalServerError().build();
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
 
@@ -222,17 +208,21 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Accounts found"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                            content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
             }
     )
     @GetMapping("/{userId}/accounts")
     @CrossOrigin(origins = "*")
     public ResponseEntity<List<AccountDto>> getUserAccounts(
             @Parameter(description = "ID of the user whose accounts are to be retrieved")
-            @PathVariable("userId") String userId
+            @PathVariable("userId") UUID userId
     ) {
         log.info("Getting user accounts for user with id: " + userId);
         List<AccountDto> accounts = userManagementFacade.getUserAccounts(userId);
+        if (accounts == null) {
+            log.error("Could not get accounts for user with id: " + userId);
+            return ResponseEntity.internalServerError().build();
+        }
         return ResponseEntity.ok(accounts);
     }
 }
