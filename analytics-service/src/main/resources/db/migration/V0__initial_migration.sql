@@ -32,3 +32,4 @@ CREATE TABLE daily_transaction
 );
 
 CREATE INDEX account_id_index ON daily_transaction (account_id);
+CREATE INDEX date_id_index ON daily_transaction (date_id);
