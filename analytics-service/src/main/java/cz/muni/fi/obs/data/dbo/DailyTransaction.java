@@ -1,34 +1,48 @@
 package cz.muni.fi.obs.data.dbo;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "daily_transaction")
 public class DailyTransaction extends Dbo {
+
+    @Column(nullable = false)
     Integer totalWithdrawalTransactions;
+
+    @Column(nullable = false)
     Integer totalDepositTransactions;
+
+    @Column(nullable = false)
     BigDecimal totalTransactionAmount;
+
+    @Column(nullable = false)
     BigDecimal totalWithdrawalAmount;
+
+    @Column(nullable = false)
     BigDecimal totalDepositAmount;
+
+    @Column(nullable = false)
     BigDecimal averageWithdrawalAmount;
+
+    @Column(nullable = false)
     BigDecimal averageDepositAmount;
+
+    @ManyToOne
     Account account;
+
+    @ManyToOne
     Date date;
-
-
-    public DailyTransaction(Integer totalWithdrawalTransactions, Integer totalDepositTransactions, BigDecimal totalTransactionAmount, BigDecimal totalWithdrawalAmount, BigDecimal totalDepositAmount, BigDecimal averageWithdrawalAmount, BigDecimal averageDepositAmount, Account account, Date date) {
-        this.totalWithdrawalTransactions = totalWithdrawalTransactions;
-        this.totalDepositTransactions = totalDepositTransactions;
-        this.totalTransactionAmount = totalTransactionAmount;
-        this.totalWithdrawalAmount = totalWithdrawalAmount;
-        this.totalDepositAmount = totalDepositAmount;
-        this.averageWithdrawalAmount = averageWithdrawalAmount;
-        this.averageDepositAmount = averageDepositAmount;
-        this.account = account;
-        this.date = date;
-    }
 }

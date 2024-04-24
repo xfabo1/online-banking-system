@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.data;
+package cz.muni.fi.obs.util;
 
 import cz.muni.fi.obs.data.dbo.Account;
 import cz.muni.fi.obs.data.dbo.DailyTransaction;
@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class DataStore {
+public class TestData {
     public List<DailyTransaction> transactions = new ArrayList<>();
     private static final Account account = new Account("1234567890");
 
-    public DataStore(){
+    public TestData() {
         DailyTransaction transaction1 = new DailyTransaction(
                 5,
                 5,
@@ -54,4 +54,3 @@ public class DataStore {
         transactions.add(transaction3);
     }
 }
-

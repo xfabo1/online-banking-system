@@ -30,6 +30,7 @@ public class AnalyticsService {
         }
         return createDailySummaryResult(transactions);
     }
+
     public MonthlySummaryResult getMonthlySummary(String accountNumber, int year, int month) {
         List<DailyTransaction> transactions = analyticsRepository.getDailyTransactions(accountNumber, year, month);
         if (transactions.isEmpty()) {
@@ -43,8 +44,9 @@ public class AnalyticsService {
         transactions.forEach(transaction -> dailySummaries.add(createDailySummary(transaction)));
         return new DailySummaryResult(LocalDate.now(), dailySummaries);
     }
+
     private DailySummary createDailySummary(DailyTransaction transaction) {
-        return new DailySummary(transaction.getDate().getDate(),
+        return new DailySummary(transaction.getDate().getFullDate(),
                 transaction.getTotalWithdrawalTransactions(),
                 transaction.getTotalDepositTransactions(),
                 transaction.getTotalWithdrawalAmount(),
@@ -57,8 +59,9 @@ public class AnalyticsService {
     private MonthlySummaryResult createMonthlySummaryResult(List<DailyTransaction> transactions) {
         return new MonthlySummaryResult(LocalDate.now(), createMonthlySummary(transactions));
     }
+
     private MonthlySummary createMonthlySummary(List<DailyTransaction> transactions) {
-        String month = Month.of(transactions.getFirst().getDate().getMonth()).name();
+        String month = Month.of(transactions.getFirst().getDate().getMonthNumber()).name();
         Integer totalWithdrawalTransactions = 0;
         Integer totalDepositTransactions = 0;
         BigDecimal totalWithdrawalAmount = new BigDecimal(0);

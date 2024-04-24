@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/{accountNumber}")
+@RequestMapping("/v1/{accountNumber}")
 public class AnalyticsController {
     private final AnalyticsFacade analyticsFacade;
+
     @Autowired
     public AnalyticsController(AnalyticsFacade analyticsFacade) {
         this.analyticsFacade = analyticsFacade;

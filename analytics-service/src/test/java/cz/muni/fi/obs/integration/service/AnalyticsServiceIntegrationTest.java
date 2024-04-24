@@ -1,65 +1,54 @@
-package cz.muni.fi.obs.service;
+package cz.muni.fi.obs.integration.service;
 
+import cz.muni.fi.obs.Application;
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
-import cz.muni.fi.obs.data.AnalyticsRepository;
-import cz.muni.fi.obs.data.DataStore;
+import cz.muni.fi.obs.service.AnalyticsService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.time.Month;
-import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_CLASS;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
 
-@ExtendWith(MockitoExtension.class)
-class AnalyticsServiceTest {
+@ContextConfiguration(classes = {Application.class})
+@Sql(value = {"/initialize_db.sql"}, executionPhase = BEFORE_TEST_CLASS)
+@Sql(value = {"/drop_all.sql"}, executionPhase = AFTER_TEST_CLASS)
+@RunWith(SpringRunner.class)
+@ActiveProfiles("test")
+@SpringBootTest
+class AnalyticsServiceIntegrationTest {
 
-    private final DataStore dataStore = new DataStore();
-
-    @Mock
-    private AnalyticsRepository analyticsRepository;
-
-    @InjectMocks
+    @Autowired
     private AnalyticsService analyticsService;
 
     @Test
     void getDailySummary_noFactsPresentForAccount_createsEmptySummary() {
-        when(analyticsRepository.getDailyTransactions(any(String.class), any(Integer.class), any(Integer.class)))
-                .thenReturn(new ArrayList<>());
-
         DailySummaryResult dailySummary = analyticsService.getDailySummary("12345", 2023, 10);
 
-        verify(analyticsRepository).getDailyTransactions("12345", 2023, 10);
-        assertThat(dailySummary.summaries().size()).isEqualTo(0);
+        assertThat(dailySummary.summaries()).isEmpty();
     }
 
     @Test
     void getDailySummary_withFactsPresent_createsCorrectSummary() {
-        when(analyticsRepository.getDailyTransactions(any(String.class), any(Integer.class), any(Integer.class)))
-                .thenReturn(dataStore.transactions);
+        DailySummaryResult dailySummaryResult = analyticsService.getDailySummary("1234567890", 2021, 1);
 
-        DailySummaryResult dailySummaryResult = analyticsService.getDailySummary("1234567890", 2023, 10);
-
-        verify(analyticsRepository).getDailyTransactions("1234567890", 2023, 10);
-        assertThat(dailySummaryResult.summaries().size()).isEqualTo(3);
+        assertThat(dailySummaryResult.summaries()).hasSize(3);
     }
 
     @Test
     void getMonthlySummary_noFactsPresentForAccount_createsEmptySummary() {
-        when(analyticsRepository.getDailyTransactions(any(String.class), any(Integer.class), any(Integer.class)))
-                .thenReturn(new ArrayList<>());
+        MonthlySummaryResult monthlySummary = analyticsService.getMonthlySummary("12345678900", 2021, 1);
 
-        MonthlySummaryResult monthlySummary = analyticsService.getMonthlySummary("1234567890", 2021, 1);
-
-        verify(analyticsRepository).getDailyTransactions("1234567890", 2021, 1);
         assertThat(monthlySummary.summary()).isNotNull();
         assertThat(monthlySummary.summary().month()).isEqualTo(Month.of(1).toString());
         assertThat(monthlySummary.summary().totalWithdrawalTransactions()).isZero();
@@ -73,12 +62,8 @@ class AnalyticsServiceTest {
 
     @Test
     void getMonthlySummary_withFactsPresent_createsCorrectSummary() {
-        when(analyticsRepository.getDailyTransactions(any(String.class), any(Integer.class), any(Integer.class)))
-                .thenReturn(dataStore.transactions);
-
         MonthlySummaryResult monthlySummary = analyticsService.getMonthlySummary("1234567890", 2021, 1);
 
-        verify(analyticsRepository).getDailyTransactions("1234567890", 2021, 1);
         assertThat(monthlySummary.summary()).isNotNull();
         assertThat(monthlySummary.summary().month()).isEqualTo(Month.of(1).toString());
         assertThat(monthlySummary.summary().totalWithdrawalTransactions()).isEqualTo(19);
