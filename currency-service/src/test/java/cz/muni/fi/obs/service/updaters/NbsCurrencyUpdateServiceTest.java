@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@TestPropertySource(properties = {"currency.auto-update.urls.nbs:https://nbs.sk/export/sk/exchange-rate/latest/csv"})
+@TestPropertySource(properties = {"currency.auto-update.services.nbs.url:https://nbs.sk/export/sk/exchange-rate/latest/csv"})
 public class NbsCurrencyUpdateServiceTest extends PostgresqlTest {
 
     @Autowired
