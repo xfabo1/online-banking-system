@@ -1,6 +1,7 @@
 package cz.muni.fi.obs.integration.controller;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,8 @@ public abstract class ControllerIntegrationTest {
 
     public static RequestSpecification requestSpecification(UriComponents uri) {
         return given().basePath(uri.getPath())
-                .queryParams(uri.getQueryParams());
+                .queryParams(uri.getQueryParams())
+                .contentType(ContentType.JSON);
     }
 
     @BeforeEach
