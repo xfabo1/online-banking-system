@@ -45,7 +45,7 @@ class AnalyticsControllerTest {
         when(analyticsFacade.getDailySummary(any(String.class), any(Integer.class), any(Integer.class)))
                 .thenReturn(new DailySummaryResult(LocalDate.now(), new ArrayList<>()));
 
-        mockMvc.perform(post("/api/v1/12345/daily-summary")
+        mockMvc.perform(post("/v1/12345/daily-summary")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new DailySummaryRequest(2021, 1))))
                 .andExpect(status().isOk());
@@ -58,7 +58,7 @@ class AnalyticsControllerTest {
         when(analyticsFacade.getDailySummary(any(String.class), any(Integer.class), any(Integer.class)))
                 .thenReturn(new DailySummaryResult(LocalDate.now(), new ArrayList<>()));
 
-        mockMvc.perform(post("/api/v1/12345/daily-summary")
+        mockMvc.perform(post("/v1/12345/daily-summary")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new DailySummaryRequest(2021, -1))))
                 .andExpect(status().isBadRequest());
@@ -70,7 +70,7 @@ class AnalyticsControllerTest {
         when(analyticsFacade.getMonthlySummary(any(String.class), any(Integer.class), any(Integer.class)))
                 .thenReturn(new MonthlySummaryResult(LocalDate.now(), null));
 
-        mockMvc.perform(post("/api/v1/12345/monthly-summary")
+        mockMvc.perform(post("/v1/12345/monthly-summary")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new MonthlySummaryRequest(2021, 1))))
                 .andExpect(status().isOk());
@@ -83,7 +83,7 @@ class AnalyticsControllerTest {
         when(analyticsFacade.getMonthlySummary(any(String.class), any(Integer.class), any(Integer.class)))
                 .thenReturn(new MonthlySummaryResult(LocalDate.now(), null));
 
-        mockMvc.perform(post("/api/v1/12345/monthly-summary")
+        mockMvc.perform(post("/v1/12345/monthly-summary")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new MonthlySummaryRequest(-10, 1))))
                 .andExpect(status().isBadRequest());
