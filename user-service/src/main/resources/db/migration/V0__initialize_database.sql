@@ -10,5 +10,3 @@ CREATE TABLE us_user
     birth_number varchar(20)  not null unique,
     active       boolean      not null default true
 );
-
-CREATE INDEX us_user_id_index ON us_user (id);
