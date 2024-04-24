@@ -15,7 +15,7 @@ spring:
           default:
             logger-level: basic
   datasource:
-    url: jdbc:postgresql://localhost:5434/transaction_db
+    url: jdbc:postgresql://transaction-db:5432/transaction_db
     username: transaction_service
     password: changemelater
     driver-class-name: org.postgresql.Driver

@@ -6,7 +6,7 @@ spring:
   application:
     name: analytics-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/analytics_db
+    url: jdbc:postgresql://analytics-db:5432/analytics_db
     username: analytics_service
     password: changemelater
     driver-class-name: org.postgresql.Driver
