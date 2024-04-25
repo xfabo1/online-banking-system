@@ -64,7 +64,6 @@ public class TestData {
 				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
-				TestData.withdrawTransactions.getFirst().getDepositAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);

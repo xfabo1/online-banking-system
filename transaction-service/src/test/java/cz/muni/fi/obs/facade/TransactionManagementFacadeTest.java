@@ -1,14 +1,12 @@
 package cz.muni.fi.obs.facade;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-
+import cz.muni.fi.obs.TestData;
+import cz.muni.fi.obs.api.AccountCreateDto;
+import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.service.AccountService;
+import cz.muni.fi.obs.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,13 +16,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
-import cz.muni.fi.obs.TestData;
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.api.TransactionCreateDto;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.service.AccountService;
-import cz.muni.fi.obs.service.TransactionService;
+import java.math.BigDecimal;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionManagementFacadeTest {
@@ -55,7 +54,6 @@ class TransactionManagementFacadeTest {
 				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
-				TestData.withdrawTransactions.getFirst().getDepositAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
@@ -64,7 +62,7 @@ class TransactionManagementFacadeTest {
 
 		transactionManagementFacade.createTransaction(transactionCreateDto);
 
-		Mockito.verify(transactionService).createTransaction(transactionCreateDto, emptyAccount, emptyAccount);
+		Mockito.verify(transactionService).createTransaction(transactionCreateDto);
 	}
 
 	@Test
@@ -85,7 +83,7 @@ class TransactionManagementFacadeTest {
 
 	@Test
 	public void checkAccountBalance_returnsBalance() {
-		when(transactionService.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
+		when(transactionService.calculateAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
 		when(accountService.findAccountByAccountNumber("1234567890"))
 				.thenReturn(Optional.of(AccountDbo.builder()
 						.id(TestData.accountId)

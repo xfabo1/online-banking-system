@@ -1,15 +1,10 @@
 package cz.muni.fi.obs.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import cz.muni.fi.obs.TestData;
+import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.repository.TransactionRepository;
+import cz.muni.fi.obs.http.CurrencyServiceClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,13 +14,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import cz.muni.fi.obs.TestData;
-import cz.muni.fi.obs.api.CurrencyExchangeResult;
-import cz.muni.fi.obs.api.TransactionCreateDto;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.data.repository.TransactionRepository;
-import cz.muni.fi.obs.http.CurrencyServiceClient;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
@@ -41,40 +36,40 @@ class TransactionServiceTest {
 
 	@Test
 	public void checkAccountBalance_noTransactions_CalculatesCorrectly() {
-		when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(Collections.emptyList());
-		when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(Collections.emptyList());
-		BigDecimal balance = transactionService.checkAccountBalance(TestData.accountId);
+		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(Collections.emptyList());
+		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(Collections.emptyList());
+		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
 		assertThat(balance).isEqualTo(BigDecimal.valueOf(0));
 	}
 
 	@Test
 	public void checkAccountBalance_singleWithdraw_calculatesCorrectly() {
-		when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(
+		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(
 				List.of(TestData.withdrawTransactions.getFirst()));
-		when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(Collections.emptyList());
-		BigDecimal balance = transactionService.checkAccountBalance(TestData.accountId);
+		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(Collections.emptyList());
+		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
 		assertThat(balance).isEqualTo(BigDecimal.valueOf(-1000));
 	}
 
 	@Test
 	public void checkAccountBalance_singleDeposit_calculatesCorrectly() {
-		when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(Collections.emptyList());
-		when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(
+		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(Collections.emptyList());
+		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(
 				List.of(TestData.depositTransactions.getFirst()));
-		BigDecimal balance = transactionService.checkAccountBalance(TestData.accountId);
+		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
 		assertThat(balance).isEqualTo(BigDecimal.valueOf(3001.5));
 	}
 
 	@Test
 	public void checkAccountBalance_multipleTransactions_calculatesCorrectly() {
-		when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(
+		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(
 				TestData.withdrawTransactions);
-		when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(
+		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(
 				TestData.depositTransactions);
-		BigDecimal balance = transactionService.checkAccountBalance(TestData.accountId);
+		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
 		assertThat(balance).isEqualTo(BigDecimal.valueOf(2043.5));
 	}
@@ -112,12 +107,11 @@ class TransactionServiceTest {
 				.symbolTo("EUR").build();
 
 		when(client.getCurrencyExchange(any())).thenReturn(Optional.of(exchangeResult));
-		when(repository.findTransactionsDboByWithdrawsFrom_Id(any())).thenReturn(Collections.emptyList());
-		when(repository.findTransactionsDboByDepositsTo_Id(any())).thenReturn(TestData.depositTransactions);
+		when(repository.findTransactionsDbosByWithdrawsFromId(any())).thenReturn(Collections.emptyList());
+		when(repository.findTransactionsDboByDepositsToId(any())).thenReturn(TestData.depositTransactions);
 		when(repository.save(any())).thenReturn(TestData.withdrawTransactions.getFirst());
 
-		TransactionDbo createdTransaction = transactionService.createTransaction(TestData.transactionCreateDto(),
-				TestData.withdrawAccount(), TestData.depositAccount());
+		TransactionDbo createdTransaction = transactionService.createTransaction(TestData.transactionCreateDto());
 
 		verify(repository).save(any());
 		assertThat(createdTransaction).isEqualTo(TestData.withdrawTransactions.getFirst());

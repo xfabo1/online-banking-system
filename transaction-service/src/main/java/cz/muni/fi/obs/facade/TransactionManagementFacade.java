@@ -34,9 +34,7 @@ public class TransactionManagementFacade {
 	}
 
 	public TransactionDbo createTransaction(TransactionCreateDto transaction) {
-		AccountDbo withdrawsFromAccount = getAccountByAccountNumber(transaction.withdrawsFromAccountNumber());
-		AccountDbo depositsToAccount = getAccountByAccountNumber(transaction.depositsToAccountNumber());
-		return transactionService.createTransaction(transaction, withdrawsFromAccount, depositsToAccount);
+		return transactionService.createTransaction(transaction);
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountNumber, int pageNumber, int pageSize) {
@@ -46,7 +44,7 @@ public class TransactionManagementFacade {
 
 	public BigDecimal checkAccountBalance(String accountNumber) {
 		AccountDbo account = getAccountByAccountNumber(accountNumber);
-		return transactionService.checkAccountBalance(account.getId());
+		return transactionService.calculateAccountBalance(account.getId());
 	}
 
 	public AccountDbo createAccount(AccountCreateDto accountCreateDto) {
