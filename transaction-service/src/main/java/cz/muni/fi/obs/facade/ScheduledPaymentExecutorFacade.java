@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -45,16 +46,13 @@ public class ScheduledPaymentExecutorFacade {
         int today = date.getDayOfMonth();
         int tommorrow = date.plusDays(1).getDayOfMonth();
 
-        List<ScheduledPayment> ready;
+        List<ScheduledPayment> ready = new ArrayList<>();
 
-        // everything after 28 (incl.) is executed on last day of month
-        if (today >= END_OF_MONTH_PAYMENT_DAY && !(tommorrow < today)) {
-            return;
-        }
-
-        // today is last day of month execute everything scheduled in 28-31
-        if (tommorrow < today) {
-            ready = retrievalService.findForEndOfMonth();
+        // if today is >= 28 only execute payments if its last day of month
+        if (today >= END_OF_MONTH_PAYMENT_DAY) {
+            if (tommorrow < today) {
+                ready = retrievalService.findForEndOfMonth();
+            }
         } else {
             ready = retrievalService.findForCurrentDayOfMonth();
         }

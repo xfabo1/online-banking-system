@@ -46,7 +46,6 @@ public class ScheduledPaymentService implements ScheduledPaymentFacade {
                 .orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, createDto.depositsToId()));
 
         ScheduledPayment scheduledPayment = new ScheduledPayment();
-        scheduledPayment.setFrequency(createDto.frequency());
         scheduledPayment.setValidUntil(createDto.validUntil());
         scheduledPayment.setWithdrawsFrom(from);
         scheduledPayment.setDepositsTo(to);
