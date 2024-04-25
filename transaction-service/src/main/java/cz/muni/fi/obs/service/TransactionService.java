@@ -41,8 +41,8 @@ public class TransactionService {
 	}
 
 	public BigDecimal calculateAccountBalance(String accountId) {
-		var withdraws = repository.findTransactionsDbosByWithdrawsFromId(accountId);
-		var deposits = repository.findTransactionsDboByDepositsToId(accountId);
+		var withdraws = repository.findTransactionsDboByWithdrawsFrom_Id(accountId);
+		var deposits = repository.findTransactionsDboByDepositsTo_Id(accountId);
 
 		BigDecimal withdrawSum = withdraws.stream()
 				.filter(transactionDbo -> transactionDbo.getTransactionState().equals(SUCCESSFUL))

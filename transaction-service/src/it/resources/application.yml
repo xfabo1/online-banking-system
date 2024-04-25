@@ -4,3 +4,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+clients:
+  currency-service:
+    url: http://localhost:8080

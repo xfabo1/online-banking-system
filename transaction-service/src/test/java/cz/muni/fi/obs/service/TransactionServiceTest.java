@@ -36,8 +36,8 @@ class TransactionServiceTest {
 
 	@Test
 	public void checkAccountBalance_noTransactions_CalculatesCorrectly() {
-		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(Collections.emptyList());
-		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(Collections.emptyList());
+        when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(Collections.emptyList());
+        when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(Collections.emptyList());
 		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
 		assertThat(balance).isEqualTo(BigDecimal.valueOf(0));
@@ -45,9 +45,9 @@ class TransactionServiceTest {
 
 	@Test
 	public void checkAccountBalance_singleWithdraw_calculatesCorrectly() {
-		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(
+        when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(
 				List.of(TestData.withdrawTransactions.getFirst()));
-		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(Collections.emptyList());
+        when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(Collections.emptyList());
 		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
 		assertThat(balance).isEqualTo(BigDecimal.valueOf(-1000));
@@ -55,8 +55,8 @@ class TransactionServiceTest {
 
 	@Test
 	public void checkAccountBalance_singleDeposit_calculatesCorrectly() {
-		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(Collections.emptyList());
-		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(
+        when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(Collections.emptyList());
+        when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(
 				List.of(TestData.depositTransactions.getFirst()));
 		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
@@ -65,9 +65,9 @@ class TransactionServiceTest {
 
 	@Test
 	public void checkAccountBalance_multipleTransactions_calculatesCorrectly() {
-		when(repository.findTransactionsDbosByWithdrawsFromId(TestData.accountId)).thenReturn(
+        when(repository.findTransactionsDboByWithdrawsFrom_Id(TestData.accountId)).thenReturn(
 				TestData.withdrawTransactions);
-		when(repository.findTransactionsDboByDepositsToId(TestData.accountId)).thenReturn(
+        when(repository.findTransactionsDboByDepositsTo_Id(TestData.accountId)).thenReturn(
 				TestData.depositTransactions);
 		BigDecimal balance = transactionService.calculateAccountBalance(TestData.accountId);
 
@@ -107,8 +107,8 @@ class TransactionServiceTest {
 				.symbolTo("EUR").build();
 
 		when(client.getCurrencyExchange(any())).thenReturn(Optional.of(exchangeResult));
-		when(repository.findTransactionsDbosByWithdrawsFromId(any())).thenReturn(Collections.emptyList());
-		when(repository.findTransactionsDboByDepositsToId(any())).thenReturn(TestData.depositTransactions);
+        when(repository.findTransactionsDboByWithdrawsFrom_Id(any())).thenReturn(Collections.emptyList());
+        when(repository.findTransactionsDboByDepositsTo_Id(any())).thenReturn(TestData.depositTransactions);
 		when(repository.save(any())).thenReturn(TestData.withdrawTransactions.getFirst());
 
 		TransactionDbo createdTransaction = transactionService.createTransaction(TestData.transactionCreateDto());

@@ -31,7 +31,7 @@ public class TransactionRepositoryTest {
 
 	@Test
 	public void findTransactionsByWithdrawsFromId_transactionsFound_returnsTransactions() {
-        List<TransactionDbo> transactions = transactionRepository.findTransactionsDbosByWithdrawsFromId("1");
+        List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByWithdrawsFrom_Id("1");
 
 		assertThat(transactions)
 				.hasSize(2)
@@ -43,7 +43,7 @@ public class TransactionRepositoryTest {
 		insertTransaction();
 
 		List<TransactionDbo> transactionsAfterSaving = transactionRepository
-                .findTransactionsDbosByWithdrawsFromId("1");
+                .findTransactionsDboByWithdrawsFrom_Id("1");
 
 		assertThat(transactionsAfterSaving)
 				.hasSize(3)
@@ -58,14 +58,14 @@ public class TransactionRepositoryTest {
 
 	@Test
 	public void findTransactionsByWithdrawsFromId_transactionsNotFound_returnsEmptyList() {
-        List<TransactionDbo> transactions = transactionRepository.findTransactionsDbosByWithdrawsFromId("non-existing");
+        List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByWithdrawsFrom_Id("non-existing");
 
 		assertThat(transactions).hasSize(0);
 	}
 
 	@Test
 	public void findTransactionsByDepositsToId_transactionsFound_returnsTransactions() {
-        List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByDepositsToId("2");
+        List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByDepositsTo_Id("2");
 
 		assertThat(transactions)
 				.hasSize(2)
@@ -77,7 +77,7 @@ public class TransactionRepositoryTest {
 		insertTransaction();
 
 		List<TransactionDbo> transactionsAfterSaving = transactionRepository
-                .findTransactionsDboByDepositsToId("2");
+                .findTransactionsDboByDepositsTo_Id("2");
 
 		assertThat(transactionsAfterSaving)
 				.hasSize(3)
@@ -93,7 +93,7 @@ public class TransactionRepositoryTest {
 	@Test
 	public void findTransactionsByDepositsToId_transactionsNotFound_returnsEmptyList() {
 		List<TransactionDbo> transactions = transactionRepository
-                .findTransactionsDboByDepositsToId("non-existing");
+                .findTransactionsDboByDepositsTo_Id("non-existing");
 
 		assertThat(transactions).hasSize(0);
 	}

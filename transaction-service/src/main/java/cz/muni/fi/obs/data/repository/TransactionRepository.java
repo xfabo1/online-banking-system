@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionDbo, String> {
 
-	List<TransactionDbo> findTransactionsDbosByWithdrawsFromId(String accountId);
+	List<TransactionDbo> findTransactionsDboByWithdrawsFrom_Id(String accountId);
 
-	List<TransactionDbo> findTransactionsDboByDepositsToId(String accountId);
+	List<TransactionDbo> findTransactionsDboByDepositsTo_Id(String accountId);
 
 	@Query("SELECT t FROM TransactionDbo t WHERE t.withdrawsFrom.id = :accountId OR t.depositsTo.id = :accountId")
 	Page<TransactionDbo> findTransactionHistory(String accountId, Pageable pageable);
