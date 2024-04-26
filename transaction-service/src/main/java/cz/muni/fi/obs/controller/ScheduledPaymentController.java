@@ -29,12 +29,12 @@ public class ScheduledPaymentController {
         return facade.createPayment(createDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/disable")
     public void disable(@PathVariable String id) {
         facade.disablePayment(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/enable")
     public void enable(@PathVariable String id) {
         facade.enablePayment(id);
     }

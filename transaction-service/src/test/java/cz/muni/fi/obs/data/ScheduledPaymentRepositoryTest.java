@@ -1,15 +1,14 @@
-package cz.muni.fi.obs.repository.data;
+package cz.muni.fi.obs.data;
 
-import cz.muni.fi.obs.common.PostgresqlTest;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.ScheduledPayment;
 import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -17,8 +16,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
+@DataJpaTest
+@ActiveProfiles("test")
+public class ScheduledPaymentRepositoryTest {
 
     @Autowired
     private ScheduledPaymentRepository scheduledPaymentRepository;
@@ -26,9 +26,16 @@ public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Before
+    private boolean setupDone = false;
+
+    @BeforeEach
     public void setUp() {
+        if (setupDone) {
+            return;
+        }
+
         AccountDbo accountDbo = new AccountDbo();
+        accountDbo.setId("123");
         accountDbo.setAccountNumber("1233");
         accountDbo.setCurrencyCode("CZK");
         accountDbo.setCustomerId("mikoflosso");
@@ -36,6 +43,7 @@ public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
         accountDbo = accountRepository.save(accountDbo);
 
         AccountDbo accountDbo1 = new AccountDbo();
+        accountDbo1.setId("1234");
         accountDbo1.setAccountNumber("12356");
         accountDbo1.setCurrencyCode("CZK");
         accountDbo1.setCustomerId("ego");
@@ -43,7 +51,7 @@ public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
         accountDbo1 = accountRepository.save(accountDbo1);
 
         BigDecimal amount = BigDecimal.valueOf(1000);
-        Instant past = Instant.now().minusSeconds(300);
+        Instant past = Instant.now().minusSeconds(1000);
 
         // ONCE A MONTH
         ScheduledPayment scheduledPayment = new ScheduledPayment();
@@ -108,10 +116,12 @@ public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
         scheduledPayment7.setDepositsTo(accountDbo1);
         scheduledPayment7.setValidUntil(past);
         scheduledPaymentRepository.save(scheduledPayment7);
+
+        setupDone = true;
     }
 
     @Test
-    void findAllByDayOfWeek_oneTransactionExists_findsCorrectTransaction() {
+    public void findAllByDayOfWeek_oneTransactionExists_findsCorrectTransaction() {
         List<ScheduledPayment> allByDayOfWeek =
                 scheduledPaymentRepository.findAllByDayOfWeek(1, Instant.now());
 
@@ -120,7 +130,7 @@ public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
     }
 
     @Test
-    void findForEndOfMonth_oneTransactionExists_findsCorrectTransaction() {
+    public void findForEndOfMonth_oneTransactionExists_findsCorrectTransaction() {
         List<ScheduledPayment> endOfMonth =
                 scheduledPaymentRepository.findForEndOfMonth(Instant.now());
 
@@ -129,7 +139,7 @@ public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
     }
 
     @Test
-    void findAllByDayOfMonth_oneTransactionExists_findsCorrectTransaction() {
+    public void findAllByDayOfMonth_oneTransactionExists_findsCorrectTransaction() {
         List<ScheduledPayment> dayOfMonth =
                 scheduledPaymentRepository.findForEndOfMonth(Instant.now());
 
@@ -138,7 +148,7 @@ public class ScheduledPaymentRepositoryTest extends PostgresqlTest {
     }
 
     @Test
-    void findAllByDayOfYear_oneTransactionExists_findsCorrectTransaction() {
+    public void findAllByDayOfYear_oneTransactionExists_findsCorrectTransaction() {
         List<ScheduledPayment> dayOfMonth =
                 scheduledPaymentRepository.findAllByDayOfYear(1, Instant.now());
 
