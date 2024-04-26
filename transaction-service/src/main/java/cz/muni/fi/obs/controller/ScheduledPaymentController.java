@@ -5,6 +5,7 @@ import cz.muni.fi.obs.api.ScheduledPaymentCreateDto;
 import cz.muni.fi.obs.api.ScheduledPaymentDto;
 import cz.muni.fi.obs.facade.ScheduledPaymentFacade;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class ScheduledPaymentController {
     }
 
     @PostMapping("/")
-    public ScheduledPaymentDto create(@RequestBody ScheduledPaymentCreateDto createDto) {
+    public ScheduledPaymentDto create(@Valid @RequestBody ScheduledPaymentCreateDto createDto) {
         return facade.createPayment(createDto);
     }
 
