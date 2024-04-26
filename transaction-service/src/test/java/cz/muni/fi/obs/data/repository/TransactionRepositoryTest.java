@@ -2,6 +2,7 @@ package cz.muni.fi.obs.data.repository;
 
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.dbo.TransactionState;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -140,6 +141,7 @@ public class TransactionRepositoryTest {
 				.conversionRate(1.0)
 				.note("note-10")
 				.variableSymbol("1010")
+				.transactionState(TransactionState.SUCCESSFUL)
 				.build();
 
 		transactionRepository.save(transactionDbo);
