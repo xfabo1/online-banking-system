@@ -18,3 +18,6 @@ CREATE INDEX day_of_month_IDX on scheduled_payment (day_of_month);
 CREATE INDEX day_of_year_IDX on scheduled_payment (day_of_year);
 CREATE INDEX withdraws_from_id_IDX on scheduled_payment (withdraws_from_id);
 CREATE INDEX deposits_to_IDX on scheduled_payment (deposits_to_id);
+
+ALTER TABLE transactions
+    ADD COLUMN transaction_state varchar(255) NOT NULL;

@@ -34,5 +34,6 @@ public class TransactionDbo {
 	private String variableSymbol;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "transaction_state", nullable = false)
 	private TransactionState transactionState;
 }
