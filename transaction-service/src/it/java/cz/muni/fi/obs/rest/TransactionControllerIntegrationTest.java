@@ -5,6 +5,7 @@ import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.controller.pagination.PagedResponse;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.dbo.TransactionState;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
 import io.restassured.common.mapper.TypeRef;
@@ -24,6 +25,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -170,7 +172,7 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 
 	@Order(7)
 	@Test
-	public void createTransaction_insufficientBalance_returns409() {
+	public void createTransaction_insufficientBalance_createsFailedTransaction() {
 		prepareTheCurrencyClient();
 		UriComponents components = UriComponentsBuilder
 				.fromPath(TRANSACTION_CONTROLLER_PATH + "/transaction/create")
@@ -188,7 +190,15 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 				.body(transactionCreateDto)
 				.post()
 				.then()
-				.statusCode(HttpStatus.SC_CONFLICT);
+				.statusCode(HttpStatus.SC_CREATED);
+
+		List<TransactionDbo> accountFiveWithdrawals = transactionRepository.findAll()
+				.stream()
+				.filter(transactionDbo -> transactionDbo.getWithdrawsFrom().getAccountNumber().equals("account-5"))
+				.toList();
+
+		assertThat(accountFiveWithdrawals.stream()
+				.anyMatch(transaction -> transaction.getTransactionState().equals(TransactionState.FAILED))).isTrue();
 	}
 
 	private String buildBalancePath(String accountNumber) {

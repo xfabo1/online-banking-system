@@ -70,8 +70,6 @@ public class TransactionService {
 				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, transaction.withdrawsFromAccountNumber()));
 		AccountDbo depositsToAccount = accountRepository.findAccountDboByAccountNumber(transaction.depositsToAccountNumber())
 				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, transaction.depositsToAccountNumber()));
-		;
-
 
 		CurrencyExchangeRequest request = CurrencyExchangeRequest.builder()
 				.from(transaction.withdrawsFromAccountNumber())
