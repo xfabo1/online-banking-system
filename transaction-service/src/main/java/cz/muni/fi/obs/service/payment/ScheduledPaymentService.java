@@ -55,12 +55,12 @@ public class ScheduledPaymentService implements ScheduledPaymentFacade {
     }
 
     @Override
-    public void disablePayment(String id) {
+    public void disablePayment(String id, Instant disableTime) {
         ScheduledPayment scheduledPayment = scheduledPaymentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 ScheduledPayment.class, id
         ));
 
-        scheduledPayment.setValidUntil(Instant.now());
+        scheduledPayment.setValidUntil(disableTime);
 
         scheduledPaymentRepository.save(scheduledPayment);
     }

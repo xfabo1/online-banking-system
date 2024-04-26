@@ -1,8 +1,7 @@
-package cz.muni.fi.obs.repository;
+package cz.muni.fi.obs.data.repository;
 
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.data.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

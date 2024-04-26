@@ -1,9 +1,7 @@
-package cz.muni.fi.obs.data;
+package cz.muni.fi.obs.data.repository;
 
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.ScheduledPayment;
-import cz.muni.fi.obs.data.repository.AccountRepository;
-import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

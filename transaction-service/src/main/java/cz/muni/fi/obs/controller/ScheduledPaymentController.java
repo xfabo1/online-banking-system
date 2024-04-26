@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+
 import static cz.muni.fi.obs.controller.ScheduledPaymentController.SCHEDULED_PAYMENT_PATH;
 
 @Tag(name = "ScheduledPayment", description = "Scheduled payment creation and disabling")
@@ -30,8 +32,8 @@ public class ScheduledPaymentController {
     }
 
     @PutMapping("/{id}/disable")
-    public void disable(@PathVariable String id) {
-        facade.disablePayment(id);
+    public void disable(@PathVariable String id, @RequestParam(required = false) Instant disableTime) {
+        facade.disablePayment(id, disableTime == null ? Instant.now() : disableTime);
     }
 
     @PutMapping("/{id}/enable")
