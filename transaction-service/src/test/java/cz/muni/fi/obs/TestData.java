@@ -3,6 +3,7 @@ package cz.muni.fi.obs;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.dbo.TransactionState;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ public class TestData {
 					.withdrawsFrom(withdrawAccount())
 					.depositAmount(BigDecimal.valueOf(250))
 					.variableSymbol("123")
+					.transactionState(TransactionState.SUCCESSFUL)
 					.build(),
 			TransactionDbo.builder()
 					.id("2")
@@ -32,6 +34,7 @@ public class TestData {
 					.withdrawsFrom(withdrawAccount())
 					.depositAmount(BigDecimal.valueOf(2))
 					.variableSymbol("123")
+					.transactionState(TransactionState.SUCCESSFUL)
 					.build()
 	);
 
@@ -45,6 +48,7 @@ public class TestData {
 					.withdrawsFrom(withdrawAccount())
 					.depositAmount(BigDecimal.valueOf(3001.5))
 					.variableSymbol("123")
+					.transactionState(TransactionState.SUCCESSFUL)
 					.build(),
 
 			TransactionDbo.builder()
@@ -56,6 +60,7 @@ public class TestData {
 					.withdrawsFrom(withdrawAccount())
 					.depositAmount(BigDecimal.valueOf(44))
 					.variableSymbol("123")
+					.transactionState(TransactionState.SUCCESSFUL)
 					.build()
 	);
 

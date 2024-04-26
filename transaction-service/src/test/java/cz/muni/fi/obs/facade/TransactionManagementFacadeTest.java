@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,9 +56,6 @@ class TransactionManagementFacadeTest {
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
-		AccountDbo emptyAccount = new AccountDbo();
-		when(accountService.findAccountByAccountNumber(any())).thenReturn(Optional.of(emptyAccount));
-
 		transactionManagementFacade.createTransaction(transactionCreateDto);
 
 		Mockito.verify(transactionService).createTransaction(transactionCreateDto);
