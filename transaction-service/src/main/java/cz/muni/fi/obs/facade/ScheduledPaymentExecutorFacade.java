@@ -21,9 +21,12 @@ public class ScheduledPaymentExecutorFacade {
 
     private static final Integer END_OF_MONTH_PAYMENT_DAY = 28;
 
+    private static final String SCHEDULER_NOTE = "Automatic payment.";
+
     private final ScheduledPaymentRetrievalService retrievalService;
 
     private final TransactionService transactionService;
+
 
     @Autowired
     public ScheduledPaymentExecutorFacade(ScheduledPaymentRetrievalService retrievalService,
@@ -70,7 +73,8 @@ public class ScheduledPaymentExecutorFacade {
 
     private void executeReadyPayments(List<ScheduledPayment> ready) {
         ready.forEach(payment -> {
-            TransactionCreateDto transactionCreateDto = new TransactionCreateDto(payment.getWithdrawsFrom().getId(), payment.getDepositsTo().getId(), payment.getAmount(), "", "");
+            TransactionCreateDto transactionCreateDto = new TransactionCreateDto(payment.getWithdrawsFrom().getAccountNumber(), payment.getDepositsTo().getAccountNumber(), payment.getAmount(),
+                    SCHEDULER_NOTE, "");
             transactionService.createTransaction(transactionCreateDto);
         });
     }
