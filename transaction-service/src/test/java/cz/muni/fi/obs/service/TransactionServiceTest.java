@@ -2,7 +2,9 @@ package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.TestData;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,9 @@ class TransactionServiceTest {
 
 	@Mock
 	CurrencyServiceClient client;
+
+	@Mock
+	AccountRepository accountRepository;
 
 	@InjectMocks
 	TransactionService transactionService;
@@ -110,6 +115,7 @@ class TransactionServiceTest {
         when(repository.findTransactionsDboByWithdrawsFrom_Id(any())).thenReturn(Collections.emptyList());
         when(repository.findTransactionsDboByDepositsTo_Id(any())).thenReturn(TestData.depositTransactions);
 		when(repository.save(any())).thenReturn(TestData.withdrawTransactions.getFirst());
+		when(accountRepository.findAccountDboByAccountNumber(any())).thenReturn(Optional.of(new AccountDbo()));
 
 		TransactionDbo createdTransaction = transactionService.createTransaction(TestData.transactionCreateDto());
 
