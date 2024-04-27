@@ -2,6 +2,7 @@ package cz.muni.fi.obs.etl;
 
 import cz.muni.fi.obs.data.dbo.DailyTransaction;
 import cz.muni.fi.obs.data.dbo.TempAccount;
+import cz.muni.fi.obs.etl.dto.AccountDto;
 import cz.muni.fi.obs.etl.step.clean.accounts.CleanTempAccountsTasklet;
 import cz.muni.fi.obs.etl.step.create.facts.FactCreatorProcessor;
 import cz.muni.fi.obs.etl.step.create.facts.FactWriter;
@@ -16,7 +17,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class JobConfiguration {
@@ -33,7 +34,7 @@ public class JobConfiguration {
 
     @Bean
     public Step readAccountsStep(JobRepository jobRepository,
-                                 DataSourceTransactionManager transactionManager,
+                                 PlatformTransactionManager transactionManager,
                                  AccountReader accountReader,
                                  AccountProcessor accountProcessor,
                                  AccountWriter accountWriter) {
@@ -47,7 +48,7 @@ public class JobConfiguration {
 
     @Bean
     public Step computeAccountFactsStep(JobRepository jobRepository,
-                                        DataSourceTransactionManager transactionManager,
+                                        PlatformTransactionManager transactionManager,
                                         TempAccountReader reader,
                                         FactCreatorProcessor processor,
                                         FactWriter writer) {
@@ -61,7 +62,7 @@ public class JobConfiguration {
 
     @Bean
     public Step cleanAccountsStep(JobRepository jobRepository,
-                                  DataSourceTransactionManager transactionManager,
+                                  PlatformTransactionManager transactionManager,
                                   CleanTempAccountsTasklet tasklet) {
         return new StepBuilder(CLEAN_ACCOUNTS_STEP_NAME, jobRepository)
                 .tasklet(tasklet, transactionManager)

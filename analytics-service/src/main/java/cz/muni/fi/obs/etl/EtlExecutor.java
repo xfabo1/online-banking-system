@@ -35,7 +35,7 @@ public class EtlExecutor {
      */
     @Scheduled(cron = "0 0 1 * * *")
     public void executeEtl() {
-        JobParameter<Instant> timeParameter = new JobParameter<>(Instant.now(), Instant.class, true);
+        JobParameter<String> timeParameter = new JobParameter<>(Instant.now().toString(), String.class, true);
         HashMap<String, JobParameter<?>> parameterMap = new HashMap<>();
         parameterMap.put("job-execution-time", timeParameter);
         JobParameters jobParameters = new JobParameters(parameterMap);

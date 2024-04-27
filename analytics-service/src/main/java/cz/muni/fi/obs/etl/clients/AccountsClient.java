@@ -1,6 +1,6 @@
 package cz.muni.fi.obs.etl.clients;
 
-import cz.muni.fi.obs.etl.AccountDto;
+import cz.muni.fi.obs.etl.dto.AccountDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

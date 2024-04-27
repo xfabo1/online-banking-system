@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.etl;
+package cz.muni.fi.obs.etl.dto;
 
 import lombok.Getter;
 import lombok.Setter;
