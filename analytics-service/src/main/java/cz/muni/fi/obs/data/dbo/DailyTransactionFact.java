@@ -1,9 +1,6 @@
 package cz.muni.fi.obs.data.dbo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +38,10 @@ public class DailyTransactionFact extends Dbo {
     BigDecimal averageDepositAmount;
 
     @ManyToOne
+    @JoinColumn(name = "account_id")
     AccountDimension accountDimension;
 
     @ManyToOne
+    @JoinColumn(name = "date_id")
     DateDimension dateDimension;
 }
