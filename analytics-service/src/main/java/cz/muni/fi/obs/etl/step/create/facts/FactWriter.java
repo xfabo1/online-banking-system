@@ -1,6 +1,6 @@
 package cz.muni.fi.obs.etl.step.create.facts;
 
-import cz.muni.fi.obs.data.dbo.DailyTransaction;
+import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @StepScope
-public class FactWriter implements ItemWriter<DailyTransaction> {
+public class FactWriter implements ItemWriter<DailyTransactionFact> {
     @Override
-    public void write(Chunk<? extends DailyTransaction> chunk) throws Exception {
+    public void write(Chunk<? extends DailyTransactionFact> chunk) throws Exception {
 
     }
 }

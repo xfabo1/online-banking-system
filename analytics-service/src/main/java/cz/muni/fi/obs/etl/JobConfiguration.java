@@ -1,6 +1,6 @@
 package cz.muni.fi.obs.etl;
 
-import cz.muni.fi.obs.data.dbo.DailyTransaction;
+import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
 import cz.muni.fi.obs.data.dbo.TempAccount;
 import cz.muni.fi.obs.etl.dto.AccountDto;
 import cz.muni.fi.obs.etl.step.clean.accounts.CleanTempAccountsTasklet;
@@ -53,7 +53,7 @@ public class JobConfiguration {
                                         FactCreatorProcessor processor,
                                         FactWriter writer) {
         return new StepBuilder(CREATE_FACTS_STEP_NAME, jobRepository)
-                .<TempAccount, DailyTransaction>chunk(CHUNK_SIZE, transactionManager)
+                .<TempAccount, DailyTransactionFact>chunk(CHUNK_SIZE, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

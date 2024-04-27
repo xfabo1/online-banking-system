@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @Table(name = "daily_transaction")
-public class DailyTransaction extends Dbo {
+public class DailyTransactionFact extends Dbo {
 
     @Column(nullable = false)
     Integer totalWithdrawalTransactions;
@@ -41,8 +41,8 @@ public class DailyTransaction extends Dbo {
     BigDecimal averageDepositAmount;
 
     @ManyToOne
-    Account account;
+    AccountDimension accountDimension;
 
     @ManyToOne
-    Date date;
+    DateDimension dateDimension;
 }
