@@ -3,6 +3,12 @@ server:
     context-path: '/api/currency-service'
   port: 8081
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ 'prometheus', 'health', 'info' ]
+
 data:
   initialize: true
 

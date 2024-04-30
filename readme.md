@@ -4,7 +4,7 @@ How to run the project:
 1. Run `mvn clean install` in the root directory
 NOTE: if this step fails you might not be running docker on your machine, it is neccessary for test containers
 2. (OPTIONAL) Add `data.initialize: true` to application.yml of a service if you want to initialize some data in the tables, unfortunately this does nothing in transaction-service yet.
-3. Run `docker compose up` in the root directory
+3. Run `docker compose up --build` in the root directory
 Now all the services and the databases are running, and you can access them on the following ports:
 - User-service: `localhost:8081/api/user-service`
 - Transaction-service: `localhost:8082/api/transaction-service`
