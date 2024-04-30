@@ -34,8 +34,8 @@ applications.
 As of now only contains some mock data and functionality but in next milestone this service will contain an ETL process
 that extracts data from transaction-service and stores it in the warehouse.
 
-As of now there are only 2 dimensions: account and date. Currency and customer dimension will be added in M2 along with
-implementation of ETL.
+ETL is done asynchronously every day at 1 am using spring, using batch processing. It can be forced from the controller
+of analytics as well.
 
 ## Transaction-service
 
@@ -43,7 +43,11 @@ Service handles all transaction related operations, it contains accounts, if a t
 records about this on both accounts, from this the service can calculate customer balance and provide all operations,
 it relies on Currency-service to provide services needed for international transactions.
 
-In M2 we need to implement creation and execution of scheduled payments.
+Scheduled payments are done using spring scheduling.
+
+Transaction processing is done using active-mq with JMS listeners. Upon calling transaction-api there is a transaction
+initialized and enqueued into active-mq, later transaction-service reads from activemq and calls currency-service and
+calculates transaction amount.
 
 ## Currency-service
 
