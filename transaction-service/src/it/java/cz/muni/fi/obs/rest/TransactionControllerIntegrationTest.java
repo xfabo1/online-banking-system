@@ -1,16 +1,16 @@
 package cz.muni.fi.obs.rest;
 
-import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.stream.Stream;
-
+import cz.muni.fi.obs.ControllerIntegrationTest;
+import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.controller.pagination.PagedResponse;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.dbo.TransactionState;
+import cz.muni.fi.obs.data.repository.TransactionRepository;
+import cz.muni.fi.obs.http.CurrencyServiceClient;
+import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -24,15 +24,15 @@ import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import cz.muni.fi.obs.ControllerIntegrationTest;
-import cz.muni.fi.obs.api.CurrencyExchangeResult;
-import cz.muni.fi.obs.api.TransactionCreateDto;
-import cz.muni.fi.obs.controller.pagination.PagedResponse;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.data.repository.TransactionRepository;
-import cz.muni.fi.obs.http.CurrencyServiceClient;
-import io.restassured.common.mapper.TypeRef;
-import io.restassured.http.ContentType;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @TestMethodOrder(OrderAnnotation.class)
 class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
@@ -123,7 +123,6 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 		TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
 				.depositsToAccountNumber("account-1")
 				.withdrawsFromAccountNumber("account-5")
-				.depositAmount(BigDecimal.valueOf(10000, 2))
 				.withdrawAmount(BigDecimal.valueOf(10000, 2))
 				.note("note")
 				.variableSymbol("123")
@@ -143,7 +142,6 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 		assertThat(transaction.get())
 				.returns(transactionCreateDto.note(), TransactionDbo::getNote)
 				.returns(transactionCreateDto.variableSymbol(), TransactionDbo::getVariableSymbol)
-				.returns(transactionCreateDto.depositAmount(), TransactionDbo::getDepositAmount)
 				.returns(transactionCreateDto.withdrawAmount(), TransactionDbo::getWithdrawAmount);
 
 		transactionRepository.deleteById(transaction.get().getId());
@@ -159,7 +157,6 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 		TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
 				.depositsToAccountNumber("")
 				.withdrawsFromAccountNumber("account-2")
-				.depositAmount(BigDecimal.valueOf(1000))
 				.withdrawAmount(BigDecimal.valueOf(1000))
 				.note("note")
 				.variableSymbol("123")
@@ -175,7 +172,7 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 
 	@Order(7)
 	@Test
-	public void createTransaction_insufficientBalance_returns409() {
+	public void createTransaction_insufficientBalance_createsFailedTransaction() {
 		prepareTheCurrencyClient();
 		UriComponents components = UriComponentsBuilder
 				.fromPath(TRANSACTION_CONTROLLER_PATH + "/transaction/create")
@@ -183,7 +180,6 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 		TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
 				.depositsToAccountNumber("account-1")
 				.withdrawsFromAccountNumber("account-5")
-				.depositAmount(BigDecimal.valueOf(100000, 2))
 				.withdrawAmount(BigDecimal.valueOf(100000, 2))
 				.note("note")
 				.variableSymbol("123")
@@ -194,7 +190,15 @@ class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
 				.body(transactionCreateDto)
 				.post()
 				.then()
-				.statusCode(HttpStatus.SC_CONFLICT);
+				.statusCode(HttpStatus.SC_CREATED);
+
+		List<TransactionDbo> accountFiveWithdrawals = transactionRepository.findAll()
+				.stream()
+				.filter(transactionDbo -> transactionDbo.getWithdrawsFrom().getAccountNumber().equals("account-5"))
+				.toList();
+
+		assertThat(accountFiveWithdrawals.stream()
+				.anyMatch(transaction -> transaction.getTransactionState().equals(TransactionState.FAILED))).isTrue();
 	}
 
 	private String buildBalancePath(String accountNumber) {

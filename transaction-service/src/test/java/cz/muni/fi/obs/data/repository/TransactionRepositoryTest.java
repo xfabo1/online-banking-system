@@ -1,13 +1,8 @@
-package cz.muni.fi.obs.repository;
+package cz.muni.fi.obs.data.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_CLASS;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
-
-import java.math.BigDecimal;
-import java.util.List;
-
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.dbo.TransactionState;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,9 +12,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.data.repository.TransactionRepository;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_CLASS;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
 
 @Sql(value = { "/initialize_db.sql" }, executionPhase = BEFORE_TEST_CLASS)
 @Sql(value = { "/drop_all.sql" }, executionPhase = AFTER_TEST_CLASS)
@@ -32,7 +31,7 @@ public class TransactionRepositoryTest {
 
 	@Test
 	public void findTransactionsByWithdrawsFromId_transactionsFound_returnsTransactions() {
-		List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByWithdrawsFrom_Id("1");
+        List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByWithdrawsFrom_Id("1");
 
 		assertThat(transactions)
 				.hasSize(2)
@@ -44,7 +43,7 @@ public class TransactionRepositoryTest {
 		insertTransaction();
 
 		List<TransactionDbo> transactionsAfterSaving = transactionRepository
-				.findTransactionsDboByWithdrawsFrom_Id("1");
+                .findTransactionsDboByWithdrawsFrom_Id("1");
 
 		assertThat(transactionsAfterSaving)
 				.hasSize(3)
@@ -59,14 +58,14 @@ public class TransactionRepositoryTest {
 
 	@Test
 	public void findTransactionsByWithdrawsFromId_transactionsNotFound_returnsEmptyList() {
-		List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByWithdrawsFrom_Id("non-existing");
+        List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByWithdrawsFrom_Id("non-existing");
 
 		assertThat(transactions).hasSize(0);
 	}
 
 	@Test
 	public void findTransactionsByDepositsToId_transactionsFound_returnsTransactions() {
-		List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByDepositsTo_Id("2");
+        List<TransactionDbo> transactions = transactionRepository.findTransactionsDboByDepositsTo_Id("2");
 
 		assertThat(transactions)
 				.hasSize(2)
@@ -78,7 +77,7 @@ public class TransactionRepositoryTest {
 		insertTransaction();
 
 		List<TransactionDbo> transactionsAfterSaving = transactionRepository
-				.findTransactionsDboByDepositsTo_Id("2");
+                .findTransactionsDboByDepositsTo_Id("2");
 
 		assertThat(transactionsAfterSaving)
 				.hasSize(3)
@@ -94,7 +93,7 @@ public class TransactionRepositoryTest {
 	@Test
 	public void findTransactionsByDepositsToId_transactionsNotFound_returnsEmptyList() {
 		List<TransactionDbo> transactions = transactionRepository
-				.findTransactionsDboByDepositsTo_Id("non-existing");
+                .findTransactionsDboByDepositsTo_Id("non-existing");
 
 		assertThat(transactions).hasSize(0);
 	}
@@ -142,6 +141,7 @@ public class TransactionRepositoryTest {
 				.conversionRate(1.0)
 				.note("note-10")
 				.variableSymbol("1010")
+				.transactionState(TransactionState.SUCCESSFUL)
 				.build();
 
 		transactionRepository.save(transactionDbo);

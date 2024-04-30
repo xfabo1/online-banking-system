@@ -1,8 +1,7 @@
 package cz.muni.fi.obs.controller.pagination;
 
-import org.springframework.data.domain.Page;
-
 import lombok.Builder;
+import org.springframework.data.domain.Page;
 
 @Builder
 public record Pagination(

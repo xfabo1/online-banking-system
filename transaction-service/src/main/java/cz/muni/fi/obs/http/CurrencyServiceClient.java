@@ -1,19 +1,18 @@
 package cz.muni.fi.obs.http;
 
-import java.util.Optional;
-
+import cz.muni.fi.obs.api.CurrencyExchangeRequest;
+import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.config.FeignClientConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import cz.muni.fi.obs.api.CurrencyExchangeRequest;
-import cz.muni.fi.obs.api.CurrencyExchangeResult;
-import cz.muni.fi.obs.config.FeignClientConfiguration.CurrencyServiceClientConfiguration;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 @FeignClient(
         name = "currency-service",
         url = "${clients.currency-service.url}",
-        configuration = CurrencyServiceClientConfiguration.class,
+        configuration = FeignClientConfiguration.CurrencyServiceClientConfiguration.class,
         fallback = CurrencyServiceClient.Fallback.class
 )
 public interface CurrencyServiceClient {

@@ -13,7 +13,6 @@ public record TransactionCreateDto(
 		@NotBlank
 		String depositsToAccountNumber,
 		@Min(0) BigDecimal withdrawAmount,
-		@Min(0) BigDecimal depositAmount,
 		String note,
 		String variableSymbol) {
 }

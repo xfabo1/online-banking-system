@@ -1,9 +1,9 @@
 package cz.muni.fi.obs.data.dbo;
 
-import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
 @Builder
@@ -42,4 +44,8 @@ public class TransactionDbo {
 	private String note;
 	@Column(name = "variable_symbol")
 	private String variableSymbol;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "transaction_state", nullable = false)
+	private TransactionState transactionState;
 }

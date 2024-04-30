@@ -1,15 +1,11 @@
 package cz.muni.fi.obs.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import cz.muni.fi.obs.TestData;
+import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.controller.pagination.PagedResponse;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.facade.TransactionManagementFacade;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,15 +15,17 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import cz.muni.fi.obs.TestData;
-import cz.muni.fi.obs.api.TransactionCreateDto;
-import cz.muni.fi.obs.controller.pagination.PagedResponse;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.facade.TransactionManagementFacade;
 import util.JsonConvertor;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TransactionController.class)
 class TransactionControllerTest {
@@ -119,7 +117,6 @@ class TransactionControllerTest {
 				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
-				TestData.withdrawTransactions.getFirst().getDepositAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
@@ -146,7 +143,6 @@ class TransactionControllerTest {
 				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
 				null,
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
-				TestData.withdrawTransactions.getFirst().getDepositAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
