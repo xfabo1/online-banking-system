@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static cz.muni.fi.obs.data.dbo.TransactionState.FAILED;
+import static cz.muni.fi.obs.data.dbo.TransactionState.PROCESSING;
 import static cz.muni.fi.obs.data.dbo.TransactionState.SUCCESSFUL;
 
 @Slf4j
@@ -71,27 +72,35 @@ public class TransactionService {
 		AccountDbo depositsToAccount = accountRepository.findAccountDboByAccountNumber(transaction.depositsToAccountNumber())
 				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, transaction.depositsToAccountNumber()));
 
-		CurrencyExchangeRequest request = CurrencyExchangeRequest.builder()
-				.from(transaction.withdrawsFromAccountNumber())
-				.to(transaction.depositsToAccountNumber())
-				.amount(transaction.withdrawAmount())
-				.build();
-
-		CurrencyExchangeResult exchangeResult = callCurrencyClient(request);
-
-		var transactionDbo = TransactionDbo.builder()
+		TransactionDbo transactionDbo = TransactionDbo.builder()
 				.id(UUID.randomUUID().toString())
 				.withdrawsFrom(withdrawsFromAccount)
 				.note(transaction.note())
 				.depositsTo(depositsToAccount)
-				.depositAmount(exchangeResult.destAmount())
 				.withdrawAmount(transaction.withdrawAmount())
 				.variableSymbol(transaction.variableSymbol())
-				.conversionRate(exchangeResult.exchangeRate())
-				.transactionState(computeTransactionState(withdrawsFromAccount.getId(), transaction.withdrawAmount()))
+				.transactionState(PROCESSING)
 				.build();
 
 		return repository.save(transactionDbo);
+	}
+
+	public void executeTransaction(String transactionId) {
+		TransactionDbo transaction = repository.findById(transactionId)
+				.orElseThrow(() -> new ResourceNotFoundException(TransactionDbo.class, transactionId));
+
+		CurrencyExchangeRequest request = CurrencyExchangeRequest.builder()
+				.from(transaction.getWithdrawsFrom().getCurrencyCode())
+				.to(transaction.getDepositsTo().getCurrencyCode())
+				.amount(transaction.getWithdrawAmount())
+				.build();
+
+		CurrencyExchangeResult exchangeResult = callCurrencyClient(request);
+
+		transaction.setConversionRate(exchangeResult.exchangeRate());
+		transaction.setDepositAmount(exchangeResult.destAmount());
+		transaction.setTransactionState(computeTransactionState(transaction.getWithdrawsFrom().getId(), transaction.getWithdrawAmount()));
+		repository.save(transaction);
 	}
 
 	private TransactionState computeTransactionState(String id, BigDecimal withdrawAmount) {
