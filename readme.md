@@ -80,3 +80,7 @@ http://localhost:9090/
 
 
 ![img_3.png](img_3.png)
+
+### System architecture
+
+![img_4.png](img_4.png)
