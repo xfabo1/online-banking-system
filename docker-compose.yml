@@ -95,22 +95,24 @@ services:
     environment:
       ADMINER_DESIGN: pepa-linha
   prometheus:
-    image: prom/prometheus:v2.44.0
+    image: prom/prometheus:v2.51.2
     container_name: prometheus
     ports:
     - "9090:9090"
     volumes:
     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
   grafana:
-    image: grafana/grafana:9.5.2
+    image: grafana/grafana:10.4.2
     container_name: grafana
     ports:
     - "3000:3000"
     restart: unless-stopped
     volumes:
     - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    - grafana_storage:/var/lib/grafana
 volumes:
   analytics-db-data: { }
   user-db-data: { }
   currency-db-data: { }
   transaction-db-data: { }
+  grafana_storage: { }

@@ -3,6 +3,12 @@ server:
     context-path: '/api/user-service'
   port: 8083
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ 'prometheus', 'health', 'info' ]
+
 spring:
   datasource:
     url: jdbc:postgresql://user-db:5432/user_db
