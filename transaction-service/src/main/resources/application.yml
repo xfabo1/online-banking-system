@@ -3,6 +3,12 @@ server:
     context-path: '/api/transaction-service'
   port: 8082
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ['prometheus', 'health', 'info']
+
 spring:
   application:
     name: transaction-service
