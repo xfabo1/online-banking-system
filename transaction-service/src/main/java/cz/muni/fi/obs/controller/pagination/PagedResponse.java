@@ -1,8 +1,8 @@
 package cz.muni.fi.obs.controller.pagination;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public record PagedResponse<T>(List<T> records, Pagination pagination) {
 
