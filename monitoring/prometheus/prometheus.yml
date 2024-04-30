@@ -1,0 +1,29 @@
+scrape_configs:
+- job_name: 'analytics-service'
+  metrics_path: '/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+  - targets: [ 'analytics-service:8080' ]
+    labels:
+      application: 'analytics-service'
+- job_name: 'currency-service'
+  metrics_path: '/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+  - targets: [ 'currency-service:8081' ]
+    labels:
+      application: 'currency-service'
+- job_name: 'transaction-service'
+  metrics_path: '/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+  - targets: [ 'transaction-service:8082' ]
+    labels:
+      application: 'transaction-service'
+- job_name: 'user-service'
+  metrics_path: '/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+  - targets: [ 'user-service:8083' ]
+    labels:
+      application: 'user-service'
