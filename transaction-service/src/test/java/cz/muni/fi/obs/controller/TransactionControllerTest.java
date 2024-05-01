@@ -102,7 +102,7 @@ class TransactionControllerTest {
 
 	@Test
 	void checkAccountBalance_balanceCalculated_returnsBalance() throws Exception {
-		when(transactionManagementFacade.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
+        when(transactionManagementFacade.calculateAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
 
 		var response = mockMvc.perform(get("/v1/transactions/account/{accountNumber}/balance", TestData.accountId)
 						.accept(MediaType.APPLICATION_JSON))

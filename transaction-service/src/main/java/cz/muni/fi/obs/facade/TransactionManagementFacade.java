@@ -47,7 +47,7 @@ public class TransactionManagementFacade {
 		return transactionService.viewTransactionHistory(account.getId(), pageNumber, pageSize);
 	}
 
-	public BigDecimal checkAccountBalance(String accountNumber) {
+	public BigDecimal calculateAccountBalance(String accountNumber) {
 		AccountDbo account = getAccountByAccountNumber(accountNumber);
 		return transactionService.calculateAccountBalance(account.getId());
 	}

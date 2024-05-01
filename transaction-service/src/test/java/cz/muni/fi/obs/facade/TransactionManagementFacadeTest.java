@@ -95,7 +95,7 @@ class TransactionManagementFacadeTest {
 						.accountNumber("1234567890")
 						.build()));
 
-		BigDecimal balance = transactionManagementFacade.checkAccountBalance("1234567890");
+		BigDecimal balance = transactionManagementFacade.calculateAccountBalance("1234567890");
 
 		assertEquals(BigDecimal.valueOf(42), balance);
 	}

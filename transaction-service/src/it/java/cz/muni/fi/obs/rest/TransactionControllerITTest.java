@@ -1,6 +1,6 @@
 package cz.muni.fi.obs.rest;
 
-import cz.muni.fi.obs.SystemIntegrationTest;
+import cz.muni.fi.obs.IntegrationTest;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.controller.pagination.PagedResponse;
@@ -22,12 +22,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -43,8 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(OrderAnnotation.class)
-@RunWith(SpringRunner.class)
-class TransactionSystemIntegrationTest extends SystemIntegrationTest {
+class TransactionControllerITTest extends IntegrationTest {
 
     private static final String SERVICE_API_PATH = "/api/transaction-service";
     private static final String TRANSACTION_CONTROLLER_PATH = SERVICE_API_PATH + TRANSACTION_PATH;
@@ -61,7 +58,7 @@ class TransactionSystemIntegrationTest extends SystemIntegrationTest {
     private CurrencyServiceClient currencyServiceClient;
 
     @BeforeEach
-    private void setUp() {
+    public void setUp() {
         if (setupDone) {
             return;
         }

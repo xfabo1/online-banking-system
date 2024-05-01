@@ -48,3 +48,6 @@ clients:
   currency-service:
     #    url: 'http://localhost:8081/api/currency-service'
     url: 'http://currency-service:8081/api/currency-service'
+
+bank:
+  bank-accounts: bank-1

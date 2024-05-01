@@ -23,10 +23,11 @@ import static io.restassured.RestAssured.given;
 @Testcontainers
 @ActiveProfiles("postgres")
 @DirtiesContext
-@ContextConfiguration(initializers = {SystemIntegrationTest.Initializer.class}, classes = {TransactionManagement.class})
-public abstract class SystemIntegrationTest {
+@ContextConfiguration(initializers = {IntegrationTest.Initializer.class}, classes = {TransactionManagement.class})
+public abstract class IntegrationTest {
 
     private static final String ACTIVEMQ_IMAGE = "apache/activemq-classic:6.1.0";
+    private static final String POSTGRES_IMAGE = "postgres:16.2";
     private static final int ACTIVEMQ_PORT = 61616;
 
     @Container
@@ -36,7 +37,7 @@ public abstract class SystemIntegrationTest {
             .withExposedPorts(ACTIVEMQ_PORT);
 
     @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.2")
+    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(POSTGRES_IMAGE)
             .withDatabaseName("currency_db")
             .withUsername("currency_service")
             .withPassword("changemelater");
@@ -57,7 +58,6 @@ public abstract class SystemIntegrationTest {
     }
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues.of(
