@@ -7,11 +7,13 @@ import cz.muni.fi.obs.data.dbo.ScheduledPayment;
 import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.jms.JmsProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
@@ -33,6 +35,9 @@ class ScheduledPaymentServiceTest {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @MockBean
+    private JmsProducer jmsProducer;
 
     private boolean setupDone = false;
 

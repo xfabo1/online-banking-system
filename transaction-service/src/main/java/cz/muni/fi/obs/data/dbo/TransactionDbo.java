@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Builder
@@ -27,8 +28,8 @@ import java.math.BigDecimal;
 @Table(name = "transactions")
 public class TransactionDbo {
 	@Id
-	private String id;
-	@Column(name = "conversion_rate", nullable = false)
+	private String id = UUID.randomUUID().toString();
+	@Column(name = "conversion_rate")
 	private Double conversionRate;
 	@ManyToOne
 	@JoinColumn(name = "withdraws_from", nullable = false)
@@ -38,7 +39,7 @@ public class TransactionDbo {
 	private AccountDbo depositsTo;
 	@Column(name = "withdrawn_amount", nullable = false)
 	private BigDecimal withdrawAmount;
-	@Column(name = "deposited_amount", nullable = false)
+	@Column(name = "deposited_amount")
 	private BigDecimal depositAmount;
 	@Column(name = "note")
 	private String note;
@@ -47,5 +48,5 @@ public class TransactionDbo {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "transaction_state", nullable = false)
-	private TransactionState transactionState;
+	private TransactionState transactionState = TransactionState.PENDING;
 }

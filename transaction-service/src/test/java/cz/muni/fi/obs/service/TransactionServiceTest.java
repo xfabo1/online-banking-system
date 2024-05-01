@@ -1,12 +1,10 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.TestData;
-import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
-import cz.muni.fi.obs.http.CurrencyServiceClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,16 +20,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 
 	@Mock
 	TransactionRepository repository;
-
-	@Mock
-	CurrencyServiceClient client;
 
 	@Mock
 	AccountRepository accountRepository;
@@ -104,16 +101,6 @@ class TransactionServiceTest {
 
 	@Test
 	void createTransaction_createsTransaction() {
-		CurrencyExchangeResult exchangeResult = CurrencyExchangeResult.builder()
-				.sourceAmount(BigDecimal.valueOf(100))
-				.destAmount(BigDecimal.valueOf(4))
-				.exchangeRate(4.0)
-				.symbolFrom("CZK")
-				.symbolTo("EUR").build();
-
-		when(client.getCurrencyExchange(any())).thenReturn(Optional.of(exchangeResult));
-        when(repository.findTransactionsDboByWithdrawsFrom_Id(any())).thenReturn(Collections.emptyList());
-        when(repository.findTransactionsDboByDepositsTo_Id(any())).thenReturn(TestData.depositTransactions);
 		when(repository.save(any())).thenReturn(TestData.withdrawTransactions.getFirst());
 		when(accountRepository.findAccountDboByAccountNumber(any())).thenReturn(Optional.of(new AccountDbo()));
 

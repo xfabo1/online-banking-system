@@ -67,7 +67,7 @@ services:
     - POSTGRES_DB=transaction_db
   transaction-broker:
     container_name: transaction-broker
-    image: apache/activemq-artemis
+    image: apache/activemq-classic:6.1.0
     ports:
       - 61616:61616
       - 8161:8161

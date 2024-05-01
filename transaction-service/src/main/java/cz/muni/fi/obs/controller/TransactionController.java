@@ -113,7 +113,7 @@ public class TransactionController {
 			log.info("Transaction creation failed due to insufficient funds: {}", transaction);
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(facade.createTransaction(transaction));
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
 	}
 }
 
