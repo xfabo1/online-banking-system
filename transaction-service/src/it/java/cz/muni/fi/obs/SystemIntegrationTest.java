@@ -23,8 +23,8 @@ import static io.restassured.RestAssured.given;
 @Testcontainers
 @ActiveProfiles("postgres")
 @DirtiesContext
-@ContextConfiguration(initializers = {ControllerIntegrationTest.Initializer.class}, classes = {TransactionManagement.class})
-public abstract class ControllerIntegrationTest {
+@ContextConfiguration(initializers = {SystemIntegrationTest.Initializer.class}, classes = {TransactionManagement.class})
+public abstract class SystemIntegrationTest {
 
     private static final String ACTIVEMQ_IMAGE = "apache/activemq-classic:6.1.0";
     private static final int ACTIVEMQ_PORT = 61616;

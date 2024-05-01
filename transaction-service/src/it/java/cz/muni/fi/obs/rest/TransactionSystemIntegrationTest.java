@@ -1,6 +1,6 @@
 package cz.muni.fi.obs.rest;
 
-import cz.muni.fi.obs.ControllerIntegrationTest;
+import cz.muni.fi.obs.SystemIntegrationTest;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.controller.pagination.PagedResponse;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 
 @TestMethodOrder(OrderAnnotation.class)
 @RunWith(SpringRunner.class)
-class TransactionControllerIntegrationTest extends ControllerIntegrationTest {
+class TransactionSystemIntegrationTest extends SystemIntegrationTest {
 
     private static final String SERVICE_API_PATH = "/api/transaction-service";
     private static final String TRANSACTION_CONTROLLER_PATH = SERVICE_API_PATH + TRANSACTION_PATH;

@@ -10,7 +10,6 @@ import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
-import cz.muni.fi.obs.jms.JmsProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,9 +46,6 @@ public class ScheduledPaymentExecutorFacadeTest {
 
     @MockBean
     private CurrencyServiceClient client;
-
-    @MockBean
-    private JmsProducer producer;
 
     private static final String SCHEDULER_NOTE = "Automatic payment.";
 
