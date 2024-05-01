@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static cz.muni.fi.obs.data.dbo.TransactionState.FAILED;
-import static cz.muni.fi.obs.data.dbo.TransactionState.PROCESSING;
+import static cz.muni.fi.obs.data.dbo.TransactionState.PENDING;
 import static cz.muni.fi.obs.data.dbo.TransactionState.SUCCESSFUL;
 
 @Slf4j
@@ -79,7 +79,7 @@ public class TransactionService {
 				.depositsTo(depositsToAccount)
 				.withdrawAmount(transaction.withdrawAmount())
 				.variableSymbol(transaction.variableSymbol())
-				.transactionState(PROCESSING)
+				.transactionState(PENDING)
 				.build();
 
 		return repository.save(transactionDbo);
