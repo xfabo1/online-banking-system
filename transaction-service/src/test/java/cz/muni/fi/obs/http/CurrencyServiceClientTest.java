@@ -1,5 +1,28 @@
 package cz.muni.fi.obs.http;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.Options;
+import cz.muni.fi.obs.api.CurrencyExchangeRequest;
+import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.jms.JmsConsumer;
+import cz.muni.fi.obs.jms.JmsProducer;
+import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
+import io.github.resilience4j.springboot3.timelimiter.autoconfigure.TimeLimiterAutoConfiguration;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import util.JsonConvertor;
+
+import java.math.BigDecimal;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
@@ -7,30 +30,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
-
-import java.math.BigDecimal;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.Options;
-
-import cz.muni.fi.obs.api.CurrencyExchangeRequest;
-import cz.muni.fi.obs.api.CurrencyExchangeResult;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
-import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
-import io.github.resilience4j.springboot3.timelimiter.autoconfigure.TimeLimiterAutoConfiguration;
-import util.JsonConvertor;
 
 @SpringBootTest(
 		webEnvironment = NONE,
@@ -51,6 +50,12 @@ class CurrencyServiceClientTest {
 
 	@Autowired
 	private CurrencyServiceClient currencyServiceClient;
+
+	@MockBean
+	private JmsProducer jmsProducer;
+
+	@MockBean
+	private JmsConsumer jmsConsumer;
 
 	@Test
 	void getCurrencyExchange_exchangeCalculated_returningExchange() throws Exception {

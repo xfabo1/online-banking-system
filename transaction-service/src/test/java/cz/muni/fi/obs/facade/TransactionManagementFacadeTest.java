@@ -5,6 +5,7 @@ import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.jms.JmsConsumer;
 import cz.muni.fi.obs.jms.JmsProducer;
 import cz.muni.fi.obs.service.AccountService;
 import cz.muni.fi.obs.service.TransactionService;
@@ -38,6 +39,9 @@ class TransactionManagementFacadeTest {
 
     @Mock
     JmsProducer jmsProducer;
+
+    @Mock
+    private JmsConsumer jmsConsumer;
 
 	@InjectMocks
 	TransactionManagementFacade transactionManagementFacade;

@@ -7,6 +7,7 @@ import cz.muni.fi.obs.data.dbo.ScheduledPayment;
 import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.jms.JmsConsumer;
 import cz.muni.fi.obs.jms.JmsProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,9 @@ class ScheduledPaymentServiceTest {
 
     @MockBean
     private JmsProducer jmsProducer;
+
+    @MockBean
+    private JmsConsumer jmsConsumer;
 
     private boolean setupDone = false;
 
