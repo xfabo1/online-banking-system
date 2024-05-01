@@ -21,7 +21,7 @@ public record UserCreateDto(
         @Schema(description = "Last name of the user", example = "Doe")
         @NotBlank(message = "Last name is required") String lastName,
 
-        @Schema(description = "Phone number of the user", example = "+420 123 456 789")
+        @Schema(description = "Phone number of the user", example = "+420123456789")
         @NotBlank(message = "Phone number is required") String phoneNumber,
 
         @Schema(description = "Email of the user", example = "john.doe@example.com")

@@ -4,6 +4,7 @@ import cz.muni.fi.obs.exceptions.NotFoundResponse;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.exceptions.ValidationErrors;
 import cz.muni.fi.obs.exceptions.ValidationFailedResponse;
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -50,6 +51,30 @@ public class ControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(PSQLException.class)
+    public ResponseEntity<ValidationFailedResponse> handlePSQLException(PSQLException ex) {
+        String fieldName = extractFieldName(ex.getMessage());
+
+        if (fieldName != null) {
+            ValidationFailedResponse response = ValidationFailedResponse.builder()
+                                                                        .message("Validation failed")
+                                                                        .validationErrors(
+                                                                                ValidationErrors.builder()
+                                                                                                .fieldErrors(Map.of(
+                                                                                                        fieldName,
+                                                                                                        "Already used" +
+                                                                                                                " by " +
+                                                                                                                "another user - must be unique"
+                                                                                                ))
+                                                                                                .build()
+                                                                        )
+                                                                        .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else {
+            throw new InternalError("Unexpected error occurred.");
+        }
+    }
+
     private ValidationErrors getValidationErrors(BindException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
@@ -62,5 +87,26 @@ public class ControllerAdvice {
         }
 
         return ValidationErrors.builder().fieldErrors(fieldErrors).globalErrors(globalErrors).build();
+    }
+
+    private String extractFieldName(String message) {
+        String fieldName = null;
+        if (message.contains("Key (")) {
+            int start = message.indexOf("Key (") + 5;
+            int end = message.indexOf(")");
+            fieldName = message.substring(start, end);
+        }
+
+        // change snake_case to camelCase
+        if (fieldName != null) {
+            String[] parts = fieldName.split("_");
+            StringBuilder camelCase = new StringBuilder(parts[0]);
+            for (int i = 1; i < parts.length; i++) {
+                camelCase.append(parts[i].substring(0, 1).toUpperCase()).append(parts[i].substring(1));
+            }
+            fieldName = camelCase.toString();
+        }
+
+        return fieldName;
     }
 }

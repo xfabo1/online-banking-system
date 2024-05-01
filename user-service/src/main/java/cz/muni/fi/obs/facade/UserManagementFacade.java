@@ -50,7 +50,7 @@ public class UserManagementFacade {
         return UserDto.fromUser(user);
     }
 
-    public Page<UserDto> findUsers(UserSearchParamsDto searchParams) {
+    public Page<UserDto> findUsers(UserSearchParamsPaginatedDto searchParams) {
         Page<User> users = userService.findUsers(searchParams);
         return users.map(UserDto::fromUser);
     }

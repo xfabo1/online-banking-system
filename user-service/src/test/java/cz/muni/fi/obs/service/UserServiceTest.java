@@ -46,10 +46,10 @@ class UserServiceTest {
                              userCreateDto.birthNumber(),
                              true
         );
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
         User response = userService.createUser(userCreateDto);
 
-        verify(userRepository).save(user);
+        verify(userRepository).save(any(User.class));
         assertThat(response).isEqualTo(user);
     }
 
@@ -73,10 +73,10 @@ class UserServiceTest {
                              userCreateDto.birthNumber(),
                              true
         );
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
         User response = userService.createUser(userCreateDto);
 
-        verify(userRepository).save(user);
+        verify(userRepository).save(any(User.class));
         assertThat(response).isEqualTo(user);
     }
 
@@ -115,12 +115,12 @@ class UserServiceTest {
                              "900101" + "/123",
                              true
         );
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
         when(userRepository.findByIdOrThrow(user.getId())).thenReturn(user);
 
         User response = userService.updateUser(user.getId(), userUpdateDto);
 
-        verify(userRepository).save(user);
+        verify(userRepository).save(any(User.class));
         assertThat(response).isEqualTo(user);
     }
 

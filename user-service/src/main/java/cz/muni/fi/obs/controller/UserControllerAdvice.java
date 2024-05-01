@@ -1,10 +1,12 @@
 package cz.muni.fi.obs.controller;
 
+import cz.muni.fi.obs.api.ErrorResponse;
 import cz.muni.fi.obs.api.NotFoundResponse;
 import cz.muni.fi.obs.api.ValidationErrors;
 import cz.muni.fi.obs.api.ValidationFailedResponse;
-import cz.muni.fi.obs.exceptions.ClientConnectionException;
+import cz.muni.fi.obs.exceptions.ExternalServiceException;
 import cz.muni.fi.obs.exceptions.UserNotFoundException;
+import feign.FeignException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -103,10 +105,16 @@ public class UserControllerAdvice {
         }
     }
 
-    @ExceptionHandler(ClientConnectionException.class)
-    public ResponseEntity<String> handleClientConnectionExceptions(ClientConnectionException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<ErrorResponse> handleClientConnectionExceptions(ExternalServiceException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(FeignException.BadRequest.class)
+    public ResponseEntity<String> handleBadRequestExceptions(FeignException.BadRequest ex) {
+        return new ResponseEntity<>(ex.contentUTF8(), HttpStatus.BAD_REQUEST);
+    }
+
 
     private String extractFieldName(String message) {
         String fieldName = null;

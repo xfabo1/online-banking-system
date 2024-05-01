@@ -1,7 +1,7 @@
 package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.UserCreateDto;
-import cz.muni.fi.obs.api.UserSearchParamsDto;
+import cz.muni.fi.obs.api.UserSearchParamsPaginatedDto;
 import cz.muni.fi.obs.api.UserUpdateDto;
 import cz.muni.fi.obs.data.dbo.User;
 import cz.muni.fi.obs.data.repository.UserRepository;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -67,15 +66,15 @@ public class UserService {
         return userRepository.findByIdOrThrow(userId);
     }
 
-    public Page<User> findUsers(UserSearchParamsDto searchParams) {
+    public Page<User> findUsers(UserSearchParamsPaginatedDto searchParams) {
         return userRepository.findBySearchParams(
-                searchParams.firstName(),
-                searchParams.lastName(),
-                searchParams.phoneNumber(),
-                searchParams.email(),
-                searchParams.birthDate(),
-                searchParams.birthNumber(),
-                searchParams.active().isEmpty() ? Optional.of(true) : searchParams.active(),
+                searchParams.firstName().orElse(null),
+                searchParams.lastName().orElse(null),
+                searchParams.phoneNumber().orElse(null),
+                searchParams.email().orElse(null),
+                searchParams.birthDate().orElse(null),
+                searchParams.birthNumber().orElse(null),
+                searchParams.active().orElse(true),
                 searchParams.pageable()
         );
     }

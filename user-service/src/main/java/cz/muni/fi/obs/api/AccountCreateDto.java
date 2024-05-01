@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AccountCreateDto(
 
-        @Schema(description = "Account number", example = "19-2000145399/0800")
+        @Schema(description = "Account number", example = "19-2000145399/0810")
         @NotBlank(message = "Account number is required")
         String accountNumber,
 
