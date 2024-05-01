@@ -41,7 +41,6 @@ public class TransactionServiceDataSeeder {
         List<AccountDbo> accounts = createAccounts();
         createScheduledPayments(accounts);
 
-        transactionService
 
         createTransactions(accounts);
         log.info("Initialized transaction service data...");
@@ -49,15 +48,10 @@ public class TransactionServiceDataSeeder {
 
     // TODO: implement
     private void createTransactions(List<AccountDbo> accounts) {
-        TransactionCreateDto transactionCreateDto = new TransactionCreateDto();
-
-        transactionService.createTransaction(transactionCreateDto)
     }
 
     private List<AccountDbo> createAccounts() {
-        AccountDbo accountDbo = new AccountDbo();
-
-        accountRepository.save(accountDbo)
+        return List.of();
     }
 
     private void createScheduledPayments(List<AccountDbo> accounts) {

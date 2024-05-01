@@ -3,6 +3,8 @@ package cz.muni.fi.obs.service;
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.repository.AccountRepository;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,7 @@ import java.util.UUID;
 
 @Service
 public class AccountService {
+
 	private final AccountRepository repository;
 
 	@Autowired
@@ -24,15 +27,15 @@ public class AccountService {
 	public AccountDbo createAccount(AccountCreateDto accountCreateDto) {
 		var accountDbo = AccountDbo.builder()
 				.id(UUID.randomUUID().toString())
-				.accountNumber(accountCreateDto.accountNumber())
 				.currencyCode(accountCreateDto.currencyCode())
 				.customerId(accountCreateDto.customerId())
 				.build();
 		return repository.save(accountDbo);
 	}
 
-	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
-		return repository.findAccountDboByAccountNumber(accountNumber);
+	public AccountDbo findAccountByAccountNumber(String accountNumber) {
+		return repository.findAccountDboByAccountNumber(Integer.valueOf(accountNumber))
+				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, accountNumber));
 	}
 
 	public List<AccountDbo> findAccountsByCustomerId(String customerId) {

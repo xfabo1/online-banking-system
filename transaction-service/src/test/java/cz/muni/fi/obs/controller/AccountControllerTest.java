@@ -12,8 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import util.JsonConvertor;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -35,7 +33,7 @@ class AccountControllerTest {
 
 	@Test
 	void createAccount_validRequest_returnsNothing() throws Exception {
-		AccountCreateDto accountCreateDto = new AccountCreateDto("owner", "CZK", "1234567890");
+		AccountCreateDto accountCreateDto = new AccountCreateDto("owner", "CZK");
 
 		mockMvc.perform(post("/v1/accounts/create")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -47,7 +45,7 @@ class AccountControllerTest {
 
 	@Test
 	void createAccount_invalidRequest_returnsBadRequest() throws Exception {
-		AccountCreateDto accountCreateDto = new AccountCreateDto(null, "CZK", "1234567890");
+		AccountCreateDto accountCreateDto = new AccountCreateDto(null, "CZK");
 
 		mockMvc.perform(post("/v1/accounts/create")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -60,31 +58,32 @@ class AccountControllerTest {
 	@Test
 	void findAccountById_accountFound_returnsAccount() throws Exception {
 		AccountDbo expectedAccount = AccountDbo.builder()
-				.id("1")
+				.id("00000001")
 				.customerId("owner")
 				.currencyCode("CZK")
-				.accountNumber("1234567890").build();
+				.accountNumber(1).build();
 
-		when(facade.findAccountByAccountNumber("1")).thenReturn(Optional.of(expectedAccount));
+		when(facade.findAccountByAccountNumber("00000001")).thenReturn(expectedAccount);
 
-		var response = mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "1")
+		var response = mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "00000001")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 		var actualAccount = JsonConvertor.convertJsonToObject(response, AccountDbo.class);
 
-		verify(facade).findAccountByAccountNumber("1");
+		verify(facade).findAccountByAccountNumber("00000001");
 		assertThat(actualAccount).isEqualTo(expectedAccount);
 	}
 
 	@Test
 	void testFindAccountById_nonExistingId_returnsNotFound() throws Exception {
-		when(facade.findAccountByAccountNumber(any())).thenReturn(Optional.empty());
+		when(facade.findAccountByAccountNumber(any()))
+				.thenThrow(new ResourceNotFoundException(AccountDbo.class, "0"));
 
-		mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "1")
+		mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "0")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 
-		verify(facade).findAccountByAccountNumber("1");
+		verify(facade).findAccountByAccountNumber("0");
 	}
 }

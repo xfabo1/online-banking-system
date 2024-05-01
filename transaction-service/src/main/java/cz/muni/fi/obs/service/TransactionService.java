@@ -11,6 +11,7 @@ import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

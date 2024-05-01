@@ -78,7 +78,7 @@ public class TestData {
 		return AccountDbo.builder()
 				.id(accountId)
 				.currencyCode("CZK")
-				.accountNumber("1234567890")
+				.accountNumber(1)
 				.build();
 	}
 
@@ -86,7 +86,7 @@ public class TestData {
 		return AccountDbo.builder()
 				.id("test")
 				.currencyCode("CZK")
-				.accountNumber("123456789")
+				.accountNumber(2)
 				.build();
 	}
 }

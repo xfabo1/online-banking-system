@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -31,14 +32,13 @@ public class AccountDbo {
 	private String customerId;
 	@Column(name = "currency_code", nullable = false)
 	private String currencyCode;
-	@GeneratedValue
 	@SequenceGenerator(name = "account_number_sequence", allocationSize = 1)
 	@Column(name = "account_number", nullable = false, unique = true)
 	@JsonIgnore
 	private Integer accountNumber;
 
 	@Transient
-	private String getAccountNumber() {
+	public String getAccountNumber() {
 		return String.format("%08d", accountNumber);
 	}
 }

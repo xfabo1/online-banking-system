@@ -48,7 +48,7 @@ public class TransactionManagementFacade {
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountNumber, int pageNumber, int pageSize) {
-		AccountDbo account = getAccountByAccountNumber(accountNumber);
+		AccountDbo account = findAccountByAccountNumber(accountNumber);
 		return transactionService.viewTransactionHistory(account.getId(), pageNumber, pageSize);
 	}
 
@@ -61,16 +61,8 @@ public class TransactionManagementFacade {
 		return accountService.createAccount(accountCreateDto);
 	}
 
-	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
+	public AccountDbo findAccountByAccountNumber(String accountNumber) {
 		return accountService.findAccountByAccountNumber(accountNumber);
-	}
-
-	private AccountDbo getAccountByAccountNumber(String accountNumber) {
-		return accountService.findAccountByAccountNumber(accountNumber)
-				.orElseThrow(() -> {
-					log.info("Account not found: {}", accountNumber);
-					return new ResourceNotFoundException("Account not found");
-				});
 	}
 
 	public List<AccountDbo> findAccountsByCustomerId(String customerId) {

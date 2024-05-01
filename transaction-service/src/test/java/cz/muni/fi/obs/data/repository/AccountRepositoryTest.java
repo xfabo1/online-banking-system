@@ -24,19 +24,19 @@ public class AccountRepositoryTest {
 
 	@Test
 	public void getAccountByAccountNumber_AccountFound_ReturnsAccount() {
-		Optional<AccountDbo> account = accountRepository.findAccountDboByAccountNumber("account-1");
+		Optional<AccountDbo> account = accountRepository.findAccountDboByAccountNumber(1);
 
 		assertThat(account).isPresent();
 		assertThat(account.get())
 				.returns("1", AccountDbo::getId)
-				.returns("account-1", AccountDbo::getAccountNumber)
+				.returns("00000001", AccountDbo::getAccountNumber)
 				.returns("CZK", AccountDbo::getCurrencyCode)
 				.returns("customer-1", AccountDbo::getCustomerId);
 	}
 
 	@Test
 	public void getAccountByAccountNumber_AccountNotFound_ReturnsOptionalEmpty() {
-		Optional<AccountDbo> account = accountRepository.findAccountDboByAccountNumber("non-existing");
+		Optional<AccountDbo> account = accountRepository.findAccountDboByAccountNumber(0);
 
 		assertThat(account).isEmpty();
 	}
@@ -48,7 +48,7 @@ public class AccountRepositoryTest {
 		assertThat(account).isPresent();
 		assertThat(account.get())
 				.returns("1", AccountDbo::getId)
-				.returns("account-1", AccountDbo::getAccountNumber)
+				.returns("00000001", AccountDbo::getAccountNumber)
 				.returns("CZK", AccountDbo::getCurrencyCode)
 				.returns("customer-1", AccountDbo::getCustomerId);
 	}
@@ -66,7 +66,7 @@ public class AccountRepositoryTest {
 
 		assertThat(accounts).hasSize(2)
 				.extracting(AccountDbo::getAccountNumber)
-				.containsExactlyInAnyOrder("account-1", "account-4");
+				.containsExactlyInAnyOrder("00000001", "00000004");
 	}
 
 	@Test
