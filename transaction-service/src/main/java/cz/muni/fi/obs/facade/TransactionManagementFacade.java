@@ -37,7 +37,9 @@ public class TransactionManagementFacade {
 	}
 
 	public TransactionDbo createTransaction(TransactionCreateDto transaction) {
-		return transactionService.createTransaction(transaction);
+		TransactionDbo createdTransaction = transactionService.createTransaction(transaction);
+		jmsProducer.sendMessage(createdTransaction.getId());
+		return createdTransaction;
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountNumber, int pageNumber, int pageSize) {
