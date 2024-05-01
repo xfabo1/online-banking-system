@@ -41,7 +41,7 @@ class TransactionManagementFacadeTest {
     JmsProducer jmsProducer;
 
     @Mock
-    private JmsConsumer jmsConsumer;
+	JmsConsumer jmsConsumer;
 
 	@InjectMocks
 	TransactionManagementFacade transactionManagementFacade;

@@ -9,17 +9,14 @@ import cz.muni.fi.obs.data.dbo.TransactionState;
 import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
-import cz.muni.fi.obs.jms.JmsProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.jms.core.JmsTemplate;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,9 +33,6 @@ public class TransactionManagementFacadeITTest extends IntegrationTest {
 
     @Autowired
     private TransactionRepository transactionRepository;
-
-    @Autowired
-    private JmsTemplate jmsTemplate;
 
     @MockBean
     private CurrencyServiceClient currencyServiceClient;
@@ -138,15 +132,6 @@ public class TransactionManagementFacadeITTest extends IntegrationTest {
         assertThat(facade.calculateAccountBalance(bank.getAccountNumber())).isEqualByComparingTo(BigDecimal.valueOf(-1000));
         assertThat(facade.calculateAccountBalance(account2.getAccountNumber())).isEqualByComparingTo(BigDecimal.valueOf(0));
         assertThat(facade.calculateAccountBalance(account1.getAccountNumber())).isEqualByComparingTo(BigDecimal.valueOf(25000));
-    }
-
-    private void waitForQueue() throws InterruptedException {
-        Integer queueSize = 1;
-
-        while (queueSize > 0) {
-            queueSize = jmsTemplate.browse(JmsProducer.TRANSACTION_QUEUE_NAME, (session, browser) -> Collections.list(browser.getEnumeration()).size());
-            Thread.sleep(1000);
-        }
     }
 
     private void prepareTheCurrencyClient() {

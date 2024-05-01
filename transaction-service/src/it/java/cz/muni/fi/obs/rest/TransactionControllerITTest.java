@@ -359,7 +359,7 @@ class TransactionControllerITTest extends IntegrationTest {
 
     @Order(7)
     @Test
-    public void createTransaction_insufficientBalance_createsFailedTransaction() {
+    public void createTransaction_insufficientBalance_createsFailedTransaction() throws InterruptedException {
         prepareTheCurrencyClient();
         UriComponents components = UriComponentsBuilder
                 .fromPath(TRANSACTION_CONTROLLER_PATH + "/transaction/create")
@@ -379,13 +379,15 @@ class TransactionControllerITTest extends IntegrationTest {
                 .then()
                 .statusCode(HttpStatus.SC_CREATED);
 
+        waitForQueue();
+
         List<TransactionDbo> accountFiveWithdrawals = transactionRepository.findAll()
                 .stream()
                 .filter(transactionDbo -> transactionDbo.getWithdrawsFrom().getAccountNumber().equals("account-5"))
                 .toList();
 
         assertThat(accountFiveWithdrawals.stream()
-                .anyMatch(transaction -> transaction.getTransactionState().equals(TransactionState.PENDING))).isTrue();
+                .anyMatch(transaction -> transaction.getTransactionState().equals(TransactionState.FAILED))).isTrue();
     }
 
     private String buildBalancePath(String accountNumber) {
