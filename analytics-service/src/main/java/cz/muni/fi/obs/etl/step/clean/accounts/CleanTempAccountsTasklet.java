@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * TODO: Create TempAccount repository, inject it here and just call delete all on the table
- */
+
 @Component
 @StepScope
 public class CleanTempAccountsTasklet implements Tasklet {

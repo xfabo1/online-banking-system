@@ -8,9 +8,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
 
-/**
- * TODO: use a mapper to convert the DTO from API into the object stored in temp db
- */
 @Component
 @StepScope
 public class AccountProcessor implements ItemProcessor<AccountDto, TempAccount> {

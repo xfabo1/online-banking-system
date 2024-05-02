@@ -8,9 +8,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * TODO: just write the chunk to DB nothing else needed
- */
+
 @Component
 @StepScope
 public class FactWriter implements ItemWriter<DailyTransactionFact> {
