@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -90,7 +91,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> getUser(
-            @Parameter(description = "ID of the user to be retrieved")
+            @Parameter(description = "ID of the user to be retrieved", example = "4121add0-f5d7-4128-9c8f-e81fa93237c5")
             @PathVariable("userId") UUID userId
     ) {
         log.info("Getting user with id: " + userId);
@@ -110,9 +111,10 @@ public class UserController {
     )
     @GetMapping("")
     @CrossOrigin(origins = "*")
-    public Page<UserDto> getUsers(@ParameterObject UserSearchParamsDto searchParams) {
-        // Retrieve users based on search parameters
-        return userManagementFacade.findUsers(searchParams);
+    public Page<UserDto> getUsers(@ParameterObject UserSearchParamsDto searchParams,
+                                  @ParameterObject Pageable pageable) {
+        UserSearchParamsPaginatedDto searchParamsPaginated = new UserSearchParamsPaginatedDto(searchParams, pageable);
+        return userManagementFacade.findUsers(searchParamsPaginated);
     }
 
     @Operation(
@@ -128,7 +130,7 @@ public class UserController {
     @PutMapping("/{userId}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> updateUser(
-            @Parameter(description = "ID of the user to be updated")
+            @Parameter(description = "ID of the user to be updated", example = "4121add0-f5d7-4128-9c8f-e81fa93237c5")
             @PathVariable("userId") UUID userId,
             @Valid @RequestBody UserUpdateDto userUpdateDto) {
         log.info("Updating user with id: " + userId);
@@ -147,6 +149,8 @@ public class UserController {
     @PostMapping("/{userId}/deactivate")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> deactivateUser(
+            @Parameter(description = "ID of the user to be deactivated",
+                       example = "4121add0-f5d7-4128-9c8f-e81fa93237c5")
             @PathVariable("userId") UUID userId) {
         log.info("Deactivating user with id: " + userId);
         UserDto user = userManagementFacade.deactivateUser(userId);
@@ -167,7 +171,9 @@ public class UserController {
     )
     @PostMapping("/{userId}/activate")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<UserDto> activateUser(@PathVariable("userId") UUID userId) {
+    public ResponseEntity<UserDto> activateUser(
+            @Parameter(description = "ID of the user to be activated", example = "4121add0-f5d7-4128-9c8f-e81fa93237c5")
+            @PathVariable("userId") UUID userId) {
         log.info("Activating user with id: " + userId);
         UserDto user = userManagementFacade.activateUser(userId);
         if (user == null) {
@@ -190,7 +196,8 @@ public class UserController {
     @PostMapping("/{userId}/accounts/create")
     @CrossOrigin(origins = "*")
     public ResponseEntity<AccountDto> createUserAccount(
-            @Parameter(description = "ID of the user for whom the account will be created")
+            @Parameter(description = "ID of the user for that account will be created",
+                       example = "4121add0-f5d7-4128-9c8f-e81fa93237c5")
             @PathVariable("userId") UUID userId,
             @Valid @RequestBody AccountCreateDto accountCreateDto
     ) {
@@ -214,8 +221,8 @@ public class UserController {
     @GetMapping("/{userId}/accounts")
     @CrossOrigin(origins = "*")
     public ResponseEntity<List<AccountDto>> getUserAccounts(
-            @Parameter(description = "ID of the user whose accounts are to be retrieved")
-            @PathVariable("userId") UUID userId
+            @Parameter(description = "ID of the user whose accounts are to be retrieved",
+                       example = "4121add0-f5d7-4128-9c8f-e81fa93237c5") @PathVariable("userId") UUID userId
     ) {
         log.info("Getting user accounts for user with id: " + userId);
         List<AccountDto> accounts = userManagementFacade.getUserAccounts(userId);

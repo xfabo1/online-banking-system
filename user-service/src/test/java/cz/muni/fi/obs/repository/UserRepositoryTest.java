@@ -14,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,13 +58,13 @@ public class UserRepositoryTest {
     @Test
     public void findBySearchParams_UsersNotFound_returnEmptyList() {
         Page<User> users = userRepository.findBySearchParams(
-                Optional.of("non-existing"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
+                "non-existing",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 Pageable.unpaged()
         );
         assertThat(users).isEmpty();
@@ -74,13 +73,13 @@ public class UserRepositoryTest {
     @Test
     public void findBySearchParams_NoParams_returnAll() {
         Page<User> users = userRepository.findBySearchParams(
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 Pageable.unpaged()
         );
 
@@ -89,49 +88,47 @@ public class UserRepositoryTest {
 
     @Test
     public void findBySearchParams_WithPagination_ReturnsPaginated() {
-        int pageSize = 2; // Assuming a page size of 2 for testing purposes
+        int pageSize = 2;
 
-        // Fetch the first page
         Page<User> firstPage = userRepository.findBySearchParams(
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 PageRequest.of(0, pageSize)
         );
 
         assertThat(firstPage).hasSize(2);
-        assertThat(firstPage.getTotalElements()).isEqualTo(4); // Assuming there are at least 4 users
+        assertThat(firstPage.getTotalElements()).isEqualTo(4);
 
-        // Fetch the second page
         Page<User> secondPage = userRepository.findBySearchParams(
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 PageRequest.of(1, pageSize)
         );
 
         assertThat(secondPage).hasSize(2);
-        assertThat(secondPage.getTotalElements()).isEqualTo(4); // Assuming there are at least 4 users
+        assertThat(secondPage.getTotalElements()).isEqualTo(4);
     }
 
     @Test
     public void findBySearchParams_AllParams_returnSingle() {
         Page<User> users = userRepository.findBySearchParams(
-                Optional.of("John"),
-                Optional.of("Doe"),
-                Optional.of("9707178239"),
-                Optional.of("example1@domain.com"),
-                Optional.of(LocalDate.of(1990, 1, 1)),
-                Optional.of("900101/1234"),
-                Optional.of(true),
+                "John",
+                "Doe",
+                "9707178239",
+                "example1@domain.com",
+                LocalDate.of(1990, 1, 1),
+                "900101/1234",
+                true,
                 Pageable.unpaged()
         );
 

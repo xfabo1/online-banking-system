@@ -2,10 +2,10 @@ package cz.muni.fi.obs.service;
 
 import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.AccountDto;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.http.TransactionServiceClient;
 import cz.muni.fi.obs.http.api.TSAccount;
 import cz.muni.fi.obs.http.api.TSAccountCreate;
-import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +49,7 @@ public class UserAccountService {
                                      tsAccount.currencyCode()
                              ))
                              .collect(Collectors.toList());
-        } catch (FeignException.NotFound e) {
+        } catch (ResourceNotFoundException e) {
             return Collections.emptyList();
         }
     }

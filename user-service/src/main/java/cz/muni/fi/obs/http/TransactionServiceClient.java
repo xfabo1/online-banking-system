@@ -1,7 +1,7 @@
 package cz.muni.fi.obs.http;
 
 import cz.muni.fi.obs.config.FeignClientConfiguration;
-import cz.muni.fi.obs.exceptions.ClientConnectionException;
+import cz.muni.fi.obs.exceptions.ExternalServiceException;
 import cz.muni.fi.obs.http.api.TSAccount;
 import cz.muni.fi.obs.http.api.TSAccountCreate;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +33,13 @@ public interface TransactionServiceClient {
         @Override
         public TSAccount createAccount(TSAccountCreate currencyExchangeRequest) {
             log.error("Could not create account for customer id {}", currencyExchangeRequest.customerId());
-            throw new ClientConnectionException("Could not create account");
+            throw new ExternalServiceException("Could not create account");
         }
 
         @Override
         public List<TSAccount> getAccountsByCustomerId(String customerId) {
             log.error("Could not get accounts by customer id {}", customerId);
-            throw new ClientConnectionException("Could not get accounts by customer id");
+            throw new ExternalServiceException("Could not get accounts by customer id");
         }
     }
 }
