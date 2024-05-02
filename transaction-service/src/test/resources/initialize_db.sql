@@ -1,10 +1,10 @@
-INSERT INTO accounts(id, customer_id, currency_code, account_number)
-VALUES ('1', 'customer-1', 'CZK', 1),
-       ('2', 'customer-2', 'EUR', 2),
-       ('3', 'customer-3', 'USD', 3),
-       ('4', 'customer-4', 'CZK', 4),
-       ('5', 'customer-5', 'EUR', 5),
-       ('6', 'customer-6', 'EUR', 6);
+INSERT INTO accounts(id, customer_id, currency_code)
+VALUES ('1', 'customer-1', 'CZK'),
+       ('2', 'customer-2', 'EUR'),
+       ('3', 'customer-3', 'USD'),
+       ('4', 'customer-4', 'CZK'),
+       ('5', 'customer-5', 'EUR'),
+       ('6', 'customer-6', 'EUR');
 
 
 INSERT INTO transactions(id, conversion_rate, withdraws_from, deposits_to, withdrawn_amount, deposited_amount, note,

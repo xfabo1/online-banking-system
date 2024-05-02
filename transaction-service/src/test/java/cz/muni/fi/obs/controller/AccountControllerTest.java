@@ -58,20 +58,20 @@ class AccountControllerTest {
 	@Test
 	void findAccountById_accountFound_returnsAccount() throws Exception {
 		AccountDbo expectedAccount = AccountDbo.builder()
-				.id("00000001")
+				.id("1")
 				.customerId("owner")
 				.currencyCode("CZK")
-				.accountNumber(1).build();
+				.build();
 
-		when(facade.findAccountByAccountNumber("00000001")).thenReturn(expectedAccount);
+		when(facade.findAccountByAccountNumber("1")).thenReturn(expectedAccount);
 
-		var response = mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "00000001")
+		var response = mockMvc.perform(get("/v1/accounts/account/{accountNumber}", "1")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 		var actualAccount = JsonConvertor.convertJsonToObject(response, AccountDbo.class);
 
-		verify(facade).findAccountByAccountNumber("00000001");
+		verify(facade).findAccountByAccountNumber("1");
 		assertThat(actualAccount).isEqualTo(expectedAccount);
 	}
 

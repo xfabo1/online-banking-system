@@ -53,7 +53,6 @@ class ScheduledPaymentServiceTest {
 
         AccountDbo accountDbo = new AccountDbo();
         accountDbo.setId("123");
-        accountDbo.setAccountNumber(1233);
         accountDbo.setCurrencyCode("CZK");
         accountDbo.setCustomerId("mikoflosso");
 
@@ -61,7 +60,6 @@ class ScheduledPaymentServiceTest {
 
         AccountDbo accountDbo1 = new AccountDbo();
         accountDbo1.setId("1234");
-        accountDbo1.setAccountNumber(12356);
         accountDbo1.setCurrencyCode("CZK");
         accountDbo1.setCustomerId("ego");
 

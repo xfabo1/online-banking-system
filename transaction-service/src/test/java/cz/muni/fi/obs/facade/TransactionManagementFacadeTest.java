@@ -61,8 +61,8 @@ class TransactionManagementFacadeTest {
 	@Test
 	public void createTransaction_createsTransaction() {
 		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
-				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getId(),
+				TestData.withdrawTransactions.getFirst().getDepositsTo().getId(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
@@ -78,30 +78,27 @@ class TransactionManagementFacadeTest {
 	void viewTransactionHistory_returnsHistory() {
 		when(transactionService.viewTransactionHistory(TestData.accountId, 0, 10))
 				.thenReturn(new PageImpl<>(TestData.withdrawTransactions));
-		when(accountService.findAccountByAccountNumber("00000001"))
+		when(accountService.findAccountByAccountNumber("1"))
 				.thenReturn(AccountDbo.builder()
 						.id(TestData.accountId)
 						.currencyCode("CZK")
-						.accountNumber(1)
 						.build());
 
 		Page<TransactionDbo> actualPage = transactionManagementFacade
-				.viewTransactionHistory("00000001", 0, 10);
+				.viewTransactionHistory("1", 0, 10);
 		assertEquals(new PageImpl<>(TestData.withdrawTransactions), actualPage);
 	}
 
 	@Test
 	public void checkAccountBalance_returnsBalance() {
 		when(transactionService.calculateAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
-		when(accountService.findAccountByAccountNumber("00000001"))
+		when(accountService.findAccountByAccountNumber("1"))
 				.thenReturn(AccountDbo.builder()
 						.id(TestData.accountId)
 						.currencyCode("CZK")
-						.accountNumber(1)
 						.build());
 
-		BigDecimal balance = transactionManagementFacade.checkAccountBalance("00000001");
-		BigDecimal balance = transactionManagementFacade.calculateAccountBalance("1234567890");
+		BigDecimal balance = transactionManagementFacade.calculateAccountBalance("00000001");
 
 		assertEquals(BigDecimal.valueOf(42), balance);
 	}
@@ -109,13 +106,12 @@ class TransactionManagementFacadeTest {
 	@Test
 	public void createAccount_createsAccount() {
 		AccountCreateDto accountCreateDto =
-				new AccountCreateDto("owner", "CZK", "1234567890");
+				new AccountCreateDto("owner", "CZK");
 
 		AccountDbo accountDbo = AccountDbo.builder()
 				.id("1")
 				.customerId("owner")
 				.currencyCode("CZK")
-				.accountNumber("1234567890")
 				.build();
 		when(accountService.createAccount(accountCreateDto)).thenReturn(accountDbo);
 
@@ -131,13 +127,12 @@ class TransactionManagementFacadeTest {
 				.id("1")
 				.customerId("owner")
 				.currencyCode("CZK")
-				.accountNumber(1)
 				.build();
 
-		when(accountService.findAccountByAccountNumber("00000001")).thenReturn(expectedAccount);
+		when(accountService.findAccountByAccountNumber("1")).thenReturn(expectedAccount);
 
-		AccountDbo foundAccount = transactionManagementFacade.findAccountByAccountNumber("00000001");
-		verify(accountService).findAccountByAccountNumber("00000001");
+		AccountDbo foundAccount = transactionManagementFacade.findAccountByAccountNumber("1");
+		verify(accountService).findAccountByAccountNumber("1");
 		assertThat(foundAccount).isNotNull();
 	}
 

@@ -110,7 +110,7 @@ class TransactionServiceTest {
 	@Test
 	void createTransaction_createsTransaction() {
 		when(repository.save(any())).thenReturn(TestData.withdrawTransactions.getFirst());
-		when(accountRepository.findAccountDboByAccountNumber(any())).thenReturn(Optional.of(new AccountDbo()));
+		when(accountRepository.findById(any())).thenReturn(Optional.of(new AccountDbo()));
 
 		TransactionDbo createdTransaction = transactionService.createTransaction(TestData.transactionCreateDto());
 

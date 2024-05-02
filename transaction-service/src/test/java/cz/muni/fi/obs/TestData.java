@@ -66,8 +66,8 @@ public class TestData {
 
 	public static TransactionCreateDto transactionCreateDto() {
 		return new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
-				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getId(),
+				TestData.withdrawTransactions.getFirst().getDepositsTo().getId(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
@@ -78,7 +78,6 @@ public class TestData {
 		return AccountDbo.builder()
 				.id(accountId)
 				.currencyCode("CZK")
-				.accountNumber(1)
 				.build();
 	}
 
@@ -86,7 +85,6 @@ public class TestData {
 		return AccountDbo.builder()
 				.id("test")
 				.currencyCode("CZK")
-				.accountNumber(2)
 				.build();
 	}
 }

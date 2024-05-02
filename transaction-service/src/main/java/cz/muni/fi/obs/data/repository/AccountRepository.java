@@ -9,11 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<AccountDbo, String> {
-
-	Optional<AccountDbo> findAccountDboByAccountNumber(Integer accountNumber);
-
 	Optional<AccountDbo> findAccountDboByCustomerId(String customerId);
-
 	List<AccountDbo> findAccountDbosByCustomerId(String customerId);
 	List<AccountDbo> findAllByCurrencyCode(String currencyCode);
 }

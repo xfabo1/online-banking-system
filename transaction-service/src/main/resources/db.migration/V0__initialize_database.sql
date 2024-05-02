@@ -2,13 +2,10 @@ CREATE TABLE accounts
 (
     id             VARCHAR(40) PRIMARY KEY,
     customer_id    VARCHAR(40) NOT NULL,
-    currency_code  VARCHAR(10) NOT NULL,
-    account_number INTEGER NOT NULL,
-    constraint account_number_unique unique (account_number)
+    currency_code  VARCHAR(10) NOT NULL
 );
 
 CREATE INDEX customer_id_index ON accounts(customer_id);
-CREATE INDEX account_number_index ON accounts(account_number);
 
 CREATE TABLE transactions
 (

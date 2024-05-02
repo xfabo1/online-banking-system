@@ -53,7 +53,7 @@ public class TransactionManagementFacade {
 	}
 
 	public BigDecimal calculateAccountBalance(String accountNumber) {
-		AccountDbo account = getAccountByAccountNumber(accountNumber);
+		AccountDbo account = findAccountByAccountNumber(accountNumber);
 		return transactionService.calculateAccountBalance(account.getId());
 	}
 

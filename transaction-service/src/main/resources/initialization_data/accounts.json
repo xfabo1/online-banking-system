@@ -1,0 +1,32 @@
+[
+  {
+    "id": "5217d3f7-e716-48ac-8a45-e0c54257d203",
+    "customerId": "4121add0-f5d7-4128-9c8f-e81fa93237c5",
+    "currencyCode": "CZK"
+  },
+  {
+    "id": "2aa6cf23-f3e1-49f0-9c2e-9032400becfa",
+    "customerId": "4121add0-f5d7-4128-9c8f-e81fa93237c6",
+    "currencyCode": "eur"
+  },
+  {
+    "id": "20451388-9dc6-44d6-b05d-c611071b6862",
+    "customerId": "4121add0-f5d7-4128-9c8f-e81fa93237c7",
+    "currencyCode": "eur"
+  },
+  {
+    "id": "086aa375-8386-4316-adb3-c10da97038ef",
+    "customerId": "4121add0-f5d7-4128-9c8f-e81fa93237c7",
+    "currencyCode": "CZK"
+  },
+  {
+    "id": "90b3d598-b611-486e-845c-f2234beb1ce2",
+    "customerId": "4121add0-f5d7-4128-9c8f-e81fa93237c8",
+    "currencyCode": "eur"
+  },
+  {
+    "id": "c7148e7e-8b08-4323-a5fe-2be9b5f32514",
+    "customerId": "4121add0-f5d7-4128-9c8f-e81fa93237c8",
+    "currencyCode": "eur"
+  }
+]

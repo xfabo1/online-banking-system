@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,8 +32,8 @@ public class AccountService {
 		return repository.save(accountDbo);
 	}
 
-	public AccountDbo findAccountByAccountNumber(String accountNumber) {
-		return repository.findAccountDboByAccountNumber(Integer.valueOf(accountNumber))
+	public AccountDbo findAccountByAccountId(String accountNumber) {
+		return repository.findById(accountNumber)
 				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, accountNumber));
 	}
 

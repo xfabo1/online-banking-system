@@ -73,7 +73,7 @@ public class ScheduledPaymentExecutorFacade {
 
     private void executeReadyPayments(List<ScheduledPayment> ready) {
         ready.forEach(payment -> {
-            TransactionCreateDto transactionCreateDto = new TransactionCreateDto(payment.getWithdrawsFrom().getAccountNumber(), payment.getDepositsTo().getAccountNumber(), payment.getAmount(),
+            TransactionCreateDto transactionCreateDto = new TransactionCreateDto(payment.getWithdrawsFrom().getId(), payment.getDepositsTo().getId(), payment.getAmount(),
                     SCHEDULER_NOTE, "");
             transactionService.createTransaction(transactionCreateDto);
         });

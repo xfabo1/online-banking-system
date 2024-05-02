@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import util.JsonConvertor;
+import cz.muni.fi.obs.util.JsonConvertor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -116,8 +116,8 @@ class TransactionControllerTest {
 	@Test
 	public void createTransaction_correctRequest_createsTransaction() throws Exception {
 		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
-				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getId(),
+				TestData.withdrawTransactions.getFirst().getDepositsTo().getId(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
@@ -142,7 +142,7 @@ class TransactionControllerTest {
 	@Test
 	public void createTransaction_incorrectRequest_returns404() throws Exception {
 		TransactionCreateDto transactionCreateDto = new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getId(),
 				null,
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),

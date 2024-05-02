@@ -6,13 +6,19 @@ import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.service.TransactionService;
+import cz.muni.fi.obs.util.JsonConvertor;
+import cz.muni.fi.obs.util.Resources;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+
+import org.flywaydb.core.internal.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 @Component
 @ConditionalOnExpression("${data.initialize:false}")
@@ -39,19 +45,20 @@ public class TransactionServiceDataSeeder {
         log.info("Initializing transaction service data...");
 
         List<AccountDbo> accounts = createAccounts();
-        createScheduledPayments(accounts);
 
-
-        createTransactions(accounts);
         log.info("Initialized transaction service data...");
     }
 
-    // TODO: implement
     private void createTransactions(List<AccountDbo> accounts) {
     }
 
     private List<AccountDbo> createAccounts() {
-        return List.of();
+        String path = "/initialization_data/accounts.json";
+        List<AccountDbo> accountDbos = Resources.readResource(path, new TypeReference<>(){});
+
+		accountRepository.saveAll(accountDbos);
+
+        return accountDbos;
     }
 
     private void createScheduledPayments(List<AccountDbo> accounts) {
