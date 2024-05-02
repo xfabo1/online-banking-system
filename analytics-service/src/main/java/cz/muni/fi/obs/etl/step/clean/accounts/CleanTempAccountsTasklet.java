@@ -5,6 +5,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 @StepScope
 public class CleanTempAccountsTasklet implements Tasklet {
 
+    private final TempAccountRepository tempAccountRepository;
+
+    @Autowired
+    public CleanTempAccountsTasklet(TempAccountRepository tempAccountRepository) {
+        this.tempAccountRepository = tempAccountRepository;
+    }
+
+
     @Override
     @Transactional
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        return null;
+        tempAccountRepository.deleteAll();
+        return RepeatStatus.FINISHED;
     }
 }
