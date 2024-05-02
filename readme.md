@@ -66,6 +66,17 @@ Password: `changemelater`
 - [Transaction-service](http://localhost:8084/?pgsql=transaction-db&username=transaction_service&db=transaction_db&)
 - [Currency-service](http://localhost:8084/?pgsql=currency-db&username=currency_service&db=currency_db&)
 
+
+### Grafana 
+http://localhost:3000/
+
+Username: `admin`
+Password: `admin`
+
+### Prometheus
+http://localhost:9090/
+
 ### Entity relationship Diagram
+
 
 ![img_3.png](img_3.png)
