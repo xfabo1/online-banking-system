@@ -3,7 +3,7 @@ CREATE TABLE accounts
     id             VARCHAR(40) PRIMARY KEY,
     customer_id    VARCHAR(40) NOT NULL,
     currency_code  VARCHAR(10) NOT NULL,
-    account_number VARCHAR(40) NOT NULL,
+    account_number INTEGER NOT NULL,
     constraint account_number_unique unique (account_number)
 );
 
