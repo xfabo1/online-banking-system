@@ -17,6 +17,4 @@ import lombok.Setter;
 public class CurrencyDimension extends Dbo {
     @Column(nullable = false, unique = true)
     String symbol;
-    @Column(nullable = false, unique = true)
-    String name;
 }

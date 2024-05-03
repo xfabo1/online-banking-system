@@ -1,6 +1,5 @@
 package cz.muni.fi.obs.data.dbo;
 
-import cz.muni.fi.obs.etl.dto.AccountDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

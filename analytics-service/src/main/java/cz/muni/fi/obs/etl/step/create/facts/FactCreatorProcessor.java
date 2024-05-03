@@ -1,26 +1,19 @@
 package cz.muni.fi.obs.etl.step.create.facts;
 
-import cz.muni.fi.obs.data.AccountRepository;
-import cz.muni.fi.obs.data.AnalyticsRepository;
-import cz.muni.fi.obs.data.DateRepository;
+import cz.muni.fi.obs.data.*;
 import cz.muni.fi.obs.data.dbo.*;
 import cz.muni.fi.obs.etl.clients.TransactionClient;
 import cz.muni.fi.obs.etl.dto.TransactionDto;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-
-/**
- * TODO: use transaction client to fetch transactions for current day for the account,
- * do all computations over these within the method and create the fact
- */
+import java.util.stream.Collectors;
 
 @Component
 @StepScope
@@ -28,58 +21,48 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
     private final TransactionClient transactionClient;
     private final AccountRepository accountRepository;
     private final DateRepository dateRepository;
+    private final CurrencyRepository currencyRepository;
     private final LocalDate currentDate = LocalDate.now();
 
     @Autowired
-    public FactCreatorProcessor(TransactionClient transactionClient, AnalyticsRepository analyticsRepository, AccountRepository accountRepository, DateRepository dateRepository) {
+    public FactCreatorProcessor(TransactionClient transactionClient, AccountRepository accountRepository, DateRepository dateRepository, CurrencyRepository currencyRepository) {
         this.transactionClient = transactionClient;
         this.accountRepository = accountRepository;
         this.dateRepository = dateRepository;
+        this.currencyRepository = currencyRepository;
     }
 
     @Override
     public DailyTransactionFact process(TempAccount tempAccount) throws Exception {
-        Page<TransactionDto> transactions = transactionClient.listTransactions(tempAccount.getAccountNumber(), LocalDate.now());
-
-        int totalWithdrawalTransactions = 0;
-        int totalDepositTransactions = 0;
-        BigDecimal totalTransactionAmount = BigDecimal.ZERO;
-        BigDecimal totalWithdrawalAmount = BigDecimal.ZERO;
-        BigDecimal totalDepositAmount = BigDecimal.ZERO;
-        BigDecimal averageWithdrawalAmount = BigDecimal.ZERO;
-        BigDecimal averageDepositAmount = BigDecimal.ZERO;
+        List<TransactionDto> transactions = transactionClient.listTransactions(tempAccount.getAccountNumber(), LocalDate.now()).getContent();
 
         List<TransactionDto> withdrawalTransactions = transactions.stream()
                 .filter(transaction -> transaction.getWithdrawsFromAccountNumber().equals(tempAccount.getAccountNumber()))
                 .toList();
+
         List<TransactionDto> depositTransactions = transactions.stream()
                 .filter(transaction -> transaction.getDepositsToAccountNumber().equals(tempAccount.getAccountNumber()))
                 .toList();
 
-        for (TransactionDto transaction : withdrawalTransactions) {
-            totalWithdrawalTransactions++;
-            totalTransactionAmount = totalTransactionAmount.add(transaction.getWithdrawAmount());
-            totalWithdrawalAmount = totalWithdrawalAmount.add(transaction.getWithdrawAmount());
-        }
+        int totalWithdrawalTransactions = withdrawalTransactions.size();
+        int totalDepositTransactions = depositTransactions.size();
 
-        for (TransactionDto transaction : depositTransactions) {
-            totalDepositTransactions++;
-            totalTransactionAmount = totalTransactionAmount.add(transaction.getDepositAmount());
-            totalDepositAmount = totalDepositAmount.add(transaction.getDepositAmount());
-        }
+        BigDecimal totalWithdrawalAmount = withdrawalTransactions.stream()
+                .map(TransactionDto::getWithdrawAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (totalWithdrawalTransactions > 0) {
-            averageWithdrawalAmount = totalWithdrawalAmount.divide(BigDecimal.valueOf(totalWithdrawalTransactions), RoundingMode.HALF_UP);
-        }
+        BigDecimal totalDepositAmount = depositTransactions.stream()
+                .map(TransactionDto::getDepositAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (totalDepositTransactions > 0) {
-            averageDepositAmount = totalDepositAmount.divide(BigDecimal.valueOf(totalDepositTransactions), RoundingMode.HALF_UP);
-        }
+        BigDecimal totalTransactionAmount = totalWithdrawalAmount.add(totalDepositAmount);
+
+        BigDecimal averageWithdrawalAmount = totalWithdrawalTransactions > 0 ? totalWithdrawalAmount.divide(BigDecimal.valueOf(totalWithdrawalTransactions), RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        BigDecimal averageDepositAmount = totalDepositTransactions > 0 ? totalDepositAmount.divide(BigDecimal.valueOf(totalDepositTransactions), RoundingMode.HALF_UP) : BigDecimal.ZERO;
 
         AccountDimension accountDimension = findOrCreateAccountDimension(tempAccount);
         DateDimension dateDimension = findOrCreateDateDimension();
-        CurrencyDimension currencyDimension = findOrCreateCurrencyDimension();
-
+        CurrencyDimension currencyDimension = findOrCreateCurrencyDimension(tempAccount.getCurrencyCode());
 
         DailyTransactionFact dailyTransactionFact = new DailyTransactionFact();
         dailyTransactionFact.setTotalWithdrawalTransactions(totalWithdrawalTransactions);
@@ -91,14 +74,14 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
         dailyTransactionFact.setAverageDepositAmount(averageDepositAmount);
         dailyTransactionFact.setAccountDimension(accountDimension);
         dailyTransactionFact.setDateDimension(dateDimension);
-
         dailyTransactionFact.setCurrencyDimension(currencyDimension);
 
         return dailyTransactionFact;
     }
 
-    private CurrencyDimension findOrCreateCurrencyDimension() {
-        return null;
+    private CurrencyDimension findOrCreateCurrencyDimension(String currencyCode) {
+        return currencyRepository.findByCurrencyCode(currencyCode).orElseGet(() ->
+                currencyRepository.save(new CurrencyDimension(currencyCode)));
     }
 
     private DateDimension findOrCreateDateDimension() {
