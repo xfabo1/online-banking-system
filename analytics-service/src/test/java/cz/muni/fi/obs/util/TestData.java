@@ -24,7 +24,8 @@ public class TestData {
                 new BigDecimal(4000),
                 new BigDecimal(2000),
                 ACCOUNT_DIMENSION,
-                new DateDimension(2021, 1, 1)
+                new DateDimension(2021, 1, 1),
+                null
         );
         DailyTransactionFact transaction2 = new DailyTransactionFact(
                 10,
@@ -35,8 +36,8 @@ public class TestData {
                 new BigDecimal(2000),
                 new BigDecimal(2000),
                 ACCOUNT_DIMENSION,
-                new DateDimension(2021, 1, 2)
-
+                new DateDimension(2021, 1, 2),
+                null
         );
         DailyTransactionFact transaction3 = new DailyTransactionFact(
                 4,
@@ -47,7 +48,8 @@ public class TestData {
                 new BigDecimal(2000),
                 new BigDecimal(1000),
                 ACCOUNT_DIMENSION,
-                new DateDimension(2021, 1, 3)
+                new DateDimension(2021, 1, 3),
+                null
         );
         transactions.add(transaction1);
         transactions.add(transaction2);
