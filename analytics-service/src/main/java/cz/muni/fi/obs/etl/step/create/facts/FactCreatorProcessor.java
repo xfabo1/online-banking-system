@@ -1,7 +1,9 @@
 package cz.muni.fi.obs.etl.step.create.facts;
 
-import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
-import cz.muni.fi.obs.data.dbo.TempAccount;
+import cz.muni.fi.obs.data.AccountRepository;
+import cz.muni.fi.obs.data.AnalyticsRepository;
+import cz.muni.fi.obs.data.DateRepository;
+import cz.muni.fi.obs.data.dbo.*;
 import cz.muni.fi.obs.etl.clients.TransactionClient;
 import cz.muni.fi.obs.etl.dto.TransactionDto;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -23,11 +25,16 @@ import java.util.List;
 @Component
 @StepScope
 public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTransactionFact> {
-    private TransactionClient transactionClient;
+    private final TransactionClient transactionClient;
+    private final AccountRepository accountRepository;
+    private final DateRepository dateRepository;
+    private final LocalDate currentDate = LocalDate.now();
 
     @Autowired
-    public FactCreatorProcessor(TransactionClient transactionClient) {
+    public FactCreatorProcessor(TransactionClient transactionClient, AnalyticsRepository analyticsRepository, AccountRepository accountRepository, DateRepository dateRepository) {
         this.transactionClient = transactionClient;
+        this.accountRepository = accountRepository;
+        this.dateRepository = dateRepository;
     }
 
     @Override
@@ -69,6 +76,10 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
             averageDepositAmount = totalDepositAmount.divide(BigDecimal.valueOf(totalDepositTransactions), RoundingMode.HALF_UP);
         }
 
+        AccountDimension accountDimension = findOrCreateAccountDimension(tempAccount);
+        DateDimension dateDimension = findOrCreateDateDimension();
+        CurrencyDimension currencyDimension = findOrCreateCurrencyDimension();
+
 
         DailyTransactionFact dailyTransactionFact = new DailyTransactionFact();
         dailyTransactionFact.setTotalWithdrawalTransactions(totalWithdrawalTransactions);
@@ -78,9 +89,25 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
         dailyTransactionFact.setTotalDepositAmount(totalDepositAmount);
         dailyTransactionFact.setAverageWithdrawalAmount(averageWithdrawalAmount);
         dailyTransactionFact.setAverageDepositAmount(averageDepositAmount);
-        dailyTransactionFact.setAccountDimension(null); // TODO implement
-        dailyTransactionFact.setDateDimension(null); // TODO Implement
+        dailyTransactionFact.setAccountDimension(accountDimension);
+        dailyTransactionFact.setDateDimension(dateDimension);
+
+        dailyTransactionFact.setCurrencyDimension(currencyDimension);
 
         return dailyTransactionFact;
+    }
+
+    private CurrencyDimension findOrCreateCurrencyDimension() {
+        return null;
+    }
+
+    private DateDimension findOrCreateDateDimension() {
+        return dateRepository.findByYearAndMonthAndDay(currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth()).orElseGet(() ->
+                dateRepository.save(new DateDimension(currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth())));
+    }
+
+    private AccountDimension findOrCreateAccountDimension(TempAccount tempAccount) {
+        return accountRepository.findById(tempAccount.getId()).orElseGet(() ->
+                accountRepository.save(new AccountDimension(tempAccount.getAccountNumber())));
     }
 }

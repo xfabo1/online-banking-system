@@ -44,4 +44,8 @@ public class DailyTransactionFact extends Dbo {
     @ManyToOne
     @JoinColumn(name = "date_id")
     DateDimension dateDimension;
+
+    @ManyToOne
+    @JoinColumn(name = "currency_id")
+    CurrencyDimension currencyDimension;
 }

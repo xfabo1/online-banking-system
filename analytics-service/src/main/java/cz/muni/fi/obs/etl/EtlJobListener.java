@@ -1,24 +1,24 @@
 package cz.muni.fi.obs.etl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.stereotype.Component;
 
-/**
- * TODO: Check for status before and after start of job, log the start of job and end of job
- * optional: use the jobExecution object to log some details (how many facts were created in the compute-facts-step)
- */
+@Slf4j
 @Component
 public class EtlJobListener implements JobExecutionListener {
 
-
     @Override
-    public void beforeJob(JobExecution jobExecution) {
+    public void beforeJob(@NotNull JobExecution jobExecution) {
         JobExecutionListener.super.beforeJob(jobExecution);
+        log.info("Starting job: {} at {}", jobExecution.getJobInstance().getJobName(), jobExecution.getStartTime());
     }
 
     @Override
-    public void afterJob(JobExecution jobExecution) {
+    public void afterJob(@NotNull JobExecution jobExecution) {
         JobExecutionListener.super.afterJob(jobExecution);
+        log.info("Job finished with status: {} at {}", jobExecution.getStatus(), jobExecution.getEndTime());
     }
 }
