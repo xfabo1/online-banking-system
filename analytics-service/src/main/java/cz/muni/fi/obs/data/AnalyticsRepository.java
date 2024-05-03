@@ -10,10 +10,10 @@ import java.util.List;
 
 @Repository
 public interface AnalyticsRepository extends JpaRepository<DailyTransactionFact, String> {
-    @Query("SELECT dt FROM DailyTransactionFact dt WHERE dt.account.accountNumber = ?1 AND dt.date.yearNumber = ?2 AND dt.date.monthNumber = ?3")
+    @Query("SELECT dt FROM DailyTransactionFact dt WHERE dt.accountDimension.accountNumber = ?1 AND dt.dateDimension.yearNumber = ?2 AND dt.dateDimension.monthNumber = ?3")
     List<DailyTransactionFact> getDailyTransactions(String accountNumber, int year, int month);
 
-    @Query("SELECT dt FROM DailyTransactionFact dt WHERE dt.account.accountNumber = ?1 AND dt.totalTransactionAmount BETWEEN ?2 AND ?3")
+    @Query("SELECT dt FROM DailyTransactionFact dt WHERE dt.accountDimension.accountNumber = ?1 AND dt.totalTransactionAmount BETWEEN ?2 AND ?3")
     List<DailyTransactionFact> getDailyTransactionsByAmountRange(String accountNumber, BigDecimal minAmount, BigDecimal maxAmount);
 
 }

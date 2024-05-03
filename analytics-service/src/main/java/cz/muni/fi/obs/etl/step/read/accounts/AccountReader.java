@@ -14,8 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-// TODO not sure
-
 @Component
 @StepScope
 @Slf4j
@@ -30,17 +28,20 @@ public class AccountReader implements ItemReader<AccountDto> {
 
     private Page<AccountDto> currentPage;
     private int currentPageNumber = 0;
+    private int currentPageItem = 0;
 
     @Override
     public AccountDto read() throws UnexpectedInputException, ParseException, NonTransientResourceException {
-        if (currentPage == null || currentPageNumber >= currentPage.getTotalPages()) {
+        if (currentPage == null || currentPageItem >= currentPage.getNumberOfElements()) {
             currentPage = fetchNextPage();
-            currentPageNumber = 0;
+            currentPageNumber++;
+            currentPageItem = 0;
         }
-        if (currentPage != null && currentPage.hasContent()) {
-            return currentPage.getContent().get(currentPageNumber++);
+        if (currentPage == null || currentPageItem >= currentPage.getNumberOfElements()) {
+            return null;
         }
-        return null;
+
+        return currentPage.getContent().get(currentPageItem++);
     }
 
     private Page<AccountDto> fetchNextPage() {
@@ -48,7 +49,7 @@ public class AccountReader implements ItemReader<AccountDto> {
             Pageable pageable = PageRequest.of(currentPageNumber, 10);
             return accountsClient.listAccounts(pageable);
         } catch (Exception e) {
-            log.error("Error fetching accounts from transaction service: {}", e.getMessage());
+            log.error("Failed to fetch page", e);
             return null;
         }
     }

@@ -4,6 +4,14 @@ CREATE TABLE currency_dim
     symbol  varchar(10) NOT NULL UNIQUE,
 );
 
+CREATE TABLE temp_account
+(
+    id             varchar(40) PRIMARY KEY,
+    customer_id    varchar(40) NOT NULL,
+    currency_code  varchar(10) NOT NULL,
+    account_number varchar(40) UNIQUE NOT NULL,
+);
+
 ALTER TABLE daily_transaction
     ADD COLUMN currency_id varchar(40) NOT NULL;
 

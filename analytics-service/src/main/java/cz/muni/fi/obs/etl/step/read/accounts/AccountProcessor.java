@@ -12,10 +12,12 @@ import org.springframework.stereotype.Component;
 @StepScope
 public class AccountProcessor implements ItemProcessor<AccountDto, TempAccount> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
     public TempAccount process(AccountDto item) {
-        return objectMapper.convertValue(item, TempAccount.class);
+        return new TempAccount(
+                item.getCustomerId(),
+                item.getCurrencyCode(),
+                item.getAccountNumber()
+        );
     }
 }
