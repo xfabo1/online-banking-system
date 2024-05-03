@@ -29,29 +29,41 @@ public class AccountReader implements ItemReader<AccountDto> {
     private Page<AccountDto> currentPage;
     private int currentPageNumber = 0;
     private int currentPageItem = 0;
+    private Integer totalPages;
 
     @Override
     public AccountDto read() throws UnexpectedInputException, ParseException, NonTransientResourceException {
-        if (currentPage == null || currentPageItem >= currentPage.getNumberOfElements()) {
+        if (currentPage == null) {
             currentPage = fetchNextPage();
-            currentPageNumber++;
-            currentPageItem = 0;
-        }
-        if (currentPage == null || currentPageItem >= currentPage.getNumberOfElements()) {
-            return null;
+            totalPages = currentPage.getTotalPages();
         }
 
-        return currentPage.getContent().get(currentPageItem++);
+        if (currentPageItem < currentPage.getSize()) {
+            return getAndIncrement();
+        } else if (currentPageNumber < totalPages) {
+            currentPageItem = 0;
+            currentPageNumber += 1;
+            currentPage = fetchNextPage();
+            return getAndIncrement();
+        } else {
+            return null;
+        }
+    }
+
+    private AccountDto getAndIncrement() {
+        AccountDto accountDto = currentPage.getContent().get(currentPageItem);
+        currentPageItem += 1;
+        return accountDto;
     }
 
     private Page<AccountDto> fetchNextPage() {
         try {
             Pageable pageable = PageRequest.of(currentPageNumber, 10);
-            return accountsClient.listAccounts(pageable);
+            Page<AccountDto> accountDtos = accountsClient.listAccounts(pageable);
+            return accountDtos == null ? Page.empty() : accountDtos;
         } catch (Exception e) {
             log.error("Failed to fetch page", e);
-            return null;
+            throw e;
         }
     }
-
 }
