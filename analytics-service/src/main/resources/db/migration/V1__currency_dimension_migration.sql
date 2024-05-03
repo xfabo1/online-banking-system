@@ -1,8 +1,7 @@
 CREATE TABLE currency_dim
 (
     id      varchar(40) PRIMARY KEY,
-    symbol  varchar(255) NOT NULL UNIQUE,
-    name    varchar(255) NOT NULL UNIQUE
+    symbol  varchar(10) NOT NULL UNIQUE,
 );
 
 ALTER TABLE daily_transaction
