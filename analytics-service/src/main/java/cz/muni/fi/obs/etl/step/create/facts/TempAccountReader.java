@@ -1,37 +1,64 @@
 package cz.muni.fi.obs.etl.step.create.facts;
 
 import cz.muni.fi.obs.data.dbo.TempAccount;
+import cz.muni.fi.obs.etl.step.clean.accounts.TempAccountRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-/**
- * TODO implement reading:
- * <p>
- * how to do this:
- * <p>
- * if there are accounts present in the collection just pop the first element and return it
- * if there are no accounts read the next page store them into the field, and increment the page, then return first account
- * from read page
- * <p>
- * if there are no accounts left just return null, this automatically terminates upon doing that
- */
 @Component
 @StepScope
+@Slf4j
 public class TempAccountReader implements ItemReader<TempAccount> {
 
-    private List<TempAccount> accountCache;
+    private final TempAccountRepository tempAccountRepository;
 
-    // might be int?
-    private long currentPage;
+    @Autowired
+    public TempAccountReader(TempAccountRepository tempAccountRepository) {
+        this.tempAccountRepository = tempAccountRepository;
+    }
 
-    // if this is set to 0 read the actual value of this param, use it to determine if there should no be accounts anymore
-    private long totalPages;
+    private Page<TempAccount> currentPage;
+    private int currentPageNumber = 0;
+    private int currentPageItem = 0;
+    private int totalPages;
 
     @Override
     public TempAccount read() {
-        return null;
+        if (currentPage == null) {
+            currentPage = fetchNextPage();
+            totalPages = currentPage.getTotalPages();
+        }
+        if (currentPageItem < currentPage.getSize()) {
+            return getAndIncrement();
+        } else if (currentPageNumber < totalPages) {
+            currentPageItem = 0;
+            currentPageNumber += 1;
+            currentPage = fetchNextPage();
+            return getAndIncrement();
+        } else {
+            return null;
+        }
+    }
+
+    private TempAccount getAndIncrement() {
+        TempAccount tempAccount = currentPage.getContent().get(currentPageItem);
+        currentPageItem += 1;
+        return tempAccount;
+    }
+
+    private Page<TempAccount> fetchNextPage() {
+        try {
+            Pageable pageable = PageRequest.of(currentPageNumber, 10);
+            return tempAccountRepository.findAll(pageable);
+        } catch (Exception e) {
+            log.error("Failed to fetch page", e);
+            throw e;
+        }
     }
 }
