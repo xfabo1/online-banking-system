@@ -3,9 +3,9 @@ package cz.muni.fi.obs.etl.clients;
 import cz.muni.fi.obs.etl.dto.AccountDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @FeignClient(
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 )
 public interface AccountsClient {
 
-    @PostMapping(value = "/v1/accounts/list")
-    Page<AccountDto> listAccounts(@RequestBody Pageable pageable);
+    @GetMapping(value = "/v1/accounts/list", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    Page<AccountDto> listAccounts(@RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize);
 }

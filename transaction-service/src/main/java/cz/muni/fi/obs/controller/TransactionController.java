@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +28,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @Validated
@@ -52,7 +52,7 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Transaction not found")
 			}
 	)
-	@GetMapping(value = "/transaction/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/transaction/{id}", produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<TransactionDbo> getTransactionById(@PathVariable("id") String id) {
 		log.info("Getting transaction by id: {}", id);
 		Optional<TransactionDbo> transaction = facade.getTransactionById(id);
@@ -68,7 +68,7 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Transaction history not found")
 			}
 	)
-	@GetMapping(value = "/account/{accountNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/account/{accountNumber}", produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<PagedResponse<TransactionDbo>> viewTransactionHistory(
 			@PathVariable("accountNumber") String accountNumber,
 			@RequestParam("pageNumber") int pageNumber,
@@ -90,7 +90,7 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Transaction history not found")
 			}
 	)
-	@PostMapping(value = "/{accountId}/list", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{accountId}/list", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<TransactionDto>> listTransactions(
 			@PathVariable("accountId") String accountId,
 			@RequestParam("pageNumber") int pageNumber,
@@ -109,7 +109,7 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Account balance not found")
 			}
 	)
-	@GetMapping(value = "/account/{accountNumber}/balance", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/account/{accountNumber}/balance", produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<BigDecimal> checkAccountBalance(@PathVariable("accountNumber") String accountNumber) {
 		log.info("Checking account balance for account: {}", accountNumber);
 		return ResponseEntity.ok(facade.calculateAccountBalance(accountNumber));
@@ -125,8 +125,8 @@ public class TransactionController {
 			}
 	)
 	@PostMapping(value = "/transaction/create",
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
+			consumes = APPLICATION_JSON_VALUE,
+			produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<TransactionDbo> createTransaction(@Valid @RequestBody TransactionCreateDto transaction) {
 		log.info("Creating transaction: {}", transaction);
 		TransactionDbo createdTransaction = facade.createTransaction(transaction);

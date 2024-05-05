@@ -2,6 +2,7 @@ package cz.muni.fi.obs.etl.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,9 +17,11 @@ public class TransactionDto {
     @NotBlank
     String depositsToAccountId;
 
+    @NotNull
     @Min(0)
     BigDecimal withdrawAmount;
 
+    @NotNull
     @Min(0)
     BigDecimal depositAmount;
 

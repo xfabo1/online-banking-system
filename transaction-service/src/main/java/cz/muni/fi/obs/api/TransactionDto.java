@@ -30,7 +30,7 @@ public class TransactionDto {
     public static TransactionDto fromDbo(TransactionDbo transactionDbo) {
         TransactionDto transactionDto = new TransactionDto();
         transactionDto.setNote(transactionDbo.getNote());
-        transactionDto.setDepositAmount(transactionDto.getDepositAmount());
+        transactionDto.setDepositAmount(transactionDbo.getDepositAmount());
         transactionDto.setVariableSymbol(transactionDbo.getVariableSymbol());
         transactionDto.setWithdrawAmount(transactionDbo.getWithdrawAmount());
         transactionDto.setWithdrawsFromAccountId(transactionDbo.getWithdrawsFrom().getId());

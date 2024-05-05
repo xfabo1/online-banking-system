@@ -49,13 +49,15 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
     @Override
     public DailyTransactionFact process(TempAccount tempAccount) {
         List<TransactionDto> transactions = fetchTransactions(tempAccount);
+        currentPage = 0;
+        pageCount = 0;
 
         List<TransactionDto> withdrawalTransactions = transactions.stream()
-                .filter(transaction -> transaction.getWithdrawsFromAccountId().equals(tempAccount.getAccountNumber()))
+                .filter(transaction -> transaction.getWithdrawsFromAccountId().equals(tempAccount.getAccountId()))
                 .toList();
 
         List<TransactionDto> depositTransactions = transactions.stream()
-                .filter(transaction -> transaction.getDepositsToAccountId().equals(tempAccount.getAccountNumber()))
+                .filter(transaction -> transaction.getDepositsToAccountId().equals(tempAccount.getAccountId()))
                 .toList();
 
         int totalWithdrawalTransactions = withdrawalTransactions.size();
@@ -106,7 +108,7 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
     }
 
     private List<TransactionDto> doFetch(TempAccount tempAccount) {
-        ResponseEntity<Page<TransactionDto>> response = transactionClient.listTransactions(tempAccount.getId(),
+        ResponseEntity<Page<TransactionDto>> response = transactionClient.listTransactions(tempAccount.getAccountId(),
                 currentPage, 50, currentDate);
 
         if (!response.getStatusCode().equals(HttpStatusCode.valueOf(200)) || response.getBody() == null) {
@@ -135,6 +137,6 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
 
     private AccountDimension findOrCreateAccountDimension(TempAccount tempAccount) {
         return accountRepository.findById(tempAccount.getId()).orElseGet(() ->
-                accountRepository.save(new AccountDimension(tempAccount.getAccountNumber())));
+                accountRepository.save(new AccountDimension(tempAccount.getAccountId())));
     }
 }

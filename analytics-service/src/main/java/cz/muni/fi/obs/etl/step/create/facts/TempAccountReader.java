@@ -34,9 +34,9 @@ public class TempAccountReader implements ItemReader<TempAccount> {
             currentPage = fetchNextPage();
             totalPages = currentPage.getTotalPages();
         }
-        if (currentPageItem < currentPage.getSize()) {
+        if (currentPageItem < currentPage.getContent().size()) {
             return getAndIncrement();
-        } else if (currentPageNumber < totalPages) {
+        } else if ((currentPageNumber + 1) < totalPages) {
             currentPageItem = 0;
             currentPageNumber += 1;
             currentPage = fetchNextPage();
@@ -54,7 +54,7 @@ public class TempAccountReader implements ItemReader<TempAccount> {
 
     private Page<TempAccount> fetchNextPage() {
         try {
-            Pageable pageable = PageRequest.of(currentPageNumber, 10);
+            Pageable pageable = PageRequest.of(currentPageNumber, 50);
             return tempAccountRepository.findAll(pageable);
         } catch (Exception e) {
             log.error("Failed to fetch page", e);

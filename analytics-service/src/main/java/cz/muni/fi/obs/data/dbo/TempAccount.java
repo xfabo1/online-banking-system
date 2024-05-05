@@ -20,5 +20,5 @@ public class TempAccount extends Dbo{
     @Column(nullable = false)
     private String currencyCode;
     @Column(nullable = false, unique = true)
-    private String accountNumber;
+    private String accountId;
 }

@@ -16,7 +16,7 @@ public class AccountProcessor implements ItemProcessor<AccountDto, TempAccount> 
         return new TempAccount(
                 item.getCustomerId(),
                 item.getCurrencyCode(),
-                item.getAccountNumber()
+                item.getId()
         );
     }
 }

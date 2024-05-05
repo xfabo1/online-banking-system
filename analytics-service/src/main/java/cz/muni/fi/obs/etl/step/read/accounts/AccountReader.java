@@ -10,8 +10,6 @@ import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,9 +36,9 @@ public class AccountReader implements ItemReader<AccountDto> {
             totalPages = currentPage.getTotalPages();
         }
 
-        if (currentPageItem < currentPage.getSize()) {
+        if (currentPageItem < currentPage.getContent().size()) {
             return getAndIncrement();
-        } else if (currentPageNumber < totalPages) {
+        } else if ((currentPageNumber + 1) < totalPages) {
             currentPageItem = 0;
             currentPageNumber += 1;
             currentPage = fetchNextPage();
@@ -58,8 +56,7 @@ public class AccountReader implements ItemReader<AccountDto> {
 
     private Page<AccountDto> fetchNextPage() {
         try {
-            Pageable pageable = PageRequest.of(currentPageNumber, 10);
-            Page<AccountDto> accountDtos = accountsClient.listAccounts(pageable);
+            Page<AccountDto> accountDtos = accountsClient.listAccounts(currentPageNumber, 50);
             return accountDtos == null ? Page.empty() : accountDtos;
         } catch (Exception e) {
             log.error("Failed to fetch page", e);
