@@ -51,3 +51,6 @@ clients:
 
 bank:
   bank-accounts: bank-1
+
+jms:
+  enabled: true
