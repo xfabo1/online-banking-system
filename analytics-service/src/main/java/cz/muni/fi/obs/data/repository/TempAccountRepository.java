@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.etl.step.clean.accounts;
+package cz.muni.fi.obs.data.repository;
 
 import cz.muni.fi.obs.data.dbo.TempAccount;
 import org.springframework.data.jpa.repository.JpaRepository;

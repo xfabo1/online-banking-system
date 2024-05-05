@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,5 +77,9 @@ public class TransactionManagementFacade {
     public Page<AccountDbo> listAccounts(Pageable pageable) {
         return accountService.listAccounts(pageable);
     }
+
+	public Page<TransactionDbo> listTransactions(String accountId, int pageNumber, int pageSize, LocalDate date) {
+		return transactionService.listByAccount(accountId, Pageable.ofSize(pageSize).withPage(pageNumber), date);
+	}
 }
 

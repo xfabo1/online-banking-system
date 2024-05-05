@@ -15,6 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -129,5 +141,10 @@ public class TransactionService {
 	private CurrencyExchangeResult callCurrencyClient(CurrencyExchangeRequest request) {
 		return client.getCurrencyExchange(request)
 				.orElseThrow(() -> new ResourceNotFoundException("Currency exchange rate not found"));
+	}
+
+	public Page<TransactionDbo> listByAccount(String accountId, Pageable pageable, LocalDate date) {
+		return repository.listTransactions(accountId, pageable, date.atStartOfDay().toInstant(ZoneOffset.UTC),
+				date.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC));
 	}
 }

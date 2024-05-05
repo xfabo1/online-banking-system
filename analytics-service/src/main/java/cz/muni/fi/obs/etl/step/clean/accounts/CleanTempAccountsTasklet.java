@@ -1,5 +1,6 @@
 package cz.muni.fi.obs.etl.step.clean.accounts;
 
+import cz.muni.fi.obs.data.repository.TempAccountRepository;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.ChunkContext;

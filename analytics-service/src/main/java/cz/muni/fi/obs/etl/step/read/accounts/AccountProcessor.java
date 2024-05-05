@@ -1,6 +1,5 @@
 package cz.muni.fi.obs.etl.step.read.accounts;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.obs.data.dbo.TempAccount;
 import cz.muni.fi.obs.etl.dto.AccountDto;
 import org.springframework.batch.core.configuration.annotation.StepScope;

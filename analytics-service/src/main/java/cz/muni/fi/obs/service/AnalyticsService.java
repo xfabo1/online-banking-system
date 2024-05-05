@@ -4,8 +4,8 @@ import cz.muni.fi.obs.api.DailySummary;
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummary;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
-import cz.muni.fi.obs.data.AnalyticsRepository;
 import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
+import cz.muni.fi.obs.data.repository.AnalyticsRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

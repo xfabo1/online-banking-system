@@ -1,19 +1,29 @@
 package cz.muni.fi.obs.etl.step.create.facts;
 
-import cz.muni.fi.obs.data.*;
-import cz.muni.fi.obs.data.dbo.*;
+import cz.muni.fi.obs.data.dbo.AccountDimension;
+import cz.muni.fi.obs.data.dbo.CurrencyDimension;
+import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
+import cz.muni.fi.obs.data.dbo.DateDimension;
+import cz.muni.fi.obs.data.dbo.TempAccount;
+import cz.muni.fi.obs.data.repository.AccountRepository;
+import cz.muni.fi.obs.data.repository.CurrencyRepository;
+import cz.muni.fi.obs.data.repository.DateRepository;
+import cz.muni.fi.obs.etl.EtlException;
 import cz.muni.fi.obs.etl.clients.TransactionClient;
 import cz.muni.fi.obs.etl.dto.TransactionDto;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @StepScope
@@ -24,6 +34,10 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
     private final CurrencyRepository currencyRepository;
     private final LocalDate currentDate = LocalDate.now();
 
+    private Integer currentPage = 0;
+
+    private Integer pageCount = 0;
+
     @Autowired
     public FactCreatorProcessor(TransactionClient transactionClient, AccountRepository accountRepository, DateRepository dateRepository, CurrencyRepository currencyRepository) {
         this.transactionClient = transactionClient;
@@ -33,8 +47,8 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
     }
 
     @Override
-    public DailyTransactionFact process(TempAccount tempAccount) throws Exception {
-        List<TransactionDto> transactions = transactionClient.listTransactions(tempAccount.getAccountNumber(), LocalDate.now()).getContent();
+    public DailyTransactionFact process(TempAccount tempAccount) {
+        List<TransactionDto> transactions = fetchTransactions(tempAccount);
 
         List<TransactionDto> withdrawalTransactions = transactions.stream()
                 .filter(transaction -> transaction.getWithdrawsFromAccountNumber().equals(tempAccount.getAccountNumber()))
@@ -57,8 +71,10 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
 
         BigDecimal totalTransactionAmount = totalWithdrawalAmount.add(totalDepositAmount);
 
-        BigDecimal averageWithdrawalAmount = totalWithdrawalTransactions > 0 ? totalWithdrawalAmount.divide(BigDecimal.valueOf(totalWithdrawalTransactions), RoundingMode.HALF_UP) : BigDecimal.ZERO;
-        BigDecimal averageDepositAmount = totalDepositTransactions > 0 ? totalDepositAmount.divide(BigDecimal.valueOf(totalDepositTransactions), RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        BigDecimal averageWithdrawalAmount = totalWithdrawalTransactions > 0 ?
+                totalWithdrawalAmount.divide(BigDecimal.valueOf(totalWithdrawalTransactions), RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        BigDecimal averageDepositAmount = totalDepositTransactions > 0 ?
+                totalDepositAmount.divide(BigDecimal.valueOf(totalDepositTransactions), RoundingMode.HALF_UP) : BigDecimal.ZERO;
 
         AccountDimension accountDimension = findOrCreateAccountDimension(tempAccount);
         DateDimension dateDimension = findOrCreateDateDimension();
@@ -77,6 +93,34 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
         dailyTransactionFact.setCurrencyDimension(currencyDimension);
 
         return dailyTransactionFact;
+    }
+
+    private List<TransactionDto> fetchTransactions(TempAccount tempAccount) {
+        List<TransactionDto> transactionDtos = new ArrayList<>();
+
+        do {
+            transactionDtos.addAll(doFetch(tempAccount));
+        } while (currentPage < pageCount);
+
+        return transactionDtos;
+    }
+
+    private List<TransactionDto> doFetch(TempAccount tempAccount) {
+        ResponseEntity<Page<TransactionDto>> response = transactionClient.listTransactions(tempAccount.getId(),
+                currentPage, 50, currentDate);
+
+        if (!response.getStatusCode().equals(HttpStatusCode.valueOf(200)) || response.getBody() == null) {
+            throw new EtlException(new RuntimeException("Transaction client failed to list transactions."));
+        }
+
+        Page<TransactionDto> page = response.getBody();
+        if (pageCount == 0) {
+            pageCount = page.getTotalPages();
+        }
+
+        currentPage += 1;
+
+        return response.getBody().getContent();
     }
 
     private CurrencyDimension findOrCreateCurrencyDimension(String currencyCode) {

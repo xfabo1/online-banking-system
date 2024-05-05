@@ -1,4 +1,4 @@
-package cz.muni.fi.obs.data;
+package cz.muni.fi.obs.data.repository;
 
 import cz.muni.fi.obs.data.dbo.DateDimension;
 import org.springframework.data.jpa.repository.JpaRepository;

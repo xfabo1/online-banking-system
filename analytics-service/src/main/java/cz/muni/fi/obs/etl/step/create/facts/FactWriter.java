@@ -1,7 +1,7 @@
 package cz.muni.fi.obs.etl.step.create.facts;
 
-import cz.muni.fi.obs.data.AnalyticsRepository;
 import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
+import cz.muni.fi.obs.data.repository.AnalyticsRepository;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;

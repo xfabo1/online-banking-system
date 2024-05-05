@@ -27,6 +27,11 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
 
 @Slf4j
 @Validated
@@ -78,6 +83,25 @@ public class TransactionController {
 			throw new ResourceNotFoundException("Transaction history not found");
 		}
 		return ResponseEntity.ok(PagedResponse.fromPage(page));
+	}
+
+	@Operation(
+			summary = "View transaction history",
+			description = "Views transaction history for account",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Transaction history found"),
+					@ApiResponse(responseCode = "404", description = "Transaction history not found")
+			}
+	)
+	@GetMapping(value = "/account/{accountNumber}/list", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<TransactionDbo>> listTransactions(
+			@PathVariable("accountNumber") String accountId,
+			@RequestParam("pageNumber") int pageNumber,
+			@RequestParam("pageSize") int pageSize,
+			@RequestParam("date") LocalDate date) {
+		log.info("Listing transactions for: {} on date: ", accountId);
+		Page<TransactionDbo> page = facade.listTransactions(accountId, pageNumber, pageSize, date);
+		return ResponseEntity.ok(page);
 	}
 
 	@Operation(
