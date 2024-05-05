@@ -30,4 +30,4 @@ spring:
 
 etl:
   transaction-service:
-    url:
+    url: 'http://localhost:8082/api/transaction-service'

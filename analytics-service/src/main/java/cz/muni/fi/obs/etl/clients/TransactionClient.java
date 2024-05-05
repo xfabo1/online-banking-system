@@ -4,8 +4,8 @@ import cz.muni.fi.obs.etl.dto.TransactionDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
         url = "${etl.transaction-service.url}"
 )
 public interface TransactionClient {
-    @GetMapping(value = "/account/{accountId}/list")
+    @PostMapping(value = "/v1/transactions/{accountId}/list")
     ResponseEntity<Page<TransactionDto>> listTransactions(
             @PathVariable("accountId") String accountId,
             @RequestParam("pageNumber") int pageNumber,

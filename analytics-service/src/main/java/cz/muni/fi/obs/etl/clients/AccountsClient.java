@@ -4,7 +4,7 @@ import cz.muni.fi.obs.etl.dto.AccountDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 )
 public interface AccountsClient {
 
-    @GetMapping(value = "/list")
+    @PostMapping(value = "/v1/accounts/list")
     Page<AccountDto> listAccounts(@RequestBody Pageable pageable);
 }

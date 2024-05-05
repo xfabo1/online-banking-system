@@ -90,7 +90,7 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Transaction history not found")
 			}
 	)
-	@GetMapping(value = "/account/{accountId}/list", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/{accountId}/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<TransactionDto>> listTransactions(
 			@PathVariable("accountId") String accountId,
 			@RequestParam("pageNumber") int pageNumber,

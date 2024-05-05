@@ -97,7 +97,7 @@ public class AccountController {
 	}
 
     @Operation(description = "list accounts")
-    @GetMapping(value = "/list")
+	@PostMapping(value = "/list")
     public Page<AccountDbo> listAccounts(@RequestBody Pageable pageable) {
         return facade.listAccounts(pageable);
     }
