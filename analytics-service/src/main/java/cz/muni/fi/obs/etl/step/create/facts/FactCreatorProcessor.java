@@ -51,11 +51,11 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
         List<TransactionDto> transactions = fetchTransactions(tempAccount);
 
         List<TransactionDto> withdrawalTransactions = transactions.stream()
-                .filter(transaction -> transaction.getWithdrawsFromAccountNumber().equals(tempAccount.getAccountNumber()))
+                .filter(transaction -> transaction.getWithdrawsFromAccountId().equals(tempAccount.getAccountNumber()))
                 .toList();
 
         List<TransactionDto> depositTransactions = transactions.stream()
-                .filter(transaction -> transaction.getDepositsToAccountNumber().equals(tempAccount.getAccountNumber()))
+                .filter(transaction -> transaction.getDepositsToAccountId().equals(tempAccount.getAccountNumber()))
                 .toList();
 
         int totalWithdrawalTransactions = withdrawalTransactions.size();

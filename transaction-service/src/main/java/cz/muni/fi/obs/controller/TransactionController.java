@@ -1,6 +1,7 @@
 package cz.muni.fi.obs.controller;
 
 import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.api.TransactionDto;
 import cz.muni.fi.obs.controller.pagination.PagedResponse;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
@@ -23,10 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
-import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -93,14 +90,14 @@ public class TransactionController {
 					@ApiResponse(responseCode = "404", description = "Transaction history not found")
 			}
 	)
-	@GetMapping(value = "/account/{accountNumber}/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Page<TransactionDbo>> listTransactions(
-			@PathVariable("accountNumber") String accountId,
+	@GetMapping(value = "/account/{accountId}/list", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<TransactionDto>> listTransactions(
+			@PathVariable("accountId") String accountId,
 			@RequestParam("pageNumber") int pageNumber,
 			@RequestParam("pageSize") int pageSize,
 			@RequestParam("date") LocalDate date) {
 		log.info("Listing transactions for: {} on date: ", accountId);
-		Page<TransactionDbo> page = facade.listTransactions(accountId, pageNumber, pageSize, date);
+		Page<TransactionDto> page = facade.listTransactions(accountId, pageNumber, pageSize, date);
 		return ResponseEntity.ok(page);
 	}
 

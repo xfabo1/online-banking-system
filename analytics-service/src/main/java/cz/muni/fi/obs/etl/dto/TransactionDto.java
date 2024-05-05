@@ -10,10 +10,11 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class TransactionDto {
-    String withdrawsFromAccountNumber;
+    @NotBlank
+    String withdrawsFromAccountId;
 
     @NotBlank
-    String depositsToAccountNumber;
+    String depositsToAccountId;
 
     @Min(0)
     BigDecimal withdrawAmount;

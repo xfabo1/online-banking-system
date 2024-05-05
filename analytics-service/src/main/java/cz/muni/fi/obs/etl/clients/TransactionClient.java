@@ -17,8 +17,8 @@ import java.time.LocalDate;
 )
 public interface TransactionClient {
     @GetMapping(value = "/account/{accountId}/list")
-    public ResponseEntity<Page<TransactionDto>> listTransactions(
-            @PathVariable("accountNumber") String accountId,
+    ResponseEntity<Page<TransactionDto>> listTransactions(
+            @PathVariable("accountId") String accountId,
             @RequestParam("pageNumber") int pageNumber,
             @RequestParam("pageSize") int pageSize,
             @RequestParam("date") LocalDate date);
