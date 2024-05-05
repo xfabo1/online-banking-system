@@ -99,7 +99,7 @@ public class TransactionManagementFacadeITTest extends IntegrationTest {
         Page<TransactionDbo> transactionDbos = facade.viewTransactionHistory(account1.getAccountNumber(), 0, 10);
 
         assertThat(transactionDbos.getContent().stream()
-                .allMatch(trans -> trans.getTransactionState().equals(TransactionState.FAILED))).isTrue();
+                .allMatch(trans -> trans.getTransactionState().equals(TransactionState.INSUFFICIENT_BALANCE))).isTrue();
         assertThat(facade.calculateAccountBalance(account1.getAccountNumber())).isEqualTo(BigDecimal.valueOf(0));
         assertThat(facade.calculateAccountBalance(account2.getAccountNumber())).isEqualTo(BigDecimal.valueOf(0));
     }

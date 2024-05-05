@@ -4,5 +4,6 @@ public enum TransactionState {
 
     PENDING,
     SUCCESSFUL,
-    FAILED;
+    CANNOT_EXCHANGE,
+    INSUFFICIENT_BALANCE;
 }
