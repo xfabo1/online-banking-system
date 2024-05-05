@@ -38,7 +38,9 @@ public class TransactionService {
 	private final List<String> bankAccounts;
 
 	@Autowired
-	public TransactionService(TransactionRepository repository, CurrencyServiceClient client, AccountRepository accountRepository,
+	public TransactionService(TransactionRepository repository,
+							  CurrencyServiceClient client,
+							  AccountRepository accountRepository,
 							  @Value("${bank.bank-accounts}") List<String> bankAccounts) {
 		this.repository = repository;
 		this.client = client;

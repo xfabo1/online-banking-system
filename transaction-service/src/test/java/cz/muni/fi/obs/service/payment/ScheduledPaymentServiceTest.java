@@ -38,10 +38,10 @@ class ScheduledPaymentServiceTest {
     private AccountRepository accountRepository;
 
     @MockBean
-    private JmsProducer jmsProducer;
+    private JmsConsumer jmsConsumer;
 
     @MockBean
-    private JmsConsumer jmsConsumer;
+    private JmsProducer jmsProducer;
 
     private boolean setupDone = false;
 

@@ -55,7 +55,7 @@ class CurrencyServiceClientTest {
 	private JmsProducer jmsProducer;
 
 	@MockBean
-	private JmsConsumer jmsConsumer;
+	JmsConsumer jmsConsumer;
 
 	@Test
 	void getCurrencyExchange_exchangeCalculated_returningExchange() throws Exception {

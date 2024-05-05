@@ -5,3 +5,5 @@ spring:
     hibernate:
       ddl-auto: create-drop
 
+jms:
+  enabled: true

@@ -5,6 +5,8 @@ import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
+import cz.muni.fi.obs.jms.JmsConsumer;
+import cz.muni.fi.obs.jms.JmsProducer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +37,12 @@ class TransactionServiceTest {
 
 	@InjectMocks
 	TransactionService transactionService;
+
+	@Mock
+	JmsConsumer jmsConsumer;
+
+	@Mock
+	private JmsProducer jmsProducer;
 
 	@Test
 	public void checkAccountBalance_noTransactions_CalculatesCorrectly() {
