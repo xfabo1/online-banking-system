@@ -12,13 +12,11 @@ public class EtlJobListener implements JobExecutionListener {
 
     @Override
     public void beforeJob(@NotNull JobExecution jobExecution) {
-        JobExecutionListener.super.beforeJob(jobExecution);
         log.info("Starting job: {} at {}", jobExecution.getJobInstance().getJobName(), jobExecution.getStartTime());
     }
 
     @Override
     public void afterJob(@NotNull JobExecution jobExecution) {
-        JobExecutionListener.super.afterJob(jobExecution);
         log.info("Job finished with status: {} at {}", jobExecution.getStatus(), jobExecution.getEndTime());
     }
 }
