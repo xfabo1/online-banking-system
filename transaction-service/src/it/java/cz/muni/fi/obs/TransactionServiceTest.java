@@ -1,20 +1,20 @@
 package cz.muni.fi.obs;
 
-import static io.restassured.RestAssured.get;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalManagementPort;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
+import static io.restassured.RestAssured.get;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ActiveProfiles("postgres")
 @SpringBootTest(
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @AutoConfigureObservability
-public class TransactionServiceTest {
+public class TransactionServiceTest extends IntegrationTest {
 
 	@LocalManagementPort
 	private int managementPort;

@@ -63,8 +63,8 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
                 List<Double> exchangeRateValues = exchangeRates.stream().skip(1).map(rate -> Double.parseDouble(sanitizeNumberFormat(rate))).toList();
                 log.info("Read: " + currencies.size() + " currencies. ");
 
-                Currency euro = currencyRepository.findByCode("eur").orElseGet(() -> {
-                    Currency currency = new Currency("eur", "euro");
+                Currency euro = currencyRepository.findByCode("EUR").orElseGet(() -> {
+                    Currency currency = new Currency("EUR", "euro");
                     return currencyRepository.save(currency);
                 });
                 for (int i = 0; i < exchangeRateValues.size(); i++) {

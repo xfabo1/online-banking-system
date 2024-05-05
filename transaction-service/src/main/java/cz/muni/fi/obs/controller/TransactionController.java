@@ -91,7 +91,7 @@ public class TransactionController {
 	@GetMapping(value = "/account/{accountNumber}/balance", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<BigDecimal> checkAccountBalance(@PathVariable("accountNumber") String accountNumber) {
 		log.info("Checking account balance for account: {}", accountNumber);
-		return ResponseEntity.ok(facade.checkAccountBalance(accountNumber));
+		return ResponseEntity.ok(facade.calculateAccountBalance(accountNumber));
 	}
 
 	@Operation(
@@ -113,7 +113,7 @@ public class TransactionController {
 			log.info("Transaction creation failed due to insufficient funds: {}", transaction);
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(facade.createTransaction(transaction));
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
 	}
 }
 

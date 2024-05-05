@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import util.JsonConvertor;
 
@@ -27,7 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TransactionController.class)
+@WebMvcTest
+@ContextConfiguration(classes = {TransactionController.class, ControllerAdvice.class})
 class TransactionControllerTest {
 
 	@Autowired
@@ -100,7 +102,7 @@ class TransactionControllerTest {
 
 	@Test
 	void checkAccountBalance_balanceCalculated_returnsBalance() throws Exception {
-		when(transactionManagementFacade.checkAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
+        when(transactionManagementFacade.calculateAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
 
 		var response = mockMvc.perform(get("/v1/transactions/account/{accountNumber}/balance", TestData.accountId)
 						.accept(MediaType.APPLICATION_JSON))

@@ -10,6 +10,8 @@ import cz.muni.fi.obs.data.repository.AccountRepository;
 import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
+import cz.muni.fi.obs.jms.JmsConsumer;
+import cz.muni.fi.obs.jms.JmsProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,12 @@ public class ScheduledPaymentExecutorFacadeTest {
 
     @MockBean
     private CurrencyServiceClient client;
+
+    @MockBean
+    private JmsProducer jmsProducer;
+
+    @MockBean
+    private JmsConsumer jmsConsumer;
 
     private static final String SCHEDULER_NOTE = "Automatic payment.";
 
@@ -148,7 +156,7 @@ public class ScheduledPaymentExecutorFacadeTest {
         assertThat(first.getWithdrawsFrom().getId()).isEqualTo("123");
         assertThat(first.getDepositsTo().getId()).isEqualTo("1234");
         assertThat(first.getNote()).isEqualTo(SCHEDULER_NOTE);
-        assertThat(first.getTransactionState()).isEqualTo(TransactionState.FAILED);
+        assertThat(first.getTransactionState()).isEqualTo(TransactionState.PENDING);
     }
 
     @Test
@@ -164,7 +172,7 @@ public class ScheduledPaymentExecutorFacadeTest {
         assertThat(first.getWithdrawsFrom().getId()).isEqualTo("123");
         assertThat(first.getDepositsTo().getId()).isEqualTo("1234");
         assertThat(first.getNote()).isEqualTo(SCHEDULER_NOTE);
-        assertThat(first.getTransactionState()).isEqualTo(TransactionState.FAILED);
+        assertThat(first.getTransactionState()).isEqualTo(TransactionState.PENDING);
     }
 
     @Test
@@ -180,6 +188,6 @@ public class ScheduledPaymentExecutorFacadeTest {
         assertThat(first.getWithdrawsFrom().getId()).isEqualTo("123");
         assertThat(first.getDepositsTo().getId()).isEqualTo("1234");
         assertThat(first.getNote()).isEqualTo(SCHEDULER_NOTE);
-        assertThat(first.getTransactionState()).isEqualTo(TransactionState.FAILED);
+        assertThat(first.getTransactionState()).isEqualTo(TransactionState.PENDING);
     }
 }

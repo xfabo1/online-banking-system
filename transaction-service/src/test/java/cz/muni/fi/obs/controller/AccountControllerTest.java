@@ -1,5 +1,19 @@
 package cz.muni.fi.obs.controller;
 
+import cz.muni.fi.obs.api.AccountCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.facade.TransactionManagementFacade;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import util.JsonConvertor;
+
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -9,21 +23,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.facade.TransactionManagementFacade;
-import util.JsonConvertor;
-
-@WebMvcTest(AccountController.class)
+@WebMvcTest
+@ContextConfiguration(classes = {AccountController.class, ControllerAdvice.class})
 class AccountControllerTest {
 
 	@Autowired

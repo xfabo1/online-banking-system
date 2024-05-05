@@ -5,6 +5,8 @@ import cz.muni.fi.obs.api.AccountCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.jms.JmsConsumer;
+import cz.muni.fi.obs.jms.JmsProducer;
 import cz.muni.fi.obs.service.AccountService;
 import cz.muni.fi.obs.service.TransactionService;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +36,12 @@ class TransactionManagementFacadeTest {
 
 	@Mock
 	AccountService accountService;
+
+    @Mock
+    JmsProducer jmsProducer;
+
+    @Mock
+	JmsConsumer jmsConsumer;
 
 	@InjectMocks
 	TransactionManagementFacade transactionManagementFacade;
@@ -56,8 +66,10 @@ class TransactionManagementFacadeTest {
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
 		);
-		transactionManagementFacade.createTransaction(transactionCreateDto);
 
+        when(transactionService.createTransaction(transactionCreateDto)).thenReturn(new TransactionDbo());
+        doNothing().when(jmsProducer).sendMessage(any(String.class));
+		transactionManagementFacade.createTransaction(transactionCreateDto);
 		Mockito.verify(transactionService).createTransaction(transactionCreateDto);
 	}
 
@@ -87,7 +99,7 @@ class TransactionManagementFacadeTest {
 						.accountNumber("1234567890")
 						.build()));
 
-		BigDecimal balance = transactionManagementFacade.checkAccountBalance("1234567890");
+		BigDecimal balance = transactionManagementFacade.calculateAccountBalance("1234567890");
 
 		assertEquals(BigDecimal.valueOf(42), balance);
 	}

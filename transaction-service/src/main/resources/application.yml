@@ -33,6 +33,10 @@ spring:
   flyway:
     locations: db.migration
     baseline-on-migrate: true
+  activemq:
+    user: admin
+    password: password
+    broker-url: tcp://host.docker.internal:61616
 
 resilience4j:
   timelimiter:
@@ -44,3 +48,6 @@ clients:
   currency-service:
     #    url: 'http://localhost:8081/api/currency-service'
     url: 'http://currency-service:8081/api/currency-service'
+
+bank:
+  bank-accounts: bank-1

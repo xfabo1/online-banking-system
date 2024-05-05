@@ -5,6 +5,7 @@ import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.jms.JmsProducer;
 import cz.muni.fi.obs.service.AccountService;
 import cz.muni.fi.obs.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,13 @@ public class TransactionManagementFacade {
 
 	private final TransactionService transactionService;
 	private final AccountService accountService;
+	private final JmsProducer jmsProducer;
 
 	@Autowired
-	public TransactionManagementFacade(TransactionService transactionService, AccountService accountService) {
+	public TransactionManagementFacade(TransactionService transactionService, AccountService accountService, JmsProducer jmsProducer) {
 		this.transactionService = transactionService;
 		this.accountService = accountService;
+		this.jmsProducer = jmsProducer;
 	}
 
 	public Optional<TransactionDbo> getTransactionById(String id) {
@@ -34,7 +37,9 @@ public class TransactionManagementFacade {
 	}
 
 	public TransactionDbo createTransaction(TransactionCreateDto transaction) {
-		return transactionService.createTransaction(transaction);
+		TransactionDbo createdTransaction = transactionService.createTransaction(transaction);
+		jmsProducer.sendMessage(createdTransaction.getId());
+		return createdTransaction;
 	}
 
 	public Page<TransactionDbo> viewTransactionHistory(String accountNumber, int pageNumber, int pageSize) {
@@ -42,7 +47,7 @@ public class TransactionManagementFacade {
 		return transactionService.viewTransactionHistory(account.getId(), pageNumber, pageSize);
 	}
 
-	public BigDecimal checkAccountBalance(String accountNumber) {
+	public BigDecimal calculateAccountBalance(String accountNumber) {
 		AccountDbo account = getAccountByAccountNumber(accountNumber);
 		return transactionService.calculateAccountBalance(account.getId());
 	}

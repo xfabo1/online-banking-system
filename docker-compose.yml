@@ -65,6 +65,19 @@ services:
     - POSTGRES_PASSWORD=changemelater
     - POSTGRES_USER=transaction_service
     - POSTGRES_DB=transaction_db
+  transaction-broker:
+    container_name: transaction-broker
+    image: apache/activemq-classic:6.1.0
+    ports:
+      - 61616:61616
+      - 8161:8161
+    volumes:
+      - transaction-broker-data:/var/log/activemq
+      - transaction-broker-data:/opt/activemq/conf
+      - transaction-broker-data:/opt/activemq/data
+    environment:
+      - ACTIVEMQ_USERNAME=admin
+      - ACTIVEMQ_PASSWORD=password
   user-service:
     container_name: user-service
     build:
@@ -115,4 +128,5 @@ volumes:
   user-db-data: { }
   currency-db-data: { }
   transaction-db-data: { }
+  transaction-broker-data: { }
   grafana_storage: { }
