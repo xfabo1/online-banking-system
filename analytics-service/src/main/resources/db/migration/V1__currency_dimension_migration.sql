@@ -1,7 +1,7 @@
 CREATE TABLE currency_dim
 (
     id      varchar(40) PRIMARY KEY,
-    symbol  varchar(10) NOT NULL UNIQUE,
+    symbol varchar(10) NOT NULL UNIQUE
 );
 
 CREATE TABLE temp_account
@@ -9,7 +9,7 @@ CREATE TABLE temp_account
     id             varchar(40) PRIMARY KEY,
     customer_id    varchar(40) NOT NULL,
     currency_code  varchar(10) NOT NULL,
-    account_number varchar(40) UNIQUE NOT NULL,
+    account_number varchar(40) UNIQUE NOT NULL
 );
 
 ALTER TABLE daily_transaction
