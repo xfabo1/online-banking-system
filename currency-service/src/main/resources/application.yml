@@ -21,7 +21,7 @@ currency:
 
 spring:
   datasource:
-    url: jdbc:postgresql://currency-db:5432/currency_db
+    url: jdbc:postgresql://localhost:5433/currency_db
     username: currency_service
     password: changemelater
     driver-class-name: org.postgresql.Driver

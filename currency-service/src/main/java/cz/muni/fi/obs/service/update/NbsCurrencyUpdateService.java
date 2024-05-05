@@ -97,6 +97,6 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
     }
 
     private String sanitizeNumberFormat(String number) {
-        return number.replace(",", "").replace(" ", "");
+        return number.replace(",", ".").replace(" ", "");
     }
 }
