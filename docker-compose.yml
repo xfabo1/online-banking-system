@@ -1,26 +1,11 @@
 services:
-  analytics-service:
-    container_name: analytics-service
+  confidential-client:
+    container_name: confidential-client
     build:
       context: .
-      dockerfile: ./analytics-service/Dockerfile
-    depends_on:
-    - analytics-db
-    environment:
-    - SPRING_DATASOURCE_URL=jdbc:postgresql://analytics-db:5432/analytics_db
+      dockerfile: ./confidential-client/Dockerfile
     ports:
-    - 8080:8080
-  analytics-db:
-    container_name: analytics-db
-    image: postgres:latest
-    ports:
-    - 5432:5432
-    volumes:
-    - analytics-db-data:/var/lib/postgresql/data
-    environment:
-    - POSTGRES_PASSWORD=changemelater
-    - POSTGRES_USER=analytics_service
-    - POSTGRES_DB=analytics_db
+      - 8080:8080
   currency-service:
     container_name: currency-service
     build:
@@ -100,11 +85,33 @@ services:
     - POSTGRES_PASSWORD=changemelater
     - POSTGRES_USER=user_service
     - POSTGRES_DB=user_db
+  analytics-service:
+    container_name: analytics-service
+    build:
+      context: .
+      dockerfile: ./analytics-service/Dockerfile
+    depends_on:
+      - analytics-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://analytics-db:5432/analytics_db
+    ports:
+      - 8084:8084
+  analytics-db:
+    container_name: analytics-db
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - analytics-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=changemelater
+      - POSTGRES_USER=analytics_service
+      - POSTGRES_DB=analytics_db
   database-fe:
     image: adminer:standalone
     restart: always
     ports:
-    - "8084:8080"
+      - "8085:8080"
     environment:
       ADMINER_DESIGN: pepa-linha
   prometheus:

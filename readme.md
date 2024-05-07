@@ -11,7 +11,7 @@ Now all the services and the databases are running, and you can access them on t
 - User-service: `localhost:8081/api/user-service`
 - Transaction-service: `localhost:8082/api/transaction-service`
 - Currency-service: `localhost:8083/currency-service`
-- Analytics-service: `localhost:8080/api/analytics-service`
+- Analytics-service: `localhost:8084/api/analytics-service`
 
 locust: we only defined the scenario of creating transactions in locust as it would be only API that the customers would
 use frequently
@@ -67,7 +67,7 @@ provides needed services to the rest of the system.
 
 ### Swagger Links
 
-- [Analytics-service](http://localhost:8080/api/analytics-service/swagger-ui/index.html)
+- [Analytics-service](http://localhost:8084/api/analytics-service/swagger-ui/index.html)
 - [User-service](http://localhost:8083/api/user-service/swagger-ui/index.html)
 - [Transaction-service](http://localhost:8082/api/transaction-service/swagger-ui/index.html)
 - [Currency-service](http://localhost:8081/api/currency-service/swagger-ui/index.html)
@@ -76,10 +76,10 @@ provides needed services to the rest of the system.
 
 Password: `changemelater`
 
-- [Analytics-service](http://localhost:8084/?pgsql=analytics-db&username=analytics_service&db=analytics_db&)
-- [User-service](http://localhost:8084/?pgsql=user-db&username=user_service&db=user_db&)
-- [Transaction-service](http://localhost:8084/?pgsql=transaction-db&username=transaction_service&db=transaction_db&)
-- [Currency-service](http://localhost:8084/?pgsql=currency-db&username=currency_service&db=currency_db&)
+- [Analytics-service](http://localhost:8085/?pgsql=analytics-db&username=analytics_service&db=analytics_db&)
+- [User-service](http://localhost:8085/?pgsql=user-db&username=user_service&db=user_db&)
+- [Transaction-service](http://localhost:8085/?pgsql=transaction-db&username=transaction_service&db=transaction_db&)
+- [Currency-service](http://localhost:8085/?pgsql=currency-db&username=currency_service&db=currency_db&)
 
 
 ### Grafana 
