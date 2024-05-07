@@ -17,6 +17,9 @@ import java.time.LocalDate;
 @Table(name = "us_user")
 public class User extends Dbo {
 
+    @Column(nullable = false, unique = true)
+    private String oauthId;
+
     @Column(nullable = false)
     private String firstName;
 

@@ -40,7 +40,8 @@ public class UserTableSeeder {
     }
 
     private List<User> getUserSeedData() {
-        User user1 = new User("John",
+        User user1 = new User("212354@muni.cz",
+                              "John",
                               "Doe",
                               "+420102306985",
                               "JohnDoe@gmail.com",
@@ -50,7 +51,8 @@ public class UserTableSeeder {
                               true
         );
         user1.setId(UUID.fromString("4121add0-f5d7-4128-9c8f-e81fa93237c5"));
-        User user2 = new User("Petr",
+        User user2 = new User("214354@muni.cz",
+                              "Petr",
                               "Hrach",
                               "+420556991123",
                               "PeteruvMail@gmail.com",
@@ -60,7 +62,8 @@ public class UserTableSeeder {
                               true
         );
         user2.setId(UUID.fromString("4121add0-f5d7-4128-9c8f-e81fa93237c6"));
-        User user3 = new User("Iva",
+        User user3 = new User("212384@muni.cz",
+                              "Iva",
                               "Dolava",
                               "+421752694158",
                               "IvaDol@gmail.com",
@@ -70,7 +73,8 @@ public class UserTableSeeder {
                               true
         );
         user3.setId(UUID.fromString("4121add0-f5d7-4128-9c8f-e81fa93237c7"));
-        User user4 = new User("Pavel",
+        User user4 = new User("812354@muni.cz",
+                              "Pavel",
                               "Horel",
                               "+421346952176",
                               "PavelHore@email.sk",

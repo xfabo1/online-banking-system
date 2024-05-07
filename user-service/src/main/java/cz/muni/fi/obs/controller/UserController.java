@@ -1,8 +1,12 @@
 package cz.muni.fi.obs.controller;
 
+import cz.muni.fi.obs.UserManagement;
 import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.enums.Nationality;
 import cz.muni.fi.obs.facade.UserManagementFacade;
+import cz.muni.fi.obs.security.Security;
+import cz.muni.fi.obs.security.annotations.*;
+import cz.muni.fi.obs.security.enums.UserScope;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +16,7 @@ import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -51,10 +56,12 @@ import java.util.UUID;
 public class UserController {
 
     private final UserManagementFacade userManagementFacade;
+    private final Security security;
 
     @Autowired
-    public UserController(UserManagementFacade userManagementFacade) {
+    public UserController(UserManagementFacade userManagementFacade, Security security) {
         this.userManagementFacade = userManagementFacade;
+        this.security = security;
     }
 
     @Operation(summary = "Get available nationalities")
@@ -64,14 +71,20 @@ public class UserController {
         return ResponseEntity.ok(Nationality.values());
     }
 
+
     @Operation(
             summary = "Create a new user",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.CUSTOMER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "201", description = "User created"),
                     @ApiResponse(responseCode = "400", description = "Invalid input data",
                                  content = @Content(schema = @Schema(implementation = ValidationErrors.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityCustomerWrite
     @PostMapping("/create")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
@@ -82,12 +95,17 @@ public class UserController {
 
     @Operation(
             summary = "Get user by ID",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.CUSTOMER_READ, UserScope.Const.BANKER_READ}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User found"),
                     @ApiResponse(responseCode = "404", description = "User not found",
                                  content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityBankerOrCustomerRead
     @GetMapping("/{userId}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> getUser(
@@ -96,19 +114,29 @@ public class UserController {
     ) {
         log.info("Getting user with id: " + userId);
         UserDto user = userManagementFacade.getUser(userId);
+
+        if (!security.isUserBanker()) {
+            security.checkUserIsOwner(user.oauthId());
+        }
+
         return ResponseEntity.ok(user);
     }
 
     @Operation(
             summary = "Get users by optional search parameters",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.BANKER_READ}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User found"),
                     @ApiResponse(responseCode = "404", description = "User not found",
                                  content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid search parameters",
                                  content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityBankerRead
     @GetMapping("")
     @CrossOrigin(origins = "*")
     public Page<UserDto> getUsers(@ParameterObject UserSearchParamsDto searchParams,
@@ -119,14 +147,19 @@ public class UserController {
 
     @Operation(
             summary = "Update user by ID",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.CUSTOMER_WRITE, UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User updated"),
                     @ApiResponse(responseCode = "404", description = "User not found",
                                  content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input data",
                                  content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityBankerOrCustomerWrite
     @PutMapping("/{userId}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> updateUser(
@@ -135,17 +168,27 @@ public class UserController {
             @Valid @RequestBody UserUpdateDto userUpdateDto) {
         log.info("Updating user with id: " + userId);
         UserDto user = userManagementFacade.updateUser(userId, userUpdateDto);
+
+        if (!security.isUserBanker()) {
+            security.checkUserIsOwner(user.oauthId());
+        }
+
         return ResponseEntity.ok(user);
     }
 
     @Operation(
             summary = "Deactivate user by ID",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User deactivated"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class)))
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityBankerWrite
     @PostMapping("/{userId}/deactivate")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> deactivateUser(
@@ -163,12 +206,17 @@ public class UserController {
 
     @Operation(
             summary = "Activate user by ID",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User activated"),
                     @ApiResponse(responseCode = "404", description = "User not found",
-                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class)))
+                                 content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityBankerWrite
     @PostMapping("/{userId}/activate")
     @CrossOrigin(origins = "*")
     public ResponseEntity<UserDto> activateUser(
@@ -185,14 +233,19 @@ public class UserController {
 
     @Operation(
             summary = "Create user account for user by ID",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.CUSTOMER_WRITE, UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Account created"),
                     @ApiResponse(responseCode = "404", description = "User not found",
                                  content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input data",
                                  content = @Content(schema = @Schema(implementation = ValidationFailedResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityBankerOrCustomerWrite
     @PostMapping("/{userId}/accounts/create")
     @CrossOrigin(origins = "*")
     public ResponseEntity<AccountDto> createUserAccount(
@@ -202,6 +255,12 @@ public class UserController {
             @Valid @RequestBody AccountCreateDto accountCreateDto
     ) {
         log.info("Creating user account for user with id: " + userId);
+
+        UserDto user = userManagementFacade.getUser(userId);
+        if (!security.isUserBanker()) {
+            security.checkUserIsOwner(user.oauthId());
+        }
+
         AccountDto account = userManagementFacade.createAccount(userId, accountCreateDto);
         if (account == null) {
             log.error("Could not create account for user with id: " + userId);
@@ -212,12 +271,17 @@ public class UserController {
 
     @Operation(
             summary = "Get user accounts by user ID",
+            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+                                            scopes = {UserScope.Const.CUSTOMER_READ, UserScope.Const.BANKER_READ}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Accounts found"),
                     @ApiResponse(responseCode = "404", description = "User not found",
                                  content = @Content(schema = @Schema(implementation = NotFoundResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content()),
             }
     )
+    @AuthorityBankerOrCustomerWrite
     @GetMapping("/{userId}/accounts")
     @CrossOrigin(origins = "*")
     public ResponseEntity<List<AccountDto>> getUserAccounts(
@@ -225,6 +289,12 @@ public class UserController {
                        example = "4121add0-f5d7-4128-9c8f-e81fa93237c5") @PathVariable("userId") UUID userId
     ) {
         log.info("Getting user accounts for user with id: " + userId);
+
+        UserDto user = userManagementFacade.getUser(userId);
+        if (!security.isUserBanker()) {
+            security.checkUserIsOwner(user.oauthId());
+        }
+
         List<AccountDto> accounts = userManagementFacade.getUserAccounts(userId);
         if (accounts == null) {
             log.error("Could not get accounts for user with id: " + userId);

@@ -48,6 +48,7 @@ public class UserControllerWebMvcTest {
                                                         "010413/2215"
         );
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       userCreateDto.firstName(),
                                       userCreateDto.lastName(),
                                       userCreateDto.phoneNumber(),
@@ -72,6 +73,7 @@ public class UserControllerWebMvcTest {
     @Test
     public void getUser_userFound_returnsUser() throws Exception {
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "123456@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -118,6 +120,7 @@ public class UserControllerWebMvcTest {
         userUpdateJson.put("email", "test@gmail.com");
 
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -144,6 +147,7 @@ public class UserControllerWebMvcTest {
     @Test
     public void deactivateUser_userDeactivated_returnsUser() throws Exception {
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -169,6 +173,7 @@ public class UserControllerWebMvcTest {
     @Test
     public void activateUser_userActivated_returnsUser() throws Exception {
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",

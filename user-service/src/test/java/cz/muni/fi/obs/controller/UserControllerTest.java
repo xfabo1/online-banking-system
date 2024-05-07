@@ -4,12 +4,15 @@ import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.enums.Nationality;
 import cz.muni.fi.obs.exceptions.UserNotFoundException;
 import cz.muni.fi.obs.facade.UserManagementFacade;
+import cz.muni.fi.obs.security.Security;
+import cz.muni.fi.obs.security.enums.UserScope;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -19,8 +22,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -28,9 +30,13 @@ class UserControllerTest {
     @Mock
     private UserManagementFacade userManagementFacade;
 
+    @Mock
+    private Security security;
     @InjectMocks
     private UserController userController;
 
+    @WithMockUser(username = "999888@muni.cz",
+                  authorities = {UserScope.Const.CUSTOMER_READ, UserScope.Const.CUSTOMER_WRITE})
     @Test
     public void createUser_userCreated_returnsUser() {
         UserCreateDto userCreateDto = new UserCreateDto("Joe",
@@ -42,6 +48,7 @@ class UserControllerTest {
                                                         "900101/1234"
         );
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -52,16 +59,18 @@ class UserControllerTest {
                                       false
         );
         when(userManagementFacade.createUser(userCreateDto)).thenReturn(userDto);
-
         ResponseEntity<UserDto> response = userController.createUser(userCreateDto);
 
         verify(userManagementFacade).createUser(userCreateDto);
         assertThat(response.getBody()).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "999888@muni.cz",
+                  authorities = {UserScope.Const.CUSTOMER_READ, UserScope.Const.CUSTOMER_WRITE})
     @Test
     public void getUser_userFound_returnsUser() {
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "999888@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -71,6 +80,8 @@ class UserControllerTest {
                                       "900101/123",
                                       false
         );
+        when(security.isUserBanker()).thenReturn(false);
+        doNothing().when(security).checkUserIsOwner(userDto.oauthId());
         when(userManagementFacade.getUser(userDto.id())).thenReturn(userDto);
 
         ResponseEntity<UserDto> response = userController.getUser(userDto.id());
@@ -79,6 +90,8 @@ class UserControllerTest {
         assertThat(response.getBody()).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "999888@muni.cz",
+                  authorities = {UserScope.Const.CUSTOMER_READ, UserScope.Const.CUSTOMER_WRITE})
     @Test
     public void getUser_userNotFound_returns404() {
         UUID nonexistentUserId = UUID.randomUUID();
@@ -89,6 +102,8 @@ class UserControllerTest {
         verify(userManagementFacade).getUser(nonexistentUserId);
     }
 
+    @WithMockUser(username = "553628@muni.cz",
+                  authorities = {UserScope.Const.CUSTOMER_READ, UserScope.Const.CUSTOMER_WRITE})
     @Test
     public void updateUser_userUpdated_returnsUser() {
         UserUpdateDto userUpdateDto = new UserUpdateDto(Optional.of("Joe"),
@@ -97,6 +112,7 @@ class UserControllerTest {
                                                         Optional.of("test@gmail.com")
         );
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -106,6 +122,8 @@ class UserControllerTest {
                                       "900101/123",
                                       false
         );
+        when(security.isUserBanker()).thenReturn(false);
+        doNothing().when(security).checkUserIsOwner(userDto.oauthId());
         when(userManagementFacade.updateUser(userDto.id(), userUpdateDto)).thenReturn(userDto);
 
         ResponseEntity<UserDto> response = userController.updateUser(userDto.id(), userUpdateDto);
@@ -114,9 +132,12 @@ class UserControllerTest {
         assertThat(response.getBody()).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz",
+                  authorities = {UserScope.Const.BANKER_WRITE, UserScope.Const.BANKER_READ})
     @Test
     public void deactivateUser_userDeactivated_returnsUser() {
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -134,9 +155,12 @@ class UserControllerTest {
         assertThat(response.getBody()).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz",
+                  authorities = {UserScope.Const.BANKER_WRITE, UserScope.Const.BANKER_READ})
     @Test
     public void activateUser_userActivated_returnsUser() {
         UserDto userDto = new UserDto(UUID.randomUUID(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -154,11 +178,14 @@ class UserControllerTest {
         assertThat(response.getBody()).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz",
+                  authorities = {UserScope.Const.BANKER_WRITE, UserScope.Const.BANKER_READ})
     @Test
     public void createUserAccount_accountCreated_returnsAccount() {
         UUID userId = UUID.randomUUID();
         AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
         AccountDto accountDto = new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account");
+        when(security.isUserBanker()).thenReturn(true);
         when(userManagementFacade.createAccount(userId, accountCreateDto)).thenReturn(accountDto);
 
         ResponseEntity<AccountDto> response = userController.createUserAccount(userId, accountCreateDto);
@@ -167,12 +194,15 @@ class UserControllerTest {
         assertThat(response.getBody()).isEqualTo(accountDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz",
+                  authorities = {UserScope.Const.BANKER_WRITE, UserScope.Const.BANKER_READ})
     @Test
     public void getUserAccounts_accountsFound_returnsAccounts() {
         UUID userId = UUID.randomUUID();
         List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account"),
                                                   new AccountDto(UUID.randomUUID(), "0987654321", "Jane's Account")
         );
+        when(security.isUserBanker()).thenReturn(true);
         when(userManagementFacade.getUserAccounts(userId)).thenReturn(accounts);
 
         ResponseEntity<List<AccountDto>> response = userController.getUserAccounts(userId);
