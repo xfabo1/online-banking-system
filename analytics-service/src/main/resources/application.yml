@@ -27,7 +27,14 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
-
+  security:
+    oauth2:
+      resourceserver:
+        opaque-token:
+          introspection-uri: https://oidc.muni.cz/oidc/introspect
+          # Martin Kuba's testing resource server
+          client-id: d57b3a8f-156e-46de-9f27-39c4daee05e1
+          client-secret: fa228ebc-4d54-4cda-901e-4d6287f8b1652a9c9c44-73c9-4502-973f-bcdb4a8ec96a
 etl:
   transaction-service:
     url: 'http://host.docker.internal:8082/api/transaction-service'
