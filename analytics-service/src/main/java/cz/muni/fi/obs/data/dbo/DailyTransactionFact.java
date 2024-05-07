@@ -1,9 +1,6 @@
 package cz.muni.fi.obs.data.dbo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @Table(name = "daily_transaction")
-public class DailyTransaction extends Dbo {
+public class DailyTransactionFact extends Dbo {
 
     @Column(nullable = false)
     Integer totalWithdrawalTransactions;
@@ -41,8 +38,14 @@ public class DailyTransaction extends Dbo {
     BigDecimal averageDepositAmount;
 
     @ManyToOne
-    Account account;
+    @JoinColumn(name = "account_id")
+    AccountDimension accountDimension;
 
     @ManyToOne
-    Date date;
+    @JoinColumn(name = "date_id")
+    DateDimension dateDimension;
+
+    @ManyToOne
+    @JoinColumn(name = "currency_id")
+    CurrencyDimension currencyDimension;
 }

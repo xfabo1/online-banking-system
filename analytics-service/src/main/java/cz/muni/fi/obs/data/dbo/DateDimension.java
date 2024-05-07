@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @Table(name = "date_dim")
-public class Date extends Dbo {
+public class DateDimension extends Dbo {
 
     @Column(nullable = false)
     int yearNumber;
@@ -28,7 +28,7 @@ public class Date extends Dbo {
     @Column(nullable = false)
     LocalDate fullDate;
 
-    public Date(int year, int month, int day) {
+    public DateDimension(int year, int month, int day) {
         this.yearNumber = year;
         this.monthNumber = month;
         this.dayNumber = day;

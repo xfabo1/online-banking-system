@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 
 @Repository
@@ -18,4 +19,9 @@ public interface TransactionRepository extends JpaRepository<TransactionDbo, Str
 
 	@Query("SELECT t FROM TransactionDbo t WHERE t.withdrawsFrom.id = :accountId OR t.depositsTo.id = :accountId")
 	Page<TransactionDbo> findTransactionHistory(String accountId, Pageable pageable);
+
+
+	@Query("SELECT t FROM TransactionDbo t WHERE t.transactionState='SUCCESSFUL' AND (t.withdrawsFrom.id = :accountId OR t.depositsTo.id = :accountId) " +
+			"AND (t.transactionTime >= :startOfDay AND t.transactionTime <= :endOfDay)")
+	Page<TransactionDbo> listTransactions(String accountId, Pageable pageable, Instant startOfDay, Instant endOfDay);
 }

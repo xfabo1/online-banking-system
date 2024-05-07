@@ -1,8 +1,8 @@
 package cz.muni.fi.obs.integration.repository;
 
 import cz.muni.fi.obs.Application;
-import cz.muni.fi.obs.data.AnalyticsRepository;
-import cz.muni.fi.obs.data.dbo.DailyTransaction;
+import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
+import cz.muni.fi.obs.data.repository.AnalyticsRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -31,57 +31,57 @@ public class AnalyticsRepositoryIntegrationTest {
 
     @Test
     public void getDailyTransactions_TransactinsFound_ReturnsTransactions() {
-        List<DailyTransaction> dailyTransactions = analyticsRepository.getDailyTransactions("1234567890", 2021, 1);
+        List<DailyTransactionFact> dailyTransactionFacts = analyticsRepository.getDailyTransactions("1234567890", 2021, 1);
 
-        assertThat(dailyTransactions.size()).isEqualTo(3);
+        assertThat(dailyTransactionFacts.size()).isEqualTo(3);
 
-        DailyTransaction firstDailyTransaction = dailyTransactions.getFirst();
+        DailyTransactionFact firstDailyTransactionFact = dailyTransactionFacts.getFirst();
 
-        assertThat(firstDailyTransaction.getTotalDepositTransactions()).isEqualTo(5);
-        assertThat(firstDailyTransaction.getTotalWithdrawalTransactions()).isEqualTo(5);
+        assertThat(firstDailyTransactionFact.getTotalDepositTransactions()).isEqualTo(5);
+        assertThat(firstDailyTransactionFact.getTotalWithdrawalTransactions()).isEqualTo(5);
 
-        assertThat(firstDailyTransaction.getTotalTransactionAmount()).isEqualTo(new BigDecimal("30000.00"));
-        assertThat(firstDailyTransaction.getTotalWithdrawalAmount()).isEqualTo(new BigDecimal("20000.00"));
-        assertThat(firstDailyTransaction.getTotalDepositAmount()).isEqualTo(new BigDecimal("10000.00"));
-        assertThat(firstDailyTransaction.getAverageWithdrawalAmount()).isEqualTo(new BigDecimal("4000.00"));
-        assertThat(firstDailyTransaction.getAverageDepositAmount()).isEqualTo(new BigDecimal("2000.00"));
+        assertThat(firstDailyTransactionFact.getTotalTransactionAmount()).isEqualTo(new BigDecimal("30000.00"));
+        assertThat(firstDailyTransactionFact.getTotalWithdrawalAmount()).isEqualTo(new BigDecimal("20000.00"));
+        assertThat(firstDailyTransactionFact.getTotalDepositAmount()).isEqualTo(new BigDecimal("10000.00"));
+        assertThat(firstDailyTransactionFact.getAverageWithdrawalAmount()).isEqualTo(new BigDecimal("4000.00"));
+        assertThat(firstDailyTransactionFact.getAverageDepositAmount()).isEqualTo(new BigDecimal("2000.00"));
 
-        assertThat(firstDailyTransaction.getDate().getFullDate()).isEqualTo(LocalDate.of(2021, 1, 1));
-        assertThat(firstDailyTransaction.getAccount().getAccountNumber()).isEqualTo("1234567890");
+        assertThat(firstDailyTransactionFact.getDateDimension().getFullDate()).isEqualTo(LocalDate.of(2021, 1, 1));
+        assertThat(firstDailyTransactionFact.getAccountDimension().getAccountNumber()).isEqualTo("1234567890");
     }
 
     @Test
     public void getDailyTransactions_NoTransactionsFound_ReturnsEmptyList() {
-        List<DailyTransaction> dailyTransactions = analyticsRepository.getDailyTransactions("1234567890", 2021, 2);
+        List<DailyTransactionFact> dailyTransactionFacts = analyticsRepository.getDailyTransactions("1234567890", 2021, 2);
 
-        assertThat(dailyTransactions).isEmpty();
+        assertThat(dailyTransactionFacts).isEmpty();
     }
 
     @Test
     public void getDailyTransactionsByAmountRange_TransactionsFound_ReturnsTransactions() {
-        List<DailyTransaction> dailyTransactions = analyticsRepository.getDailyTransactionsByAmountRange("1234567890", new BigDecimal("35000.00"), new BigDecimal("45000.00"));
+        List<DailyTransactionFact> dailyTransactionFacts = analyticsRepository.getDailyTransactionsByAmountRange("1234567890", new BigDecimal("35000.00"), new BigDecimal("45000.00"));
 
-        assertThat(dailyTransactions).hasSize(1);
+        assertThat(dailyTransactionFacts).hasSize(1);
 
-        DailyTransaction firstDailyTransaction = dailyTransactions.getFirst();
+        DailyTransactionFact firstDailyTransactionFact = dailyTransactionFacts.getFirst();
 
-        assertThat(firstDailyTransaction.getTotalDepositTransactions()).isEqualTo(10);
-        assertThat(firstDailyTransaction.getTotalWithdrawalTransactions()).isEqualTo(10);
+        assertThat(firstDailyTransactionFact.getTotalDepositTransactions()).isEqualTo(10);
+        assertThat(firstDailyTransactionFact.getTotalWithdrawalTransactions()).isEqualTo(10);
 
-        assertThat(firstDailyTransaction.getTotalTransactionAmount()).isEqualTo(new BigDecimal("40000.00"));
-        assertThat(firstDailyTransaction.getTotalWithdrawalAmount()).isEqualTo(new BigDecimal("20000.00"));
-        assertThat(firstDailyTransaction.getTotalDepositAmount()).isEqualTo(new BigDecimal("20000.00"));
-        assertThat(firstDailyTransaction.getAverageWithdrawalAmount()).isEqualTo(new BigDecimal("2000.00"));
-        assertThat(firstDailyTransaction.getAverageDepositAmount()).isEqualTo(new BigDecimal("2000.00"));
+        assertThat(firstDailyTransactionFact.getTotalTransactionAmount()).isEqualTo(new BigDecimal("40000.00"));
+        assertThat(firstDailyTransactionFact.getTotalWithdrawalAmount()).isEqualTo(new BigDecimal("20000.00"));
+        assertThat(firstDailyTransactionFact.getTotalDepositAmount()).isEqualTo(new BigDecimal("20000.00"));
+        assertThat(firstDailyTransactionFact.getAverageWithdrawalAmount()).isEqualTo(new BigDecimal("2000.00"));
+        assertThat(firstDailyTransactionFact.getAverageDepositAmount()).isEqualTo(new BigDecimal("2000.00"));
 
-        assertThat(firstDailyTransaction.getDate().getFullDate()).isEqualTo(LocalDate.of(2021, 1, 2));
-        assertThat(firstDailyTransaction.getAccount().getAccountNumber()).isEqualTo("1234567890");
+        assertThat(firstDailyTransactionFact.getDateDimension().getFullDate()).isEqualTo(LocalDate.of(2021, 1, 2));
+        assertThat(firstDailyTransactionFact.getAccountDimension().getAccountNumber()).isEqualTo("1234567890");
     }
 
     @Test
     public void getDailyTransactionsByAmountRange_NoTransactionsFound_ReturnsEmptyList() {
-        List<DailyTransaction> dailyTransactions = analyticsRepository.getDailyTransactionsByAmountRange("1234567890", new BigDecimal("45000.00"), new BigDecimal("50000.00"));
+        List<DailyTransactionFact> dailyTransactionFacts = analyticsRepository.getDailyTransactionsByAmountRange("1234567890", new BigDecimal("45000.00"), new BigDecimal("50000.00"));
 
-        assertThat(dailyTransactions).isEmpty();
+        assertThat(dailyTransactionFacts).isEmpty();
     }
 }

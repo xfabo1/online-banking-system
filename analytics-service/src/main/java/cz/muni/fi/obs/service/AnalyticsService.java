@@ -4,8 +4,8 @@ import cz.muni.fi.obs.api.DailySummary;
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummary;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
-import cz.muni.fi.obs.data.AnalyticsRepository;
-import cz.muni.fi.obs.data.dbo.DailyTransaction;
+import cz.muni.fi.obs.data.dbo.DailyTransactionFact;
+import cz.muni.fi.obs.data.repository.AnalyticsRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ public class AnalyticsService {
     }
 
     public DailySummaryResult getDailySummary(String accountNumber, int year, int month) {
-        List<DailyTransaction> transactions = analyticsRepository.getDailyTransactions(accountNumber, year, month);
+        List<DailyTransactionFact> transactions = analyticsRepository.getDailyTransactions(accountNumber, year, month);
         if (transactions.isEmpty()) {
             return new DailySummaryResult(LocalDate.now(), new ArrayList<>());
         }
@@ -32,21 +32,21 @@ public class AnalyticsService {
     }
 
     public MonthlySummaryResult getMonthlySummary(String accountNumber, int year, int month) {
-        List<DailyTransaction> transactions = analyticsRepository.getDailyTransactions(accountNumber, year, month);
+        List<DailyTransactionFact> transactions = analyticsRepository.getDailyTransactions(accountNumber, year, month);
         if (transactions.isEmpty()) {
             return new MonthlySummaryResult(LocalDate.now(), new MonthlySummary(Month.of(month).name(), 0, 0, new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0)));
         }
         return createMonthlySummaryResult(transactions);
     }
 
-    private DailySummaryResult createDailySummaryResult(List<DailyTransaction> transactions) {
+    private DailySummaryResult createDailySummaryResult(List<DailyTransactionFact> transactions) {
         List<DailySummary> dailySummaries = new ArrayList<>();
         transactions.forEach(transaction -> dailySummaries.add(createDailySummary(transaction)));
         return new DailySummaryResult(LocalDate.now(), dailySummaries);
     }
 
-    private DailySummary createDailySummary(DailyTransaction transaction) {
-        return new DailySummary(transaction.getDate().getFullDate(),
+    private DailySummary createDailySummary(DailyTransactionFact transaction) {
+        return new DailySummary(transaction.getDateDimension().getFullDate(),
                 transaction.getTotalWithdrawalTransactions(),
                 transaction.getTotalDepositTransactions(),
                 transaction.getTotalWithdrawalAmount(),
@@ -56,18 +56,18 @@ public class AnalyticsService {
                 transaction.getTotalDepositAmount().subtract(transaction.getTotalWithdrawalAmount()));
     }
 
-    private MonthlySummaryResult createMonthlySummaryResult(List<DailyTransaction> transactions) {
+    private MonthlySummaryResult createMonthlySummaryResult(List<DailyTransactionFact> transactions) {
         return new MonthlySummaryResult(LocalDate.now(), createMonthlySummary(transactions));
     }
 
-    private MonthlySummary createMonthlySummary(List<DailyTransaction> transactions) {
-        String month = Month.of(transactions.getFirst().getDate().getMonthNumber()).name();
+    private MonthlySummary createMonthlySummary(List<DailyTransactionFact> transactions) {
+        String month = Month.of(transactions.getFirst().getDateDimension().getMonthNumber()).name();
         Integer totalWithdrawalTransactions = 0;
         Integer totalDepositTransactions = 0;
         BigDecimal totalWithdrawalAmount = new BigDecimal(0);
         BigDecimal totalDepositAmount = new BigDecimal(0);
 
-        for (DailyTransaction transaction : transactions) {
+        for (DailyTransactionFact transaction : transactions) {
             totalWithdrawalTransactions += transaction.getTotalWithdrawalTransactions();
             totalDepositTransactions += transaction.getTotalDepositTransactions();
             totalWithdrawalAmount = totalWithdrawalAmount.add(transaction.getTotalWithdrawalAmount());

@@ -330,7 +330,7 @@ class TransactionControllerITTest extends IntegrationTest {
                 .returns(transactionCreateDto.withdrawAmount(), TransactionDbo::getWithdrawAmount);
 
 
-        assertThat(transaction.get().getTransactionState()).isIn(TransactionState.SUCCESSFUL, TransactionState.FAILED);
+        assertThat(transaction.get().getTransactionState()).isIn(TransactionState.SUCCESSFUL, TransactionState.INSUFFICIENT_BALANCE);
         transactionRepository.deleteById(transaction.get().getId());
     }
 
@@ -387,7 +387,7 @@ class TransactionControllerITTest extends IntegrationTest {
                 .toList();
 
         assertThat(accountFiveWithdrawals.stream()
-                .anyMatch(transaction -> transaction.getTransactionState().equals(TransactionState.FAILED))).isTrue();
+                .anyMatch(transaction -> transaction.getTransactionState().equals(TransactionState.INSUFFICIENT_BALANCE))).isTrue();
     }
 
     private String buildBalancePath(String accountNumber) {

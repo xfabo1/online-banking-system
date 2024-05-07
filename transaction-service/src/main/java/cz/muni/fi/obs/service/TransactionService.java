@@ -15,15 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static cz.muni.fi.obs.data.dbo.TransactionState.FAILED;
+import static cz.muni.fi.obs.data.dbo.TransactionState.CANNOT_EXCHANGE;
+import static cz.muni.fi.obs.data.dbo.TransactionState.INSUFFICIENT_BALANCE;
 import static cz.muni.fi.obs.data.dbo.TransactionState.PENDING;
 import static cz.muni.fi.obs.data.dbo.TransactionState.SUCCESSFUL;
 
@@ -104,9 +108,16 @@ public class TransactionService {
 					.amount(transaction.getWithdrawAmount())
 					.build();
 
-			CurrencyExchangeResult exchangeResult = callCurrencyClient(request);
-			transaction.setConversionRate(exchangeResult.exchangeRate());
-			transaction.setDepositAmount(exchangeResult.destAmount());
+			Optional<CurrencyExchangeResult> currencyExchangeResult = callCurrencyClient(request);
+			if (currencyExchangeResult.isEmpty()) {
+				transaction.setTransactionState(CANNOT_EXCHANGE);
+				repository.save(transaction);
+				return;
+			} else {
+				CurrencyExchangeResult exchangeResult = currencyExchangeResult.get();
+				transaction.setConversionRate(exchangeResult.exchangeRate());
+				transaction.setDepositAmount(exchangeResult.destAmount());
+			}
 		} else {
 			transaction.setConversionRate(1d);
 			transaction.setDepositAmount(transaction.getWithdrawAmount());
@@ -123,11 +134,15 @@ public class TransactionService {
 	}
 
 	private TransactionState computeTransactionState(String id, BigDecimal withdrawAmount) {
-		return calculateAccountBalance(id).compareTo(withdrawAmount) >= 0 ? SUCCESSFUL : FAILED;
+		return calculateAccountBalance(id).compareTo(withdrawAmount) >= 0 ? SUCCESSFUL : INSUFFICIENT_BALANCE;
 	}
 
-	private CurrencyExchangeResult callCurrencyClient(CurrencyExchangeRequest request) {
-		return client.getCurrencyExchange(request)
-				.orElseThrow(() -> new ResourceNotFoundException("Currency exchange rate not found"));
+	private Optional<CurrencyExchangeResult> callCurrencyClient(CurrencyExchangeRequest request) {
+		return client.getCurrencyExchange(request);
+	}
+
+	public Page<TransactionDbo> listByAccount(String accountId, Pageable pageable, LocalDate date) {
+		return repository.listTransactions(accountId, pageable, date.atStartOfDay().toInstant(ZoneOffset.UTC),
+				date.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC));
 	}
 }

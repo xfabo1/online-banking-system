@@ -1,5 +1,7 @@
 package cz.muni.fi.obs.data.dbo;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +19,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.time.Instant;
 
 @Entity
 @Builder
@@ -45,8 +48,9 @@ public class TransactionDbo {
 	private String note;
 	@Column(name = "variable_symbol")
 	private String variableSymbol;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "transaction_state", nullable = false)
 	private TransactionState transactionState = TransactionState.PENDING;
+	@Column(name = "transaction_time", updatable = false, nullable = false)
+	private final Instant transactionTime = Instant.now();
 }

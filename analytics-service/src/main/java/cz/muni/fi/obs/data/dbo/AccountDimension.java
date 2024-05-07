@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "account_dim")
-public class Account extends Dbo {
+public class AccountDimension extends Dbo {
     @Column(nullable = false, unique = true)
     String accountNumber;
 }

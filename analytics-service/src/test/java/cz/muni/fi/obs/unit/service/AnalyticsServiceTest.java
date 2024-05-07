@@ -2,7 +2,7 @@ package cz.muni.fi.obs.unit.service;
 
 import cz.muni.fi.obs.api.DailySummaryResult;
 import cz.muni.fi.obs.api.MonthlySummaryResult;
-import cz.muni.fi.obs.data.AnalyticsRepository;
+import cz.muni.fi.obs.data.repository.AnalyticsRepository;
 import cz.muni.fi.obs.service.AnalyticsService;
 import cz.muni.fi.obs.util.TestData;
 import org.junit.jupiter.api.Test;

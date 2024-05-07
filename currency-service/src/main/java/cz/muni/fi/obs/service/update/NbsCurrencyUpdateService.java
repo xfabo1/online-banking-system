@@ -22,10 +22,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @ConditionalOnProperty(prefix = "currency.auto-update.services.nbs", name = "url")
@@ -74,12 +76,28 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
 
                     currency = currencyRepository.save(currency);
 
+                    Optional<ExchangeRate> currentExchangeRate = exchangeRateRepository
+                            .findCurrentExchangeRate(euro.getId(), currency.getId(), Instant.now());
+
+                    LocalDateTime now = LocalDateTime.now();
+                    Instant validStart;
+                    Instant validEnd = now.toLocalDate().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
+
+                    if (currentExchangeRate.isPresent()) {
+                        ExchangeRate exchangeRate = currentExchangeRate.get();
+                        validStart = now.toInstant(ZoneOffset.UTC);
+                        exchangeRate.setValidUntil(validStart);
+                        exchangeRateRepository.save(exchangeRate);
+                    } else {
+                        validStart = now.toLocalDate().atStartOfDay().toInstant(ZoneOffset.UTC);
+                    }
+
                     ExchangeRate exchangeRate = ExchangeRate.builder()
                             .from(euro)
                             .to(currency)
                             .conversionRate(exchangeRateValues.get(index))
-                            .createdAt(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC))
-                            .validUntil(LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC))
+                            .createdAt(validStart)
+                            .validUntil(validEnd)
                             .build();
 
                     euro.getExchangeRatesFrom().add(exchangeRate);
@@ -97,6 +115,6 @@ public class NbsCurrencyUpdateService implements CurrencyUpdateService {
     }
 
     private String sanitizeNumberFormat(String number) {
-        return number.replace(",", "").replace(" ", "");
+        return number.replace(",", ".").replace(" ", "");
     }
 }
