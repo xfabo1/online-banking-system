@@ -46,4 +46,4 @@ class ObsUser(HttpUser):
 
         print(response.json())
 
-    wait_time = between(5, 10)  # Adjust the wait time between tasks
+    wait_time = between(0, 0.5)  # Adjust the wait time between tasks

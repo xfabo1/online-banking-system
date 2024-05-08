@@ -12,7 +12,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>obs</name>
-    <description>Online banking system developed for learning purposed in the course pa165 at FI MU</description>
+    <description>Online banking system developed for learning purposes in the course pa165 at FI MU</description>
     <modules>
         <module>user-service</module>
         <module>transaction-service</module>

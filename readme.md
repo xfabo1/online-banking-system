@@ -19,6 +19,10 @@ there is defined a scenario when someone deposits money via ATM meaning in the s
 it is deducted
 from the banks account
 
+analytics data is not seeded so just run after locust so you launch etl that will create the data warehouse content,
+normally it is run every day at 1 am to transform data from transaction service from previous day
+POST http://localhost:8080/api/analytics-service/v1/etl/execute
+
 ## Use case:
 ![img_2.png](img_2.png)
 
