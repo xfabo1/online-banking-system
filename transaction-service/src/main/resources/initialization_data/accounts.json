@@ -27,6 +27,7 @@
   {
     "id": "c7148e7e-8b08-4323-a5fe-2be9b5f32514",
     "customerId": "4121add0-f5d7-4128-9c8f-e81fa93237c8",
-    "currencyCode": "eur"
+    "currencyCode": "eur",
+    "isBankAccount": true
   }
 ]
