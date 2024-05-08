@@ -1,12 +1,5 @@
 package cz.muni.fi.obs.service.payment;
 
-import java.time.Instant;
-import java.time.LocalDate;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import cz.muni.fi.obs.api.ScheduledPaymentCreateDto;
 import cz.muni.fi.obs.api.ScheduledPaymentDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
@@ -17,6 +10,12 @@ import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.facade.ScheduledPaymentFacade;
 import cz.muni.fi.obs.mapper.ScheduledPaymentMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.LocalDate;
 
 @Service
 @Transactional
@@ -49,6 +48,7 @@ public class ScheduledPaymentService implements ScheduledPaymentFacade {
         scheduledPayment.setValidUntil(createDto.validUntil());
         scheduledPayment.setWithdrawsFrom(from);
         scheduledPayment.setDepositsTo(to);
+        scheduledPayment.setAmount(createDto.amount());
         setTiming(scheduledPayment, createDto.frequency(), createDto.executeDate());
 
         return mapper.toDto(scheduledPaymentRepository.save(scheduledPayment));

@@ -1,20 +1,5 @@
 package cz.muni.fi.obs.service.payment;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-
 import cz.muni.fi.obs.api.ScheduledPaymentCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.PaymentFrequency;
@@ -24,6 +9,21 @@ import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 import cz.muni.fi.obs.jms.JmsConsumer;
 import cz.muni.fi.obs.jms.JmsProducer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -78,7 +78,7 @@ class ScheduledPaymentServiceTest {
     public void createScheduledPaymentMonthly_bothAccountsExist_createsPaymentMonthly() {
         LocalDate date = LocalDate.now();
         ScheduledPaymentCreateDto scheduledPaymentCreateDto = new ScheduledPaymentCreateDto(date,
-                null, PaymentFrequency.MONTHLY, "123", "1234");
+                null, BigDecimal.valueOf(100), PaymentFrequency.MONTHLY, "123", "1234");
 
         scheduledPaymentService.createPayment(scheduledPaymentCreateDto);
 
@@ -96,7 +96,7 @@ class ScheduledPaymentServiceTest {
     public void createScheduledPaymentYearly_bothAccountsExist_createsPaymentYearly() {
         LocalDate date = LocalDate.now();
         ScheduledPaymentCreateDto scheduledPaymentCreateDto = new ScheduledPaymentCreateDto(date,
-                null, PaymentFrequency.YEARLY, "123", "1234");
+                null, BigDecimal.valueOf(100), PaymentFrequency.YEARLY, "123", "1234");
 
         scheduledPaymentService.createPayment(scheduledPaymentCreateDto);
 
@@ -114,7 +114,7 @@ class ScheduledPaymentServiceTest {
     public void createScheduledPaymentWeekly_bothAccountsExists_createsWeeklyPayment() {
         LocalDate date = LocalDate.now();
         ScheduledPaymentCreateDto scheduledPaymentCreateDto = new ScheduledPaymentCreateDto(date,
-                null, PaymentFrequency.WEEKLY, "123", "1234");
+                null, BigDecimal.valueOf(100), PaymentFrequency.WEEKLY, "123", "1234");
 
         scheduledPaymentService.createPayment(scheduledPaymentCreateDto);
 
@@ -131,7 +131,7 @@ class ScheduledPaymentServiceTest {
     @Test
     public void createScheduledPayment_toAccountDoesNotExist_throwsException() {
         ScheduledPaymentCreateDto scheduledPaymentCreateDto = new ScheduledPaymentCreateDto(LocalDate.now(),
-                null, PaymentFrequency.WEEKLY, "this id does not exist in db", "1234");
+                null, BigDecimal.valueOf(100), PaymentFrequency.WEEKLY, "this id does not exist in db", "1234");
 
         assertThrows(ResourceNotFoundException.class, () -> scheduledPaymentService.createPayment(scheduledPaymentCreateDto));
     }
@@ -140,7 +140,7 @@ class ScheduledPaymentServiceTest {
     public void disableScheduledPayment_paymentExists_disablesPayment() {
         LocalDate date = LocalDate.now();
         ScheduledPaymentCreateDto scheduledPaymentCreateDto = new ScheduledPaymentCreateDto(date,
-                null, PaymentFrequency.WEEKLY, "123", "1234");
+                null, BigDecimal.valueOf(100), PaymentFrequency.WEEKLY, "123", "1234");
 
         scheduledPaymentService.createPayment(scheduledPaymentCreateDto);
 

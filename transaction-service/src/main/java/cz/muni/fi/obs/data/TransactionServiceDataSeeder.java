@@ -85,6 +85,7 @@ public class TransactionServiceDataSeeder {
         scheduledPaymentService.createPayment(new ScheduledPaymentCreateDto(
                 LocalDate.of(2024, 6, 6),
                 null,
+                BigDecimal.valueOf(1000),
                 PaymentFrequency.YEARLY,
                 accounts.getFirst().getId(),
                 accounts.getLast().getId()
@@ -92,6 +93,7 @@ public class TransactionServiceDataSeeder {
         scheduledPaymentService.createPayment(new ScheduledPaymentCreateDto(
                 LocalDate.of(2024, 7, 7),
                 null,
+                BigDecimal.valueOf(1000),
                 PaymentFrequency.MONTHLY,
                 accounts.get(1).getId(),
                 accounts.get(2).getId()
@@ -99,6 +101,7 @@ public class TransactionServiceDataSeeder {
         scheduledPaymentService.createPayment(new ScheduledPaymentCreateDto(
                 LocalDate.of(2024, 8, 8),
                 null,
+                BigDecimal.valueOf(1000),
                 PaymentFrequency.WEEKLY,
                 accounts.get(3).getId(),
                 accounts.get(4).getId()
