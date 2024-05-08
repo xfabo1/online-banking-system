@@ -1,17 +1,17 @@
 package cz.muni.fi.obs.service;
 
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.data.repository.AccountRepository;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import cz.muni.fi.obs.api.AccountCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.data.repository.AccountRepository;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 
 @Service
 public class AccountService {
@@ -32,9 +32,9 @@ public class AccountService {
 		return repository.save(accountDbo);
 	}
 
-	public AccountDbo findAccountByAccountId(String accountNumber) {
-		return repository.findById(accountNumber)
-				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, accountNumber));
+	public AccountDbo findAccountByAccountId(String accountId) {
+		return repository.findById(accountId)
+				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, accountId));
 	}
 
 	public List<AccountDbo> findAccountsByCustomerId(String customerId) {

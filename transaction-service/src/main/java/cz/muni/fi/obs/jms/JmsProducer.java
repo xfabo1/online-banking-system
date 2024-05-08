@@ -1,7 +1,8 @@
 package cz.muni.fi.obs.jms;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class JmsProducer {

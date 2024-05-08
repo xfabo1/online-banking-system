@@ -1,5 +1,15 @@
 package cz.muni.fi.obs.data;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import cz.muni.fi.obs.api.ScheduledPaymentCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
@@ -13,16 +23,6 @@ import cz.muni.fi.obs.service.payment.ScheduledPaymentService;
 import cz.muni.fi.obs.util.Resources;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 @Component
 @ConditionalOnExpression("${data.initialize:false}")

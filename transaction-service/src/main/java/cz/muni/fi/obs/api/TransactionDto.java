@@ -1,12 +1,12 @@
 package cz.muni.fi.obs.api;
 
+import java.math.BigDecimal;
+
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter

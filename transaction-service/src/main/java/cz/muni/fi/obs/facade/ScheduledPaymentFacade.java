@@ -1,9 +1,9 @@
 package cz.muni.fi.obs.facade;
 
+import java.time.Instant;
+
 import cz.muni.fi.obs.api.ScheduledPaymentCreateDto;
 import cz.muni.fi.obs.api.ScheduledPaymentDto;
-
-import java.time.Instant;
 
 public interface ScheduledPaymentFacade {
 

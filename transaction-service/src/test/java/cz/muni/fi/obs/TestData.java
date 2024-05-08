@@ -1,13 +1,13 @@
 package cz.muni.fi.obs;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.dbo.TransactionState;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 
 public class TestData {
 

@@ -1,14 +1,15 @@
 package cz.muni.fi.obs.data.repository;
 
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import java.time.Instant;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.List;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionDbo, String> {

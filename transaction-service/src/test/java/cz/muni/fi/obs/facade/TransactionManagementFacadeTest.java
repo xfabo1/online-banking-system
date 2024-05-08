@@ -78,7 +78,7 @@ class TransactionManagementFacadeTest {
 	void viewTransactionHistory_returnsHistory() {
 		when(transactionService.viewTransactionHistory(TestData.accountId, 0, 10))
 				.thenReturn(new PageImpl<>(TestData.withdrawTransactions));
-		when(accountService.findAccountByAccountNumber("1"))
+		when(accountService.findAccountByAccountId("1"))
 				.thenReturn(AccountDbo.builder()
 						.id(TestData.accountId)
 						.currencyCode("CZK")
@@ -92,13 +92,13 @@ class TransactionManagementFacadeTest {
 	@Test
 	public void checkAccountBalance_returnsBalance() {
 		when(transactionService.calculateAccountBalance(TestData.accountId)).thenReturn(BigDecimal.valueOf(42));
-		when(accountService.findAccountByAccountNumber("1"))
+		when(accountService.findAccountByAccountId("1"))
 				.thenReturn(AccountDbo.builder()
 						.id(TestData.accountId)
 						.currencyCode("CZK")
 						.build());
 
-		BigDecimal balance = transactionManagementFacade.calculateAccountBalance("00000001");
+		BigDecimal balance = transactionManagementFacade.calculateAccountBalance("1");
 
 		assertEquals(BigDecimal.valueOf(42), balance);
 	}
@@ -129,19 +129,19 @@ class TransactionManagementFacadeTest {
 				.currencyCode("CZK")
 				.build();
 
-		when(accountService.findAccountByAccountNumber("1")).thenReturn(expectedAccount);
+		when(accountService.findAccountByAccountId("1")).thenReturn(expectedAccount);
 
-		AccountDbo foundAccount = transactionManagementFacade.findAccountByAccountNumber("1");
-		verify(accountService).findAccountByAccountNumber("1");
+		AccountDbo foundAccount = transactionManagementFacade.findAccountByAccountId("1");
+		verify(accountService).findAccountByAccountId("1");
 		assertThat(foundAccount).isNotNull();
 	}
 
 	@Test
 	void testFindAccountById_nonExistingId_returnsNull() {
-		when(accountService.findAccountByAccountNumber("0")).thenReturn(null);
+		when(accountService.findAccountByAccountId("0")).thenReturn(null);
 
-		AccountDbo foundAccount = transactionManagementFacade.findAccountByAccountNumber("0");
-		verify(accountService).findAccountByAccountNumber("0");
+		AccountDbo foundAccount = transactionManagementFacade.findAccountByAccountId("0");
+		verify(accountService).findAccountByAccountId("0");
 		assertThat(foundAccount).isNull();
 	}
 }

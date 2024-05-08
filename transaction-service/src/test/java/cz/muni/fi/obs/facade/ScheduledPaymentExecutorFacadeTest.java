@@ -1,5 +1,23 @@
 package cz.muni.fi.obs.facade;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+
 import cz.muni.fi.obs.api.CurrencyExchangeRequest;
 import cz.muni.fi.obs.api.CurrencyExchangeResult;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
@@ -12,23 +30,6 @@ import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.http.CurrencyServiceClient;
 import cz.muni.fi.obs.jms.JmsConsumer;
 import cz.muni.fi.obs.jms.JmsProducer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -59,6 +60,7 @@ public class ScheduledPaymentExecutorFacadeTest {
 
     @BeforeEach
     public void setUp() {
+        transactionRepository.deleteAll();
         when(client.getCurrencyExchange(any(CurrencyExchangeRequest.class)))
                 .thenReturn(Optional.of(new CurrencyExchangeResult("CZK",
                         "CZK",
@@ -134,11 +136,6 @@ public class ScheduledPaymentExecutorFacadeTest {
         scheduledPayment5.setDepositsTo(accountDbo1);
         scheduledPayment5.setValidUntil(past);
         scheduledPaymentRepository.save(scheduledPayment5);
-    }
-
-    @AfterEach
-    public void cleanTransactions() {
-        transactionRepository.deleteAll();
     }
 
     @Test

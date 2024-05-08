@@ -1,13 +1,8 @@
 package cz.muni.fi.obs.controller;
 
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
-import cz.muni.fi.obs.facade.TransactionManagementFacade;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import static cz.muni.fi.obs.controller.AccountController.ACCOUNT_PATH;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,9 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-import static cz.muni.fi.obs.controller.AccountController.ACCOUNT_PATH;
+import cz.muni.fi.obs.api.AccountCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.facade.TransactionManagementFacade;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Validated
@@ -69,7 +69,7 @@ public class AccountController {
 	)
 	@GetMapping(value = "/account/{accountNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AccountDbo> findAccountById(@PathVariable("accountNumber") String accountNumber) {
-		return ResponseEntity.ok(facade.findAccountByAccountNumber(accountNumber));
+		return ResponseEntity.ok(facade.findAccountByAccountId(accountNumber));
 	}
 
 	@Operation(

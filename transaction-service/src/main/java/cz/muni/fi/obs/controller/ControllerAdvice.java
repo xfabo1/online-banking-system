@@ -1,9 +1,10 @@
 package cz.muni.fi.obs.controller;
 
-import cz.muni.fi.obs.exceptions.NotFoundResponse;
-import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
-import cz.muni.fi.obs.exceptions.ValidationErrors;
-import cz.muni.fi.obs.exceptions.ValidationFailedResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,10 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import cz.muni.fi.obs.exceptions.NotFoundResponse;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
+import cz.muni.fi.obs.exceptions.ValidationErrors;
+import cz.muni.fi.obs.exceptions.ValidationFailedResponse;
 
 @RestControllerAdvice
 public class ControllerAdvice {
