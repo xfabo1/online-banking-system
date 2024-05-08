@@ -1,28 +1,23 @@
 package cz.muni.fi.obs.data;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.type.TypeReference;
-
 import cz.muni.fi.obs.api.ScheduledPaymentCreateDto;
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.PaymentFrequency;
 import cz.muni.fi.obs.data.repository.AccountRepository;
-import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
-import cz.muni.fi.obs.data.repository.TransactionRepository;
 import cz.muni.fi.obs.facade.TransactionManagementFacade;
-import cz.muni.fi.obs.service.TransactionService;
 import cz.muni.fi.obs.service.payment.ScheduledPaymentService;
 import cz.muni.fi.obs.util.Resources;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Component
 @ConditionalOnExpression("${data.initialize:false}")
@@ -35,9 +30,6 @@ public class TransactionServiceDataSeeder {
 
     @Autowired
     public TransactionServiceDataSeeder(AccountRepository accountRepository,
-                                        TransactionRepository transactionRepository,
-                                        ScheduledPaymentRepository scheduledPaymentRepository,
-                                        TransactionService transactionService,
                                         ScheduledPaymentService scheduledPaymentService,
                                         TransactionManagementFacade transactionManagementFacade) {
         this.accountRepository = accountRepository;

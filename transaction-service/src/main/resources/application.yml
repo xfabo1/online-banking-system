@@ -50,8 +50,5 @@ clients:
   currency-service:
     url: 'http://host.docker.internal:8081/api/currency-service'
 
-bank:
-  bank-accounts: bank-1
-
 jms:
   enabled: true
