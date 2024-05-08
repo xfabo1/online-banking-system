@@ -13,6 +13,11 @@ Now all the services and the databases are running, and you can access them on t
 - Currency-service: `localhost:8083/currency-service`
 - Analytics-service: `localhost:8080/api/analytics-service`
 
+locust: we only defined the scenario of creating transactions in locust as it would be only API that the customers would
+use frequently
+there is defined a scenario when someone deposits money via ATM meaning in the scenario the customer deposits 1000 and
+it is deducted
+from the banks account
 
 ## Use case:
 ![img_2.png](img_2.png)

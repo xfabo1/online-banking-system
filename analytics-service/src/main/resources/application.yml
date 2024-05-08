@@ -30,4 +30,4 @@ spring:
 
 etl:
   transaction-service:
-    url: 'http://localhost:8082/api/transaction-service'
+    url: 'http://host.docker.internal:8082/api/transaction-service'
