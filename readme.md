@@ -5,6 +5,8 @@ How to run the project:
 NOTE: if this step fails you might not be running docker on your machine, it is neccessary for test containers
 2. (OPTIONAL) Add `data.initialize: true` to application.yml of a service if you want to initialize some data in the tables, unfortunately this does nothing in transaction-service yet.
 3. Run `docker compose up --build` in the root directory
+NOTE: if this step fails you might have old volumes with false data, so please remove all volumes connected to this repository from docker and remove the online-banking-service container.
+NOTE-2: if some service does not start because of the flyway migration error, please drop the flyway schema migration table from the db and restart the container.
 Now all the services and the databases are running, and you can access them on the following ports:
 - User-service: `localhost:8081/api/user-service`
 - Transaction-service: `localhost:8082/api/transaction-service`
