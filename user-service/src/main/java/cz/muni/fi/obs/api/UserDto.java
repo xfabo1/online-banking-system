@@ -14,6 +14,9 @@ public record UserDto(
         @Schema(description = "Unique ID of the user", example = "d333c127-470b-4680-8c7c-70988998b329")
         UUID id,
 
+        @Schema(description = "ID of the user from MUNI OAuth2", example = "555222@muni.cz")
+        String oauthId,
+
         @Schema(description = "First name of the user", example = "John")
         String firstName,
 
@@ -43,7 +46,8 @@ public record UserDto(
         if (user == null) {
             return null;
         }
-        return UserDto.builder().id(user.getId()).firstName(user.getFirstName()).lastName(user.getLastName())
+        return UserDto.builder().id(user.getId()).oauthId(user.getOauthId()).firstName(user.getFirstName()).lastName(
+                              user.getLastName())
                       .phoneNumber(user.getPhoneNumber()).email(user.getEmail()).birthDate(user.getBirthDate())
                       .nationality(user.getNationality()).birthNumber(user.getBirthNumber()).active(user.isActive())
                       .build();

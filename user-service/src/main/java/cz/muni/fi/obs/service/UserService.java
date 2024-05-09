@@ -5,6 +5,7 @@ import cz.muni.fi.obs.api.UserSearchParamsPaginatedDto;
 import cz.muni.fi.obs.api.UserUpdateDto;
 import cz.muni.fi.obs.data.dbo.User;
 import cz.muni.fi.obs.data.repository.UserRepository;
+import cz.muni.fi.obs.security.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,17 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final Security security;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, Security security) {
         this.userRepository = userRepository;
+        this.security = security;
     }
 
     public User createUser(UserCreateDto userCreateDto) {
         User user = new User(
+                security.getCurrentUserOauthId(),
                 userCreateDto.firstName(),
                 userCreateDto.lastName(),
                 userCreateDto.phoneNumber(),

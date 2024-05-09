@@ -5,6 +5,7 @@ import cz.muni.fi.obs.api.UserUpdateDto;
 import cz.muni.fi.obs.data.dbo.User;
 import cz.muni.fi.obs.data.enums.Nationality;
 import cz.muni.fi.obs.data.repository.UserRepository;
+import cz.muni.fi.obs.security.Security;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,10 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+
+    @Mock
+    private Security security;
+
     @InjectMocks
     private UserService userService;
 
@@ -37,7 +42,8 @@ class UserServiceTest {
                                                         "900101/1234"
         );
 
-        User user = new User(userCreateDto.firstName(),
+        User user = new User("553628@muni.cz",
+                             userCreateDto.firstName(),
                              userCreateDto.lastName(),
                              userCreateDto.phoneNumber(),
                              userCreateDto.email(),
@@ -46,6 +52,7 @@ class UserServiceTest {
                              userCreateDto.birthNumber(),
                              true
         );
+        when(security.getCurrentUserOauthId()).thenReturn(user.getOauthId());
         when(userRepository.save(any(User.class))).thenReturn(user);
         User response = userService.createUser(userCreateDto);
 
@@ -64,15 +71,18 @@ class UserServiceTest {
                                                         "900101/1234"
         );
 
-        User user = new User(userCreateDto.firstName(),
-                             userCreateDto.lastName(),
-                             userCreateDto.phoneNumber(),
-                             userCreateDto.email(),
-                             userCreateDto.birthDate(),
-                             userCreateDto.nationality(),
-                             userCreateDto.birthNumber(),
-                             true
+        User user = new User(
+                "553628@muni.cz",
+                userCreateDto.firstName(),
+                userCreateDto.lastName(),
+                userCreateDto.phoneNumber(),
+                userCreateDto.email(),
+                userCreateDto.birthDate(),
+                userCreateDto.nationality(),
+                userCreateDto.birthNumber(),
+                true
         );
+        when(security.getCurrentUserOauthId()).thenReturn(user.getOauthId());
         when(userRepository.save(any(User.class))).thenReturn(user);
         User response = userService.createUser(userCreateDto);
 
@@ -82,14 +92,16 @@ class UserServiceTest {
 
     @Test
     void getUser_userFound_returnsUser() {
-        User user = new User("Joe",
-                             "Doe",
-                             "123456789",
-                             "test@gmail.com",
-                             LocalDate.now(),
-                             Nationality.CZ,
-                             "900101" + "/123",
-                             true
+        User user = new User(
+                "553628@muni.cz",
+                "Joe",
+                "Doe",
+                "123456789",
+                "test@gmail.com",
+                LocalDate.now(),
+                Nationality.CZ,
+                "900101" + "/123",
+                true
         );
         when(userRepository.findByIdOrThrow(user.getId())).thenReturn(user);
 
@@ -106,7 +118,8 @@ class UserServiceTest {
                                                         Optional.of("123456789"),
                                                         Optional.of("test@gmail.com")
         );
-        User user = new User("Joe",
+        User user = new User("553628@muni.cz",
+                             "Joe",
                              "Doe",
                              "123456789",
                              "test@gmail.com",
@@ -126,7 +139,8 @@ class UserServiceTest {
 
     @Test
     void activateUser_userActivated_returnsUser() {
-        User user = new User("Joe",
+        User user = new User("553628@muni.cz",
+                             "Joe",
                              "Doe",
                              "123456789",
                              "test@gmail.com",
@@ -147,7 +161,8 @@ class UserServiceTest {
 
     @Test
     void activateUser_userDeactivated_returnsUser() {
-        User user = new User("Joe",
+        User user = new User("553628@muni.cz",
+                             "Joe",
                              "Doe",
                              "123456789",
                              "test@gmail.com",
@@ -168,7 +183,8 @@ class UserServiceTest {
 
     @Test
     void deactivateUser_userActivated_returnsUser() {
-        User user = new User("Joe",
+        User user = new User("553628@muni.cz",
+                             "Joe",
                              "Doe",
                              "123456789",
                              "test@gmail.com",
@@ -189,7 +205,8 @@ class UserServiceTest {
 
     @Test
     void deactivateUser_userDeactivated_returnsUser() {
-        User user = new User("Joe",
+        User user = new User("553628@muni.cz",
+                             "Joe",
                              "Doe",
                              "123456789",
                              "test@gmail.com",

@@ -42,7 +42,8 @@ class UserManagementFacadeTest {
                                                         Nationality.CZ,
                                                         "900101/1234"
         );
-        User user = new User("Joe",
+        User user = new User("553628@muni.cz",
+                             "Joe",
                              "Doe",
                              "123456789",
                              "test@gmail.com",
@@ -52,6 +53,7 @@ class UserManagementFacadeTest {
                              true
         );
         UserDto userDto = new UserDto(user.getId(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -71,16 +73,19 @@ class UserManagementFacadeTest {
 
     @Test
     public void getUser_userFound_returnsUser() {
-        User user = new User("Joe",
-                             "Doe",
-                             "123456789",
-                             "test@gmail.com",
-                             LocalDate.now(),
-                             Nationality.CZ,
-                             "900101/123",
-                             true
+        User user = new User(
+                "553628@muni.cz",
+                "Joe",
+                "Doe",
+                "123456789",
+                "test@gmail.com",
+                LocalDate.now(),
+                Nationality.CZ,
+                "900101/123",
+                true
         );
         UserDto userDto = new UserDto(user.getId(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -105,16 +110,19 @@ class UserManagementFacadeTest {
                                                         Optional.of("123456789"),
                                                         Optional.of("test@gmail.com")
         );
-        User user = new User("Joe",
-                             "Doe",
-                             "123456789",
-                             "test@gmail.com",
-                             LocalDate.now(),
-                             Nationality.CZ,
-                             "900101/123",
-                             true
+        User user = new User(
+                "553628@muni.cz",
+                "Joe",
+                "Doe",
+                "123456789",
+                "test@gmail.com",
+                LocalDate.now(),
+                Nationality.CZ,
+                "900101/123",
+                true
         );
         UserDto userDto = new UserDto(user.getId(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -134,16 +142,19 @@ class UserManagementFacadeTest {
 
     @Test
     public void deactivateUser_userDeactivated_returnsUser() {
-        User user = new User("Joe",
-                             "Doe",
-                             "123456789",
-                             "test@gmail.com",
-                             LocalDate.now(),
-                             Nationality.CZ,
-                             "900101/123",
-                             true
+        User user = new User(
+                "553628@muni.cz",
+                "Joe",
+                "Doe",
+                "123456789",
+                "test@gmail.com",
+                LocalDate.now(),
+                Nationality.CZ,
+                "900101/123",
+                true
         );
         UserDto userDto = new UserDto(user.getId(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -163,16 +174,19 @@ class UserManagementFacadeTest {
 
     @Test
     public void activateUser_userActivated_returnsUser() {
-        User user = new User("Joe",
-                             "Doe",
-                             "123456789",
-                             "test@gmail.com",
-                             LocalDate.now(),
-                             Nationality.CZ,
-                             "900101/123",
-                             true
+        User user = new User(
+                "553628@muni.cz",
+                "Joe",
+                "Doe",
+                "123456789",
+                "test@gmail.com",
+                LocalDate.now(),
+                Nationality.CZ,
+                "900101/123",
+                true
         );
         UserDto userDto = new UserDto(user.getId(),
+                                      "553628@muni.cz",
                                       "Joe",
                                       "Doe",
                                       "123456789",
@@ -208,7 +222,6 @@ class UserManagementFacadeTest {
         List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), "1234567890", "CZK"),
                                                   new AccountDto(UUID.randomUUID(), "0987654321", "EUR")
         );
-        when(userService.getUser(userId)).thenReturn(new User());
         when(userAccountService.getUserAccounts(userId)).thenReturn(accounts);
 
         List<AccountDto> response = userManagementFacade.getUserAccounts(userId);

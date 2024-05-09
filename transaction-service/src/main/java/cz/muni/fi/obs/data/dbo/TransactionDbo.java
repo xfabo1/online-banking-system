@@ -1,23 +1,11 @@
 package cz.muni.fi.obs.data.dbo;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Builder
@@ -28,8 +16,9 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 @Table(name = "transactions")
 public class TransactionDbo {
-	@Id
-	private String id = UUID.randomUUID().toString();
+	@Builder.Default
+	@Column(name = "transaction_time", updatable = false, nullable = false)
+	private final Instant transactionTime = Instant.now();
 	@Column(name = "conversion_rate")
 	private Double conversionRate;
 	@ManyToOne
@@ -46,9 +35,11 @@ public class TransactionDbo {
 	private String note;
 	@Column(name = "variable_symbol")
 	private String variableSymbol;
+	@Builder.Default
+	@Id
+	private String id = UUID.randomUUID().toString();
+	@Builder.Default
 	@Enumerated(EnumType.STRING)
 	@Column(name = "transaction_state", nullable = false)
 	private TransactionState transactionState = TransactionState.PENDING;
-	@Column(name = "transaction_time", updatable = false, nullable = false)
-	private final Instant transactionTime = Instant.now();
 }

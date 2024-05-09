@@ -7,13 +7,19 @@ NOTE: if this step fails you might not be running docker on your machine, it is 
 3. Run `docker compose up --build` in the root directory
 NOTE: if this step fails you might have old volumes with false data, so please remove all volumes connected to this repository from docker and remove the online-banking-service container.
 NOTE-2: if some service does not start because of the flyway migration error, please drop the flyway schema migration table from the db and restart the container.
-Now all the services and the databases are running, and you can access them on the following ports:
-- User-service: `localhost:8081/api/user-service`
-- Transaction-service: `localhost:8082/api/transaction-service`
-- Currency-service: `localhost:8083/currency-service`
-- Analytics-service: `localhost:8080/api/analytics-service`
+   Now all the services and the databases are running, and you can access their swaggers using the following links:
 
-locust: we only defined the scenario of creating transactions in locust as it would be only API that the customers would
+- [Analytics-service](http://localhost:8084/api/analytics-service/swagger-ui/index.html)
+- [User-service](http://localhost:8083/api/user-service/swagger-ui/index.html)
+- [Transaction-service](http://localhost:8082/api/transaction-service/swagger-ui/index.html)
+- [Currency-service](http://localhost:8081/api/currency-service/swagger-ui/index.html)
+
+In order to use the secured serivices you will first need to obtain a token using the client:
+http://localhost:8080/
+
+## Locust
+
+We only defined the scenario of creating transactions in locust as it would be only API that the customers would
 use frequently
 there is defined a scenario when someone deposits money via ATM meaning in the scenario the customer deposits 1000 and
 it is deducted
@@ -22,6 +28,17 @@ from the banks account
 analytics data is not seeded so just run after locust so you launch etl that will create the data warehouse content,
 normally it is run every day at 1 am to transform data from transaction service from previous day
 POST http://localhost:8080/api/analytics-service/v1/etl/execute
+
+## Grafana
+
+http://localhost:3000/
+
+Username: `admin`
+Password: `admin`
+
+## Prometheus
+
+http://localhost:9090/
 
 ## Use case:
 ![img_2.png](img_2.png)
@@ -65,9 +82,11 @@ calculates transaction amount.
 Service handles all currency related operation, it manages currencies so exchange rates are always up-to-date and
 provides needed services to the rest of the system.
 
-### Swagger Links
+## Links
 
-- [Analytics-service](http://localhost:8080/api/analytics-service/swagger-ui/index.html)
+### Swagger
+
+- [Analytics-service](http://localhost:8084/api/analytics-service/swagger-ui/index.html)
 - [User-service](http://localhost:8083/api/user-service/swagger-ui/index.html)
 - [Transaction-service](http://localhost:8082/api/transaction-service/swagger-ui/index.html)
 - [Currency-service](http://localhost:8081/api/currency-service/swagger-ui/index.html)
@@ -76,26 +95,17 @@ provides needed services to the rest of the system.
 
 Password: `changemelater`
 
-- [Analytics-service](http://localhost:8084/?pgsql=analytics-db&username=analytics_service&db=analytics_db&)
-- [User-service](http://localhost:8084/?pgsql=user-db&username=user_service&db=user_db&)
-- [Transaction-service](http://localhost:8084/?pgsql=transaction-db&username=transaction_service&db=transaction_db&)
-- [Currency-service](http://localhost:8084/?pgsql=currency-db&username=currency_service&db=currency_db&)
+- [Analytics-service](http://localhost:8085/?pgsql=analytics-db&username=analytics_service&db=analytics_db&)
+- [User-service](http://localhost:8085/?pgsql=user-db&username=user_service&db=user_db&)
+- [Transaction-service](http://localhost:8085/?pgsql=transaction-db&username=transaction_service&db=transaction_db&)
+- [Currency-service](http://localhost:8085/?pgsql=currency-db&username=currency_service&db=currency_db&)
 
+--- 
 
-### Grafana 
-http://localhost:3000/
-
-Username: `admin`
-Password: `admin`
-
-### Prometheus
-http://localhost:9090/
-
-### Entity relationship Diagram
-
+### Entity relationship diagram
 
 ![img_3.png](img_3.png)
 
-### System architecture
+### System architecture diagram
 
 ![img_4.png](img_4.png)

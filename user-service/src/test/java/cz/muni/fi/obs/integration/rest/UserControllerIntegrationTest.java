@@ -1,5 +1,6 @@
 package cz.muni.fi.obs.integration.rest;
 
+import cz.muni.fi.obs.UserManagement;
 import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.dbo.User;
 import cz.muni.fi.obs.data.enums.Nationality;
@@ -9,6 +10,7 @@ import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ContextConfiguration(classes = {UserManagement.class})
 class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
     private static final String USER_CONTROLLER_PATH = "/api/user-service/v1/users";
