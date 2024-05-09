@@ -6,6 +6,7 @@ import cz.muni.fi.obs.api.ValidationErrors;
 import cz.muni.fi.obs.api.ValidationFailedResponse;
 import cz.muni.fi.obs.exceptions.ExternalServiceException;
 import cz.muni.fi.obs.exceptions.UserNotFoundException;
+import cz.muni.fi.obs.security.exceptions.AccessDeniedException;
 import feign.FeignException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
@@ -108,6 +109,11 @@ public class UserControllerAdvice {
     @ExceptionHandler(ExternalServiceException.class)
     public ResponseEntity<ErrorResponse> handleClientConnectionExceptions(ExternalServiceException ex) {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(FeignException.BadRequest.class)

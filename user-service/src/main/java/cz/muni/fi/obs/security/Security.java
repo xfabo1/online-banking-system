@@ -22,7 +22,7 @@ public class Security {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!authentication.getName().equals(oauthId)) {
-            throw new AccessDeniedException("You are not owner of this resource");
+            throw new AccessDeniedException("You are not owner of this account");
         }
     }
 

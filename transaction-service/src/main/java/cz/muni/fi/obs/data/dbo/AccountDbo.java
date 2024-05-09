@@ -4,12 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Builder
@@ -27,6 +22,8 @@ public class AccountDbo {
 	private String customerId;
 	@Column(name = "currency_code", nullable = false)
 	private String currencyCode;
+
+	@Builder.Default
 	@Column(name = "bank_account", nullable = false)
 	private boolean isBankAccount = false;
 }
