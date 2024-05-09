@@ -1,8 +1,9 @@
 package cz.muni.fi.obs;
 
-import cz.muni.fi.obs.jms.JmsProducer;
-import io.restassured.RestAssured;
-import io.restassured.specification.RequestSpecification;
+import static io.restassured.RestAssured.given;
+
+import java.util.Collections;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,9 +21,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Collections;
-
-import static io.restassured.RestAssured.given;
+import cz.muni.fi.obs.jms.JmsProducer;
+import io.restassured.RestAssured;
+import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers

@@ -1,13 +1,13 @@
 package cz.muni.fi.obs;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
 import cz.muni.fi.obs.api.TransactionCreateDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
 import cz.muni.fi.obs.data.dbo.TransactionDbo;
 import cz.muni.fi.obs.data.dbo.TransactionState;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 
 public class TestData {
 
@@ -66,8 +66,8 @@ public class TestData {
 
 	public static TransactionCreateDto transactionCreateDto() {
 		return new TransactionCreateDto(
-				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getAccountNumber(),
-				TestData.withdrawTransactions.getFirst().getDepositsTo().getAccountNumber(),
+				TestData.withdrawTransactions.getFirst().getWithdrawsFrom().getId(),
+				TestData.withdrawTransactions.getFirst().getDepositsTo().getId(),
 				TestData.withdrawTransactions.getFirst().getWithdrawAmount(),
 				TestData.withdrawTransactions.getFirst().getNote(),
 				TestData.withdrawTransactions.getFirst().getVariableSymbol()
@@ -78,7 +78,6 @@ public class TestData {
 		return AccountDbo.builder()
 				.id(accountId)
 				.currencyCode("CZK")
-				.accountNumber("1234567890")
 				.build();
 	}
 
@@ -86,7 +85,6 @@ public class TestData {
 		return AccountDbo.builder()
 				.id("test")
 				.currencyCode("CZK")
-				.accountNumber("123456789")
 				.build();
 	}
 }

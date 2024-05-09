@@ -1,18 +1,16 @@
 package cz.muni.fi.obs.rest;
 
-import cz.muni.fi.obs.IntegrationTest;
-import cz.muni.fi.obs.api.CurrencyExchangeResult;
-import cz.muni.fi.obs.api.TransactionCreateDto;
-import cz.muni.fi.obs.controller.pagination.PagedResponse;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.data.dbo.TransactionState;
-import cz.muni.fi.obs.data.repository.AccountRepository;
-import cz.muni.fi.obs.data.repository.TransactionRepository;
-import cz.muni.fi.obs.http.CurrencyServiceClient;
-import cz.muni.fi.obs.jms.JmsProducer;
-import io.restassured.common.mapper.TypeRef;
-import io.restassured.http.ContentType;
+import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -29,16 +27,19 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import static cz.muni.fi.obs.controller.TransactionController.TRANSACTION_PATH;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import cz.muni.fi.obs.IntegrationTest;
+import cz.muni.fi.obs.api.CurrencyExchangeResult;
+import cz.muni.fi.obs.api.TransactionCreateDto;
+import cz.muni.fi.obs.controller.pagination.PagedResponse;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.dbo.TransactionState;
+import cz.muni.fi.obs.data.repository.AccountRepository;
+import cz.muni.fi.obs.data.repository.TransactionRepository;
+import cz.muni.fi.obs.http.CurrencyServiceClient;
+import cz.muni.fi.obs.jms.JmsProducer;
+import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.ContentType;
 
 @TestMethodOrder(OrderAnnotation.class)
 class TransactionControllerITTest extends IntegrationTest {
@@ -67,37 +68,31 @@ class TransactionControllerITTest extends IntegrationTest {
                 .id("1")
                 .customerId("customer-1")
                 .currencyCode("CZK")
-                .accountNumber("account-1")
                 .build();
         AccountDbo account2 = AccountDbo.builder()
                 .id("2")
                 .customerId("customer-2")
                 .currencyCode("EUR")
-                .accountNumber("account-2")
                 .build();
         AccountDbo account3 = AccountDbo.builder()
                 .id("3")
                 .customerId("customer-3")
                 .currencyCode("USD")
-                .accountNumber("account-3")
                 .build();
         AccountDbo account4 = AccountDbo.builder()
                 .id("4")
                 .customerId("customer-4")
                 .currencyCode("CZK")
-                .accountNumber("account-4")
                 .build();
         AccountDbo account5 = AccountDbo.builder()
                 .id("5")
                 .customerId("customer-5")
                 .currencyCode("EUR")
-                .accountNumber("account-5")
                 .build();
         AccountDbo account6 = AccountDbo.builder()
                 .id("6")
                 .customerId("customer-6")
                 .currencyCode("EUR")
-                .accountNumber("account-6")
                 .build();
 
         TransactionDbo transaction1 = TransactionDbo.builder()
@@ -241,7 +236,7 @@ class TransactionControllerITTest extends IntegrationTest {
     @Order(2)
     @Test
     public void calculateBalanceForAccountNumber_balanceNotFound_returnsZero() {
-        UriComponents components = UriComponentsBuilder.fromPath(buildBalancePath("account-6")).build();
+        UriComponents components = UriComponentsBuilder.fromPath(buildBalancePath("6")).build();
 
         BigDecimal balance = requestSpecification(components)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -298,8 +293,8 @@ class TransactionControllerITTest extends IntegrationTest {
                 .fromPath(TRANSACTION_CONTROLLER_PATH + "/transaction/create")
                 .build();
         TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
-                .depositsToAccountNumber("account-1")
-                .withdrawsFromAccountNumber("account-5")
+                .depositsToAccount("1")
+                .withdrawsFromAccount("5")
                 .withdrawAmount(BigDecimal.valueOf(10000, 2))
                 .note("note")
                 .variableSymbol("123")
@@ -342,8 +337,8 @@ class TransactionControllerITTest extends IntegrationTest {
                 .fromPath(TRANSACTION_CONTROLLER_PATH + "/transaction/create")
                 .build();
         TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
-                .depositsToAccountNumber("")
-                .withdrawsFromAccountNumber("account-2")
+                .depositsToAccount("")
+                .withdrawsFromAccount("2")
                 .withdrawAmount(BigDecimal.valueOf(1000))
                 .note("note")
                 .variableSymbol("123")
@@ -365,8 +360,8 @@ class TransactionControllerITTest extends IntegrationTest {
                 .fromPath(TRANSACTION_CONTROLLER_PATH + "/transaction/create")
                 .build();
         TransactionCreateDto transactionCreateDto = TransactionCreateDto.builder()
-                .depositsToAccountNumber("account-1")
-                .withdrawsFromAccountNumber("account-5")
+                .depositsToAccount("1")
+                .withdrawsFromAccount("5")
                 .withdrawAmount(BigDecimal.valueOf(100000, 2))
                 .note("note")
                 .variableSymbol("123")
@@ -383,7 +378,7 @@ class TransactionControllerITTest extends IntegrationTest {
 
         List<TransactionDbo> accountFiveWithdrawals = transactionRepository.findAll()
                 .stream()
-                .filter(transactionDbo -> transactionDbo.getWithdrawsFrom().getAccountNumber().equals("account-5"))
+                .filter(transactionDbo -> transactionDbo.getWithdrawsFrom().getId().equals("5"))
                 .toList();
 
         assertThat(accountFiveWithdrawals.stream()
@@ -412,19 +407,19 @@ class TransactionControllerITTest extends IntegrationTest {
 
     private static Stream<Arguments> provideAccountNumbersAndTransactionCounts() {
         return Stream.of(
-                Arguments.of("account-1", 4),
-                Arguments.of("account-2", 4),
-                Arguments.of("account-3", 4),
-                Arguments.of("account-4", 3),
-                Arguments.of("account-5", 3));
+                Arguments.of("1", 4),
+                Arguments.of("2", 4),
+                Arguments.of("3", 4),
+                Arguments.of("4", 3),
+                Arguments.of("5", 3));
     }
 
     private static Stream<Arguments> provideAccountNumbersAndBalances() {
         return Stream.of(
-                Arguments.of("account-1", BigDecimal.valueOf(1080000, 2)),
-                Arguments.of("account-2", BigDecimal.valueOf(-15200, 2)),
-                Arguments.of("account-3", BigDecimal.valueOf(-105000, 2)),
-                Arguments.of("account-4", BigDecimal.valueOf(175000, 2)),
-                Arguments.of("account-5", BigDecimal.valueOf(70000, 2)));
+                Arguments.of("1", BigDecimal.valueOf(1080000, 2)),
+                Arguments.of("2", BigDecimal.valueOf(-15200, 2)),
+                Arguments.of("3", BigDecimal.valueOf(-105000, 2)),
+                Arguments.of("4", BigDecimal.valueOf(175000, 2)),
+                Arguments.of("5", BigDecimal.valueOf(70000, 2)));
     }
 }

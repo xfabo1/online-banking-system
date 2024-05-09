@@ -8,8 +8,6 @@ public record AccountCreateDto(
 		@NotBlank
 		String customerId,
 		@NotBlank
-		String currencyCode,
-		@NotBlank
-		String accountNumber) {
+		String currencyCode) {
 }
 

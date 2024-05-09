@@ -9,6 +9,8 @@ management:
       exposure:
         include: [ 'prometheus', 'health', 'info' ]
 
+data.initialize: true
+
 spring:
   application:
     name: transaction-service
@@ -29,7 +31,6 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
-    show-sql: true
   flyway:
     locations: db.migration
     baseline-on-migrate: true
@@ -46,11 +47,7 @@ resilience4j:
 
 clients:
   currency-service:
-    #    url: 'http://localhost:8081/api/currency-service'
-    url: 'http://currency-service:8081/api/currency-service'
-
-bank:
-  bank-accounts: bank-1
+    url: 'http://host.docker.internal:8081/api/currency-service'
 
 jms:
   enabled: true

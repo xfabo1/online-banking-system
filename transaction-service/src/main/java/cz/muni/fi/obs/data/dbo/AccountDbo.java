@@ -27,6 +27,6 @@ public class AccountDbo {
 	private String customerId;
 	@Column(name = "currency_code", nullable = false)
 	private String currencyCode;
-	@Column(name = "account_number", nullable = false, unique = true)
-	private String accountNumber;
+	@Column(name = "bank_account", nullable = false)
+	private boolean isBankAccount = false;
 }

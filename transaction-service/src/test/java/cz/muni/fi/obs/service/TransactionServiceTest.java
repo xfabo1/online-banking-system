@@ -1,12 +1,15 @@
 package cz.muni.fi.obs.service;
 
-import cz.muni.fi.obs.TestData;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.data.dbo.TransactionDbo;
-import cz.muni.fi.obs.data.repository.AccountRepository;
-import cz.muni.fi.obs.data.repository.TransactionRepository;
-import cz.muni.fi.obs.jms.JmsConsumer;
-import cz.muni.fi.obs.jms.JmsProducer;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,15 +19,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import cz.muni.fi.obs.TestData;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.data.dbo.TransactionDbo;
+import cz.muni.fi.obs.data.repository.AccountRepository;
+import cz.muni.fi.obs.data.repository.TransactionRepository;
+import cz.muni.fi.obs.jms.JmsConsumer;
+import cz.muni.fi.obs.jms.JmsProducer;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
@@ -110,7 +111,7 @@ class TransactionServiceTest {
 	@Test
 	void createTransaction_createsTransaction() {
 		when(repository.save(any())).thenReturn(TestData.withdrawTransactions.getFirst());
-		when(accountRepository.findAccountDboByAccountNumber(any())).thenReturn(Optional.of(new AccountDbo()));
+		when(accountRepository.findById(any())).thenReturn(Optional.of(new AccountDbo()));
 
 		TransactionDbo createdTransaction = transactionService.createTransaction(TestData.transactionCreateDto());
 

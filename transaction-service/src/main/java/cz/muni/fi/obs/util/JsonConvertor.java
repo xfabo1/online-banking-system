@@ -1,4 +1,4 @@
-package util;
+package cz.muni.fi.obs.util;
 
 import java.io.IOException;
 
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class JsonConvertor {
@@ -25,5 +26,13 @@ public class JsonConvertor {
 
 	public static <T> T convertJsonToObject(String object, TypeReference<T> typeReference) throws IOException {
 		return OBJECT_MAPPER.readValue(object, typeReference);
+	}
+
+	public static ObjectReader reader(Class<?> type) {
+		return OBJECT_MAPPER.readerFor(type);
+	}
+
+	public static ObjectReader reader(TypeReference<?> type) {
+		return OBJECT_MAPPER.readerFor(type);
 	}
 }

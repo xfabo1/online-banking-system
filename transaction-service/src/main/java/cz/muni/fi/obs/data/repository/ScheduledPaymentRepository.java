@@ -1,12 +1,13 @@
 package cz.muni.fi.obs.data.repository;
 
-import cz.muni.fi.obs.data.dbo.ScheduledPayment;
+import java.time.Instant;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.List;
+import cz.muni.fi.obs.data.dbo.ScheduledPayment;
 
 @Repository
 public interface ScheduledPaymentRepository extends JpaRepository<ScheduledPayment, String> {

@@ -1,17 +1,18 @@
 package cz.muni.fi.obs.data.repository;
 
-import cz.muni.fi.obs.data.dbo.AccountDbo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_CLASS;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_CLASS;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
 
 @Sql(value = { "/initialize_db.sql" }, executionPhase = BEFORE_TEST_CLASS)
 @Sql(value = { "/drop_all.sql" }, executionPhase = AFTER_TEST_CLASS)
@@ -24,19 +25,18 @@ public class AccountRepositoryTest {
 
 	@Test
 	public void getAccountByAccountNumber_AccountFound_ReturnsAccount() {
-		Optional<AccountDbo> account = accountRepository.findAccountDboByAccountNumber("account-1");
+		Optional<AccountDbo> account = accountRepository.findById("1");
 
 		assertThat(account).isPresent();
 		assertThat(account.get())
 				.returns("1", AccountDbo::getId)
-				.returns("account-1", AccountDbo::getAccountNumber)
 				.returns("CZK", AccountDbo::getCurrencyCode)
 				.returns("customer-1", AccountDbo::getCustomerId);
 	}
 
 	@Test
 	public void getAccountByAccountNumber_AccountNotFound_ReturnsOptionalEmpty() {
-		Optional<AccountDbo> account = accountRepository.findAccountDboByAccountNumber("non-existing");
+		Optional<AccountDbo> account = accountRepository.findById("0");
 
 		assertThat(account).isEmpty();
 	}
@@ -48,7 +48,6 @@ public class AccountRepositoryTest {
 		assertThat(account).isPresent();
 		assertThat(account.get())
 				.returns("1", AccountDbo::getId)
-				.returns("account-1", AccountDbo::getAccountNumber)
 				.returns("CZK", AccountDbo::getCurrencyCode)
 				.returns("customer-1", AccountDbo::getCustomerId);
 	}
@@ -65,8 +64,8 @@ public class AccountRepositoryTest {
 		var accounts = accountRepository.findAllByCurrencyCode("CZK");
 
 		assertThat(accounts).hasSize(2)
-				.extracting(AccountDbo::getAccountNumber)
-				.containsExactlyInAnyOrder("account-1", "account-4");
+				.extracting(AccountDbo::getId)
+				.containsExactlyInAnyOrder("1", "4");
 	}
 
 	@Test

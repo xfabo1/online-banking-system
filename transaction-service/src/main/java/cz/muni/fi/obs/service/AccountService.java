@@ -1,19 +1,21 @@
 package cz.muni.fi.obs.service;
 
-import cz.muni.fi.obs.api.AccountCreateDto;
-import cz.muni.fi.obs.data.dbo.AccountDbo;
-import cz.muni.fi.obs.data.repository.AccountRepository;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import cz.muni.fi.obs.api.AccountCreateDto;
+import cz.muni.fi.obs.data.dbo.AccountDbo;
+import cz.muni.fi.obs.data.repository.AccountRepository;
+import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 
 @Service
 public class AccountService {
+
 	private final AccountRepository repository;
 
 	@Autowired
@@ -24,15 +26,15 @@ public class AccountService {
 	public AccountDbo createAccount(AccountCreateDto accountCreateDto) {
 		var accountDbo = AccountDbo.builder()
 				.id(UUID.randomUUID().toString())
-				.accountNumber(accountCreateDto.accountNumber())
 				.currencyCode(accountCreateDto.currencyCode())
 				.customerId(accountCreateDto.customerId())
 				.build();
 		return repository.save(accountDbo);
 	}
 
-	public Optional<AccountDbo> findAccountByAccountNumber(String accountNumber) {
-		return repository.findAccountDboByAccountNumber(accountNumber);
+	public AccountDbo findAccountByAccountId(String accountId) {
+		return repository.findById(accountId)
+				.orElseThrow(() -> new ResourceNotFoundException(AccountDbo.class, accountId));
 	}
 
 	public List<AccountDbo> findAccountsByCustomerId(String customerId) {

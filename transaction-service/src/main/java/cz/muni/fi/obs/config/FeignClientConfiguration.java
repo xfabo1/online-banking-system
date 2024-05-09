@@ -1,7 +1,8 @@
 package cz.muni.fi.obs.config;
 
-import cz.muni.fi.obs.http.CurrencyServiceClient;
 import org.springframework.context.annotation.Bean;
+
+import cz.muni.fi.obs.http.CurrencyServiceClient;
 
 public class FeignClientConfiguration {
 

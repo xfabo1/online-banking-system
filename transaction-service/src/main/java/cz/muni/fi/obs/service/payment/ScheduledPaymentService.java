@@ -1,6 +1,5 @@
 package cz.muni.fi.obs.service.payment;
 
-
 import cz.muni.fi.obs.api.ScheduledPaymentCreateDto;
 import cz.muni.fi.obs.api.ScheduledPaymentDto;
 import cz.muni.fi.obs.data.dbo.AccountDbo;
@@ -49,6 +48,7 @@ public class ScheduledPaymentService implements ScheduledPaymentFacade {
         scheduledPayment.setValidUntil(createDto.validUntil());
         scheduledPayment.setWithdrawsFrom(from);
         scheduledPayment.setDepositsTo(to);
+        scheduledPayment.setAmount(createDto.amount());
         setTiming(scheduledPayment, createDto.frequency(), createDto.executeDate());
 
         return mapper.toDto(scheduledPaymentRepository.save(scheduledPayment));

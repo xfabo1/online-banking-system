@@ -1,11 +1,10 @@
 package cz.muni.fi.obs.exceptions;
 
+import java.util.List;
+import java.util.Map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-
-import java.util.List;
-import java.util.Map;
 
 @Builder
 public record ValidationErrors(

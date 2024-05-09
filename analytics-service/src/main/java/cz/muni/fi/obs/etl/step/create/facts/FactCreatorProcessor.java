@@ -32,6 +32,9 @@ public class FactCreatorProcessor implements ItemProcessor<TempAccount, DailyTra
     private final AccountRepository accountRepository;
     private final DateRepository dateRepository;
     private final CurrencyRepository currencyRepository;
+
+    // fixme: this is very bad!!! should be specified by JobParameters and taken from JobExecutionContext, as a result
+    // the daily etl does not really work when activated from scheduling because it should fetch previous day data
     private final LocalDate currentDate = LocalDate.now();
 
     private Integer currentPage = 0;

@@ -1,10 +1,11 @@
 package cz.muni.fi.obs.jms;
 
-import cz.muni.fi.obs.service.TransactionService;
-import lombok.extern.slf4j.Slf4j;
+import static cz.muni.fi.obs.jms.JmsProducer.TRANSACTION_QUEUE_NAME;
+
 import org.springframework.jms.annotation.JmsListener;
 
-import static cz.muni.fi.obs.jms.JmsProducer.TRANSACTION_QUEUE_NAME;
+import cz.muni.fi.obs.service.TransactionService;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class JmsConsumer {

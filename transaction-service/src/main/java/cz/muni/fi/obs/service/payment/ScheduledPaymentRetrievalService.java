@@ -1,13 +1,14 @@
 package cz.muni.fi.obs.service.payment;
 
-import cz.muni.fi.obs.data.dbo.ScheduledPayment;
-import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import cz.muni.fi.obs.data.dbo.ScheduledPayment;
+import cz.muni.fi.obs.data.repository.ScheduledPaymentRepository;
 
 @Service
 public class ScheduledPaymentRetrievalService {
