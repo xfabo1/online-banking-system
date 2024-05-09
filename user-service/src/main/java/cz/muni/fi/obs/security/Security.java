@@ -2,12 +2,15 @@ package cz.muni.fi.obs.security;
 
 import cz.muni.fi.obs.security.enums.UserScope;
 import cz.muni.fi.obs.security.exceptions.AccessDeniedException;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 
+
 @Component
+@Profile("!test-disable-security")
 public class Security {
 
     public String getCurrentUserOauthId() {

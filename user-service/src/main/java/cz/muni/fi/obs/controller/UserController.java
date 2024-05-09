@@ -1,10 +1,10 @@
 package cz.muni.fi.obs.controller;
 
-import cz.muni.fi.obs.UserManagement;
 import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.enums.Nationality;
 import cz.muni.fi.obs.facade.UserManagementFacade;
 import cz.muni.fi.obs.security.Security;
+import cz.muni.fi.obs.security.SecurityConfig;
 import cz.muni.fi.obs.security.annotations.*;
 import cz.muni.fi.obs.security.enums.UserScope;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -74,7 +74,7 @@ public class UserController {
 
     @Operation(
             summary = "Create a new user",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.CUSTOMER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "201", description = "User created"),
@@ -95,7 +95,7 @@ public class UserController {
 
     @Operation(
             summary = "Get user by ID",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.CUSTOMER_READ, UserScope.Const.BANKER_READ}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User found"),
@@ -124,7 +124,7 @@ public class UserController {
 
     @Operation(
             summary = "Get users by optional search parameters",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.BANKER_READ}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User found"),
@@ -147,7 +147,7 @@ public class UserController {
 
     @Operation(
             summary = "Update user by ID",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.CUSTOMER_WRITE, UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User updated"),
@@ -178,7 +178,7 @@ public class UserController {
 
     @Operation(
             summary = "Deactivate user by ID",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User deactivated"),
@@ -206,7 +206,7 @@ public class UserController {
 
     @Operation(
             summary = "Activate user by ID",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User activated"),
@@ -233,7 +233,7 @@ public class UserController {
 
     @Operation(
             summary = "Create user account for user by ID",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.CUSTOMER_WRITE, UserScope.Const.BANKER_WRITE}),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Account created"),
@@ -271,7 +271,7 @@ public class UserController {
 
     @Operation(
             summary = "Get user accounts by user ID",
-            security = @SecurityRequirement(name = UserManagement.SECURITY_SCHEME_BEARER,
+            security = @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_BEARER,
                                             scopes = {UserScope.Const.CUSTOMER_READ, UserScope.Const.BANKER_READ}),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Accounts found"),

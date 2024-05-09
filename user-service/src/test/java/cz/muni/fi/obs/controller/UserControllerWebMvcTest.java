@@ -5,6 +5,8 @@ import cz.muni.fi.obs.api.*;
 import cz.muni.fi.obs.data.enums.Nationality;
 import cz.muni.fi.obs.exceptions.UserNotFoundException;
 import cz.muni.fi.obs.facade.UserManagementFacade;
+import cz.muni.fi.obs.security.Security;
+import cz.muni.fi.obs.security.enums.UserScope;
 import cz.muni.fi.obs.util.JsonConvertor;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
@@ -37,6 +41,10 @@ public class UserControllerWebMvcTest {
     @MockBean
     private UserManagementFacade userManagementFacade;
 
+    @MockBean
+    private Security security;
+
+    @WithMockUser(username = "553628@muni.cz", authorities = {UserScope.Const.CUSTOMER_WRITE})
     @Test
     public void createUser_userCreated_returnsUser() throws Exception {
         UserCreateDto userCreateDto = new UserCreateDto("Joe",
@@ -60,8 +68,11 @@ public class UserControllerWebMvcTest {
         );
         when(userManagementFacade.createUser(userCreateDto)).thenReturn(userDto);
 
-        String responseJson = mockMvc.perform(post("/v1/users/create").content(JsonConvertor.convertObjectToJson(
-                                             userCreateDto)).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON_VALUE))
+        String responseJson = mockMvc.perform(post("/v1/users/create").with(SecurityMockMvcRequestPostProcessors.csrf())
+                                                                      .content(JsonConvertor.convertObjectToJson(
+                                                                              userCreateDto))
+                                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                                      .accept(MediaType.APPLICATION_JSON_VALUE))
                                      .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(
                         StandardCharsets.UTF_8);
         UserDto userDtoResponse = JsonConvertor.convertJsonToObject(responseJson, UserDto.class);
@@ -70,6 +81,7 @@ public class UserControllerWebMvcTest {
         assertThat(userDtoResponse).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "123456@muni.cz", authorities = {UserScope.Const.CUSTOMER_READ})
     @Test
     public void getUser_userFound_returnsUser() throws Exception {
         UserDto userDto = new UserDto(UUID.randomUUID(),
@@ -85,26 +97,30 @@ public class UserControllerWebMvcTest {
         );
         when(userManagementFacade.getUser(userDto.id())).thenReturn(userDto);
 
-        String responseJson =
-                mockMvc.perform(get("/v1/users/{userId}", userDto.id()).accept(MediaType.APPLICATION_JSON_VALUE))
-                       .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(
-                               StandardCharsets.UTF_8);
+        String responseJson = mockMvc.perform(get("/v1/users/{userId}", userDto.id())
+                                                      .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                                      .accept(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(
+                        StandardCharsets.UTF_8);
         UserDto userDtoResponse = JsonConvertor.convertJsonToObject(responseJson, UserDto.class);
         verify(userManagementFacade).getUser(userDto.id());
         assertThat(userDtoResponse).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "123456@muni.cz", authorities = {UserScope.Const.BANKER_READ})
     @Test
     public void getUser_userNotFound_returns404() throws Exception {
         UUID nonexistentUserId = UUID.randomUUID();
         when(userManagementFacade.getUser(nonexistentUserId)).thenThrow(UserNotFoundException.class);
 
-        mockMvc.perform(get("/v1/users/{userId}", nonexistentUserId).accept(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(get("/v1/users/{userId}", nonexistentUserId).with(SecurityMockMvcRequestPostProcessors.csrf())
+                                                                    .accept(MediaType.APPLICATION_JSON_VALUE))
                .andExpect(status().isNotFound());
 
         verify(userManagementFacade).getUser(nonexistentUserId);
     }
 
+    @WithMockUser(username = "553628@muni.cz", authorities = {UserScope.Const.CUSTOMER_WRITE})
     @Test
     public void updateUser_userUpdated_returnsUser() throws Exception {
         UserUpdateDto userUpdateDto = new UserUpdateDto(Optional.of("Joe"),
@@ -132,10 +148,10 @@ public class UserControllerWebMvcTest {
         );
         when(userManagementFacade.updateUser(userDto.id(), userUpdateDto)).thenReturn(userDto);
 
-        String responseJson = mockMvc.perform(put("/v1/users/{userId}", userDto.id())
-                                                      .content(userUpdateJson.toString())
-                                                      .contentType(MediaType.APPLICATION_JSON)
-                                                      .accept(MediaType.APPLICATION_JSON_VALUE))
+        String responseJson = mockMvc.perform(put("/v1/users/{userId}", userDto.id()).with(
+                                                                                             SecurityMockMvcRequestPostProcessors.csrf()).content(userUpdateJson.toString())
+                                                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                                                     .accept(MediaType.APPLICATION_JSON_VALUE))
                                      .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(
                         StandardCharsets.UTF_8);
         UserDto userDtoResponse = JsonConvertor.convertJsonToObject(responseJson, UserDto.class);
@@ -144,6 +160,7 @@ public class UserControllerWebMvcTest {
         assertThat(userDtoResponse).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz", authorities = {UserScope.Const.BANKER_WRITE})
     @Test
     public void deactivateUser_userDeactivated_returnsUser() throws Exception {
         UserDto userDto = new UserDto(UUID.randomUUID(),
@@ -159,10 +176,11 @@ public class UserControllerWebMvcTest {
         );
         when(userManagementFacade.deactivateUser(userDto.id())).thenReturn(userDto);
 
-        String responseJson = mockMvc.perform(post("/v1/users/{userId}/deactivate",
-                                                   userDto.id()
-                                     ).accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn().getResponse()
-                                     .getContentAsString(StandardCharsets.UTF_8);
+        String responseJson = mockMvc.perform(post("/v1/users/{userId}/deactivate", userDto.id())
+                                                      .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                                      .accept(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(
+                        StandardCharsets.UTF_8);
         UserDto userDtoResponse = JsonConvertor.convertJsonToObject(responseJson, UserDto.class);
 
 
@@ -170,6 +188,7 @@ public class UserControllerWebMvcTest {
         assertThat(userDtoResponse).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz", authorities = {UserScope.Const.BANKER_WRITE})
     @Test
     public void activateUser_userActivated_returnsUser() throws Exception {
         UserDto userDto = new UserDto(UUID.randomUUID(),
@@ -185,24 +204,29 @@ public class UserControllerWebMvcTest {
         );
         when(userManagementFacade.activateUser(userDto.id())).thenReturn(userDto);
 
-        String responseJson = mockMvc.perform(post("/v1/users/{userId}/activate",
-                                                   userDto.id()
-                                     ).accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn().getResponse()
-                                     .getContentAsString(StandardCharsets.UTF_8);
+        String responseJson = mockMvc.perform(post("/v1/users/{userId}/activate", userDto.id())
+                                                      .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                                      .accept(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(
+                        StandardCharsets.UTF_8);
         UserDto userDtoResponse = JsonConvertor.convertJsonToObject(responseJson, UserDto.class);
 
         verify(userManagementFacade).activateUser(userDto.id());
         assertThat(userDtoResponse).isEqualTo(userDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz", authorities = {UserScope.Const.BANKER_WRITE})
     @Test
     public void createUserAccount_accountCreated_returnsAccount() throws Exception {
         AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
         AccountDto accountDto = new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account");
         when(userManagementFacade.createAccount(accountDto.id(), accountCreateDto)).thenReturn(accountDto);
+        when(security.isUserBanker()).thenReturn(true);
 
         String responseJson = mockMvc.perform(post("/v1/users/{userId}/accounts/create", accountDto.id())
-                                                      .content(JsonConvertor.convertObjectToJson(accountCreateDto))
+                                                      .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                                      .content(
+                                                              JsonConvertor.convertObjectToJson(accountCreateDto))
                                                       .contentType(MediaType.APPLICATION_JSON)
                                                       .accept(MediaType.APPLICATION_JSON_VALUE))
                                      .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(
@@ -213,6 +237,7 @@ public class UserControllerWebMvcTest {
         assertThat(accountDtoResponse).isEqualTo(accountDto);
     }
 
+    @WithMockUser(username = "111111@muni.cz", authorities = {UserScope.Const.BANKER_READ})
     @Test
     public void getUserAccounts_accountsFound_returnsAccounts() throws Exception {
         UUID userId = UUID.randomUUID();
@@ -220,10 +245,13 @@ public class UserControllerWebMvcTest {
                                                   new AccountDto(UUID.randomUUID(), "0987654321", "Jane's Account")
         );
         when(userManagementFacade.getUserAccounts(userId)).thenReturn(accounts);
-
+        when(security.isUserBanker()).thenReturn(true);
         String responseJson = mockMvc.perform(get("/v1/users/{userId}/accounts",
                                                   userId
-                                     ).accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn().getResponse()
+                                     )
+                                                      .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                                      .accept(MediaType.APPLICATION_JSON_VALUE))
+                                     .andExpect(status().isOk()).andReturn().getResponse()
                                      .getContentAsString(StandardCharsets.UTF_8);
         List<AccountDto> accountDtoResponse = JsonConvertor.convertJsonToObject(responseJson, new TypeReference<>() {
         });
