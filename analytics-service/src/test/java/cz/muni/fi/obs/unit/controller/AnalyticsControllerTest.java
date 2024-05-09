@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -59,6 +60,7 @@ class AnalyticsControllerTest {
                 .thenReturn(new DailySummaryResult(LocalDate.now(), new ArrayList<>()));
 
         mockMvc.perform(post("/v1/12345/daily-summary")
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(new DailySummaryRequest(2021, 1))))
                .andExpect(status().isOk());
@@ -73,6 +75,7 @@ class AnalyticsControllerTest {
                 .thenReturn(new DailySummaryResult(LocalDate.now(), new ArrayList<>()));
 
         mockMvc.perform(post("/v1/12345/daily-summary")
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(new DailySummaryRequest(2021, -1))))
                .andExpect(status().isBadRequest());
@@ -86,6 +89,7 @@ class AnalyticsControllerTest {
                 .thenReturn(new MonthlySummaryResult(LocalDate.now(), null));
 
         mockMvc.perform(post("/v1/12345/monthly-summary")
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(new MonthlySummaryRequest(2021, 1))))
                .andExpect(status().isOk());
@@ -100,6 +104,7 @@ class AnalyticsControllerTest {
                 .thenReturn(new MonthlySummaryResult(LocalDate.now(), null));
 
         mockMvc.perform(post("/v1/12345/monthly-summary")
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(new MonthlySummaryRequest(-10, 1))))
                .andExpect(status().isBadRequest());
