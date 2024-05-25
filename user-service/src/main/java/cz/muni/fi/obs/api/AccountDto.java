@@ -10,10 +10,15 @@ public record AccountDto(
         @Schema(description = "Unique ID of the account", example = "d333c127-470b-4680-8c7c-70988998b329")
         UUID id,
 
-        @Schema(description = "Account number", example = "12-1234567890/0100")
-        String accountNumber,
+        @Schema(description = "ID of the customer who owns the account",
+                example = "d333c127-470b-4680-8c7c-70988998b329")
+        UUID customerId,
 
         @Schema(description = "Accounts currency code", example = "CZK")
-        String currencyCode
+        String currencyCode,
+
+        @Schema(description = "Is the account owned by bank", example = "false")
+        boolean isBankAccount
+
 ) {
 }

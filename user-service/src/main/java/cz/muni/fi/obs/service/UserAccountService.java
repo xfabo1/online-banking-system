@@ -34,8 +34,9 @@ public class UserAccountService {
         TSAccount tsAccount = transactionServiceClient.createAccount(tsAccountCreate);
         return new AccountDto(
                 UUID.fromString(tsAccount.id()),
-                tsAccount.accountNumber(),
-                tsAccount.currencyCode()
+                UUID.fromString(tsAccount.customerId()),
+                tsAccount.currencyCode(),
+                tsAccount.isBankAccount()
         );
     }
 
@@ -45,8 +46,9 @@ public class UserAccountService {
             return tsAccounts.stream()
                              .map(tsAccount -> new AccountDto(
                                      UUID.fromString(tsAccount.id()),
-                                     tsAccount.accountNumber(),
-                                     tsAccount.currencyCode()
+                                     UUID.fromString(tsAccount.customerId()),
+                                     tsAccount.currencyCode(),
+                                     tsAccount.isBankAccount()
                              ))
                              .collect(Collectors.toList());
         } catch (ResourceNotFoundException e) {

@@ -218,8 +218,9 @@ public class UserControllerWebMvcTest {
     @WithMockUser(username = "111111@muni.cz", authorities = {UserScope.Const.BANKER_WRITE})
     @Test
     public void createUserAccount_accountCreated_returnsAccount() throws Exception {
+        UUID userId = UUID.randomUUID();
         AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
-        AccountDto accountDto = new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account");
+        AccountDto accountDto = new AccountDto(UUID.randomUUID(), userId, "Joe's Account", false);
         when(userManagementFacade.createAccount(accountDto.id(), accountCreateDto)).thenReturn(accountDto);
         when(security.isUserBanker()).thenReturn(true);
 
@@ -241,8 +242,8 @@ public class UserControllerWebMvcTest {
     @Test
     public void getUserAccounts_accountsFound_returnsAccounts() throws Exception {
         UUID userId = UUID.randomUUID();
-        List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account"),
-                                                  new AccountDto(UUID.randomUUID(), "0987654321", "Jane's Account")
+        List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), userId, "Joe's Account", false),
+                                                  new AccountDto(UUID.randomUUID(), userId, "Jane's Account", false)
         );
         when(userManagementFacade.getUserAccounts(userId)).thenReturn(accounts);
         when(security.isUserBanker()).thenReturn(true);

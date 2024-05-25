@@ -184,7 +184,7 @@ class UserControllerTest {
     public void createUserAccount_accountCreated_returnsAccount() {
         UUID userId = UUID.randomUUID();
         AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
-        AccountDto accountDto = new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account");
+        AccountDto accountDto = new AccountDto(UUID.randomUUID(), userId, "1234567890", false);
         when(security.isUserBanker()).thenReturn(true);
         when(userManagementFacade.createAccount(userId, accountCreateDto)).thenReturn(accountDto);
 
@@ -199,8 +199,8 @@ class UserControllerTest {
     @Test
     public void getUserAccounts_accountsFound_returnsAccounts() {
         UUID userId = UUID.randomUUID();
-        List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account"),
-                                                  new AccountDto(UUID.randomUUID(), "0987654321", "Jane's Account")
+        List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), userId, "Joe's Account", false),
+                                                  new AccountDto(UUID.randomUUID(), userId, "Jane's Account", false)
         );
         when(security.isUserBanker()).thenReturn(true);
         when(userManagementFacade.getUserAccounts(userId)).thenReturn(accounts);
