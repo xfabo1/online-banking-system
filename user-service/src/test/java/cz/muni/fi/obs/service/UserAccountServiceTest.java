@@ -39,12 +39,13 @@ class UserAccountServiceTest {
         );
         TSAccount tsAccount = new TSAccount(UUID.randomUUID().toString(),
                                             userId.toString(),
-                                            accountCreateDto.accountNumber(),
-                                            accountCreateDto.currencyCode()
+                                            accountCreateDto.currencyCode(),
+                                            false
         );
         AccountDto account = new AccountDto(UUID.fromString(tsAccount.id()),
-                                            tsAccount.accountNumber(),
-                                            tsAccount.currencyCode()
+                                            userId,
+                                            tsAccount.currencyCode(),
+                                            false
         );
         when(transactionServiceClient.createAccount(tsAccountCreate)).thenReturn(tsAccount);
 
@@ -59,14 +60,14 @@ class UserAccountServiceTest {
         UUID userId = UUID.randomUUID();
 
         List<AccountDto> accounts = Arrays.asList(
-                new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account"),
-                new AccountDto(UUID.randomUUID(), "0987654321", "Joe's Other Account")
+                new AccountDto(UUID.randomUUID(), userId, "Joe's Account", false),
+                new AccountDto(UUID.randomUUID(), userId, "Joe's Other Account", false)
         );
         List<TSAccount> tsAccounts = accounts.stream()
                                              .map(account -> new TSAccount(account.id().toString(),
                                                                            userId.toString(),
                                                                            account.currencyCode(),
-                                                                           account.accountNumber()
+                                                                           false
                                              ))
                                              .collect(Collectors.toList());
         when(transactionServiceClient.getAccountsByCustomerId(userId.toString())).thenReturn(tsAccounts);

@@ -206,8 +206,9 @@ class UserManagementFacadeTest {
 
     @Test
     public void createAccount_accountCreated_returnsAccount() {
+        UUID userId = UUID.randomUUID();
         AccountCreateDto accountCreateDto = new AccountCreateDto("1234567890", "Joe's Account");
-        AccountDto account = new AccountDto(UUID.randomUUID(), "1234567890", "Joe's Account");
+        AccountDto account = new AccountDto(UUID.randomUUID(), userId, "Joe's Account", false);
         when(userAccountService.create(account.id(), accountCreateDto)).thenReturn(account);
 
         AccountDto response = userManagementFacade.createAccount(account.id(), accountCreateDto);
@@ -219,8 +220,8 @@ class UserManagementFacadeTest {
     @Test
     public void getUserAccounts_accountsFound_returnsAccounts() {
         UUID userId = UUID.randomUUID();
-        List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), "1234567890", "CZK"),
-                                                  new AccountDto(UUID.randomUUID(), "0987654321", "EUR")
+        List<AccountDto> accounts = Arrays.asList(new AccountDto(UUID.randomUUID(), userId, "CZK", false),
+                                                  new AccountDto(UUID.randomUUID(), userId, "EUR", false)
         );
         when(userAccountService.getUserAccounts(userId)).thenReturn(accounts);
 
