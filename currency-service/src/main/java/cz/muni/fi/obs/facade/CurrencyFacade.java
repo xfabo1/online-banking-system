@@ -39,4 +39,8 @@ public class CurrencyFacade {
                 .collect(Collectors.toList());
         return new PageImpl<>(dtos, pageRequest, currencies.getTotalElements());
     }
+
+    public boolean codeExists(String code) {
+        return currencyService.codeExists(code);
+    }
 }

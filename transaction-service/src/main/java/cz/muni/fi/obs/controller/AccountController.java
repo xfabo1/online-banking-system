@@ -48,7 +48,8 @@ public class AccountController {
 			description = "Creates an account for customer from request body",
 			responses = {
 					@ApiResponse(responseCode = "201", description = "Account created successfully"),
-					@ApiResponse(responseCode = "400", description = "Invalid request body")
+					@ApiResponse(responseCode = "400", description = "Invalid request body"),
+					@ApiResponse(responseCode = "404", description = "Currency not found")
 			}
 	)
 	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
