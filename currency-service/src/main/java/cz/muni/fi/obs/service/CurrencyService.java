@@ -22,4 +22,8 @@ public class CurrencyService {
     public Page<Currency> listPage(Pageable pageable) {
         return currencyRepository.findAll(pageable);
     }
+
+    public boolean codeExists(String code) {
+        return currencyRepository.existsByCode(code);
+    }
 }

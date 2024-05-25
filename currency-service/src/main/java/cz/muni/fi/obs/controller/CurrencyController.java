@@ -36,4 +36,10 @@ public class CurrencyController {
                                                         @RequestParam(defaultValue = "50") Integer pageSize) {
         return ResponseEntity.ok(currencyFacade.listPage(Pageable.ofSize(pageSize).withPage(page)));
     }
+
+    @Operation(summary = "Check if currency with code exists")
+    @GetMapping("/exists")
+    public boolean currencies(@RequestParam String code) {
+        return currencyFacade.codeExists(code);
+    }
 }

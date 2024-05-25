@@ -3,6 +3,7 @@ package cz.muni.fi.obs.service;
 import java.util.List;
 import java.util.UUID;
 
+import cz.muni.fi.obs.http.CurrencyServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +18,20 @@ import cz.muni.fi.obs.exceptions.ResourceNotFoundException;
 public class AccountService {
 
 	private final AccountRepository repository;
+	private final CurrencyServiceClient client;
 
 	@Autowired
-	public AccountService(AccountRepository repository) {
+	public AccountService(AccountRepository repository, CurrencyServiceClient client) {
 		this.repository = repository;
-	}
+        this.client = client;
+    }
 
 	public AccountDbo createAccount(AccountCreateDto accountCreateDto) {
+
+		var exists = client.currencyExists(accountCreateDto.currencyCode());
+		if (!exists) {
+			throw new ResourceNotFoundException("Currency with code " + accountCreateDto.currencyCode() + " does not exist");
+		}
 		var accountDbo = AccountDbo.builder()
 				.id(UUID.randomUUID().toString())
 				.currencyCode(accountCreateDto.currencyCode())
