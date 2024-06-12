@@ -1,0 +1,33 @@
+server:
+  servlet:
+    context-path: '/api/currency-service'
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ 'prometheus', 'health', 'info' ]
+
+data:
+  initialize: true
+
+currency:
+  auto-update:
+    services:
+      nbs:
+        enabled: true
+        url: https://nbs.sk/export/sk/exchange-rate/latest/csv
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/currency_db
+    username: currency_service
+    password: changemelater
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    locations: db.migration

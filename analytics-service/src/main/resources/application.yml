@@ -1,0 +1,40 @@
+server:
+  servlet:
+    context-path: '/api/analytics-service'
+  port: 8084
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ 'prometheus', 'health', 'info' ]
+
+spring:
+  application:
+    name: analytics-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/analytics_db
+    username: analytics_service
+    password: changemelater
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    locations: db/migration
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  security:
+    oauth2:
+      resourceserver:
+        opaque-token:
+          introspection-uri: https://oidc.muni.cz/oidc/introspect
+          # Martin Kuba's testing resource server
+          client-id: d57b3a8f-156e-46de-9f27-39c4daee05e1
+          client-secret: fa228ebc-4d54-4cda-901e-4d6287f8b1652a9c9c44-73c9-4502-973f-bcdb4a8ec96a
+etl:
+  transaction-service:
+    url: 'http://host.docker.internal:8082/api/transaction-service'

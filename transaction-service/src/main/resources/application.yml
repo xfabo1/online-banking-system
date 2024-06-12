@@ -1,0 +1,53 @@
+server:
+  servlet:
+    context-path: '/api/transaction-service'
+  port: 8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ 'prometheus', 'health', 'info' ]
+
+data.initialize: true
+
+spring:
+  application:
+    name: transaction-service
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          default:
+            logger-level: basic
+  datasource:
+    url: jdbc:postgresql://transaction-db:5432/transaction_db
+    username: transaction_service
+    password: changemelater
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    locations: db.migration
+    baseline-on-migrate: true
+  activemq:
+    user: admin
+    password: password
+    broker-url: tcp://host.docker.internal:61616
+
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 30s
+
+clients:
+  currency-service:
+    url: 'http://host.docker.internal:8081/api/currency-service'
+
+jms:
+  enabled: true

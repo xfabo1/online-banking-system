@@ -1,0 +1,139 @@
+services:
+  confidential-client:
+    container_name: confidential-client
+    build:
+      context: .
+      dockerfile: ./confidential-client/Dockerfile
+    ports:
+      - 8080:8080
+  currency-service:
+    container_name: currency-service
+    build:
+      context: .
+      dockerfile: ./currency-service/Dockerfile
+    depends_on:
+    - currency-db
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://currency-db:5432/currency_db
+    ports:
+    - 8081:8081
+  currency-db:
+    container_name: currency-db
+    image: postgres:latest
+    ports:
+    - 5433:5432
+    volumes:
+    - currency-db-data:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_PASSWORD=changemelater
+    - POSTGRES_USER=currency_service
+    - POSTGRES_DB=currency_db
+  transaction-service:
+    container_name: transaction-service
+    build:
+      context: .
+      dockerfile: ./transaction-service/Dockerfile
+    depends_on:
+    - transaction-db
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://transaction-db:5432/transaction_db
+    ports:
+    - 8082:8082
+  transaction-db:
+    container_name: transaction-db
+    image: postgres:latest
+    ports:
+    - 5434:5432
+    volumes:
+    - transaction-db-data:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_PASSWORD=changemelater
+    - POSTGRES_USER=transaction_service
+    - POSTGRES_DB=transaction_db
+  transaction-broker:
+    container_name: transaction-broker
+    image: apache/activemq-classic:6.1.0
+    ports:
+      - 61616:61616
+      - 8161:8161
+    volumes:
+      - transaction-broker-data:/var/log/activemq
+      - transaction-broker-data:/opt/activemq/conf
+      - transaction-broker-data:/opt/activemq/data
+    environment:
+      - ACTIVEMQ_USERNAME=admin
+      - ACTIVEMQ_PASSWORD=password
+  user-service:
+    container_name: user-service
+    build:
+      context: .
+      dockerfile: ./user-service/Dockerfile
+    depends_on:
+    - user-db
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/user_db
+    ports:
+    - 8083:8083
+  user-db:
+    container_name: user-db
+    image: postgres:latest
+    ports:
+    - 5435:5432
+    volumes:
+    - user-db-data:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_PASSWORD=changemelater
+    - POSTGRES_USER=user_service
+    - POSTGRES_DB=user_db
+  analytics-service:
+    container_name: analytics-service
+    build:
+      context: .
+      dockerfile: ./analytics-service/Dockerfile
+    depends_on:
+      - analytics-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://analytics-db:5432/analytics_db
+    ports:
+      - 8084:8084
+  analytics-db:
+    container_name: analytics-db
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - analytics-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=changemelater
+      - POSTGRES_USER=analytics_service
+      - POSTGRES_DB=analytics_db
+  database-fe:
+    image: adminer:standalone
+    restart: always
+    ports:
+      - "8085:8080"
+    environment:
+      ADMINER_DESIGN: pepa-linha
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: prometheus
+    ports:
+    - "9090:9090"
+    volumes:
+    - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    ports:
+    - "3000:3000"
+    restart: unless-stopped
+    volumes:
+    - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    - grafana_storage:/var/lib/grafana
+volumes:
+  analytics-db-data: { }
+  user-db-data: { }
+  currency-db-data: { }
+  transaction-db-data: { }
+  transaction-broker-data: { }
+  grafana_storage: { }

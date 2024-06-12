@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${#locale.language}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link rel="SHORTCUT ICON" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/style.css}" type="text/css"/>
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/js-cookie/js.cookie.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <title>OAuth2 Client</title>
+</head>
+<body>
+<div class="container">
+    <h1 id="title">
+        <a th:href="@{/}">OAuth2 Client For Banking system</a>
+    </h1>
+    <th:block layout:fragment="body">
+    </th:block>
+</div>
+</body>
+</html>

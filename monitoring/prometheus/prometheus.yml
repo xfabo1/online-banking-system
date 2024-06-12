@@ -1,0 +1,29 @@
+scrape_configs:
+- job_name: 'currency-service'
+  metrics_path: '/api/currency-service/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+  - targets: ['host.docker.internal:8081']
+    labels:
+      application: 'currency-service'
+- job_name: 'transaction-service'
+  metrics_path: '/api/transaction-service/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+  - targets: ['host.docker.internal:8082']
+    labels:
+      application: 'transaction-service'
+- job_name: 'user-service'
+  metrics_path: '/api/user-service/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+  - targets: ['host.docker.internal:8083']
+    labels:
+      application: 'user-service'
+- job_name: 'analytics-service'
+  metrics_path: '/api/analytics-service/actuator/prometheus'
+  scrape_interval: 5s
+  static_configs:
+    - targets: ['host.docker.internal:8084']
+      labels:
+        application: 'analytics-service'
